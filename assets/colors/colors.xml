@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary backgrounds -->
+    <color name="background_primary">#000000</color>
+    <color name="background_secondary">#141414</color>
+
+    <!-- Surface colors -->
+    <color name="surface_primary">#1A1A1A</color>
+    <color name="surface_secondary">#2A2A2A</color>
+
+    <!-- Accent -->
+    <color name="accent">#E50914</color>
+    <color name="accent_dark">#8B0000</color>
+
+    <!-- Content / text colors -->
+    <color name="content_primary">#FFFFFF</color>
+    <color name="content_secondary">#AAAAAA</color>
+</resources>
