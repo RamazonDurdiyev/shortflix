@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Shortflix',
       debugShowCheckedModeBanner: false,
-      home: const NetflixHomePage()
+      home: const HomePage()
     );
   }
 }

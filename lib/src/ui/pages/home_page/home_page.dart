@@ -52,8 +52,8 @@ const List<CategoryItem> kCategories = [
 // ─────────────────────────────────────────
 //  HOME PAGE
 // ─────────────────────────────────────────
-class NetflixHomePage extends StatelessWidget {
-  const NetflixHomePage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
