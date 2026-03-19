@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_page.dart';
 import 'package:shortflix/src/ui/widgets/global/movie_image_placeholder.dart';
 
@@ -30,7 +31,7 @@ class MoviesGrid extends StatelessWidget {
 }
 
 class _MovieCard extends StatelessWidget {
-  final MovieItem movie;
+  final MovieModel movie;
   const _MovieCard({required this.movie});
 
   @override
@@ -43,16 +44,15 @@ class _MovieCard extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: movie.fallbackColor,
               border: Border.all(color: ColorName.surfaceSecondary, width: 0.5),
             ),
             clipBehavior: Clip.antiAlias,
-            child: movie.imageUrl != null
+            child: movie.imageUrl.isEmpty
                 ? Image.network(
-                    movie.imageUrl!,
+                    movie.imageUrl,
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    errorBuilder: (_, __, ___) => movieImagePlaceholder(),
+                    errorBuilder: (_, _, _) => movieImagePlaceholder(),
                   )
                 : movieImagePlaceholder(),
           ),
@@ -75,7 +75,7 @@ class _MovieCard extends StatelessWidget {
         Row(
           children: [
             Text(
-              movie.year,
+              movie.year.toString(),
               style: const TextStyle(color: ColorName.contentSecondary, fontSize: 10),
             ),
             const Spacer(),

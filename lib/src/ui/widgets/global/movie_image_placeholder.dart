@@ -8,14 +8,14 @@ Widget movieImagePlaceholder() {
       children: [
         Icon(
           Icons.movie_creation_outlined,
-          color: ColorName.accent.withOpacity(0.7),
+          color: ColorName.accent.withValues(alpha: .7),
           size: 32,
         ),
         const SizedBox(height: 4),
         Text(
           'N',
           style: TextStyle(
-            color: ColorName.accent.withOpacity(0.5),
+            color: ColorName.accent.withValues(alpha: .5),
             fontSize: 18,
             fontWeight: FontWeight.w900,
             fontStyle: FontStyle.italic,
