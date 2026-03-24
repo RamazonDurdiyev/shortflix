@@ -1,53 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
-import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
+import 'package:shortflix/src/ui/pages/home_page/home_event.dart';
+import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
 import 'package:shortflix/src/ui/widgets/global/movies_grid.dart';
 import 'package:shortflix/src/ui/widgets/home_page/featured_carousel.dart';
-
-// ─────────────────────────────────────────
-//  DATA MODELS
-// ─────────────────────────────────────────
-
-class CategoryItem {
-  final String label;
-  final IconData icon;
-  const CategoryItem({required this.label, required this.icon});
-}
-
-
-
-final List<MovieModel> kMovies = [
-  const MovieModel(id: 1, title: 'Interstellar', year: 2014, rating: '8.6', imageUrl: 'imageUrl'),
-  const MovieModel(id: 2, title: 'Parasite', year: 2019, rating: '8.6', imageUrl: 'imageUrl'),
-  const MovieModel(id: 3, title: 'The Godfather', year: 1972, rating: '9.2', imageUrl: 'imageUrl'),
-  const MovieModel(id: 4, title: 'Inception', year: 2010, rating: '8.8', imageUrl: 'imageUrl'),
-  const MovieModel(id: 5, title: 'Joker', year: 2019, rating: '8.4', imageUrl: 'imageUrl'),
-  const MovieModel(id: 6, title: 'Tenet', year: 2020, rating: '7.4', imageUrl: 'imageUrl'),
-  const MovieModel(id: 7, title: 'The Dark Knight', year: 2008, rating: '9.0', imageUrl: 'imageUrl'),
-  const MovieModel(id: 8, title: 'Shutter Island', year: 2010, rating: '8.2', imageUrl: 'imageUrl'),
-  const MovieModel(id: 9, title: 'Prestige', year: 2006, rating: '8.5', imageUrl: 'imageUrl'),
-  const MovieModel(id: 10, title: 'Hereditary', year: 2018, rating: '7.3', imageUrl: 'imageUrl'),
-  const MovieModel(id: 11, title: 'Midsommar', year: 2019, rating: '7.1', imageUrl: 'imageUrl'),
-  const MovieModel(id: 12, title: 'Get Out', year: 2017, rating: '7.7', imageUrl: 'imageUrl'),
-];
-
-const List<CategoryItem> kCategories = [
-  CategoryItem(label: 'Action', icon: Icons.local_fire_department_rounded),
-  CategoryItem(label: 'Drama', icon: Icons.theater_comedy_rounded),
-  CategoryItem(label: 'Sci-Fi', icon: Icons.rocket_launch_rounded),
-  CategoryItem(label: 'Horror', icon: Icons.nightlight_round),
-  CategoryItem(label: 'Comedy', icon: Icons.sentiment_very_satisfied_rounded),
-  CategoryItem(label: 'Thriller', icon: Icons.visibility_rounded),
-  CategoryItem(label: 'Romance', icon: Icons.favorite_rounded),
-  CategoryItem(label: 'Animation', icon: Icons.animation_rounded),
-  CategoryItem(label: 'Documentary', icon: Icons.camera_outlined),
-  CategoryItem(label: 'Crime', icon: Icons.gavel_rounded),
-  CategoryItem(label: 'Fantasy', icon: Icons.auto_awesome_rounded),
-  CategoryItem(label: 'History', icon: Icons.account_balance_rounded),
-  CategoryItem(label: 'Mystery', icon: Icons.psychology_rounded),
-  CategoryItem(label: 'Adventure', icon: Icons.explore_rounded),
-  CategoryItem(label: 'Western', icon: Icons.landscape_rounded),
-];
 
 // ─────────────────────────────────────────
 //  HOME PAGE
@@ -57,6 +16,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeBloc = context.read<HomeBloc>();
+    homeBloc.add(FetchCategoriesEvent());
+    homeBloc.add(FetchMoviesEvent());
+    homeBloc.add(FetchBannersEvent());
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       body: SafeArea(
@@ -75,7 +38,17 @@ class HomePage extends StatelessWidget {
             ),
 
             // ── Carousel ──────────────────────────────
-            const SliverToBoxAdapter(child: FeaturedCarousel()),
+            SliverToBoxAdapter(
+              child: BlocBuilder<HomeBloc, HomeState>(
+                bloc: homeBloc,
+                buildWhen: (_, state) => state is FetchBannersState,
+                builder: (context, state) {
+                  return FeaturedCarousel(
+                    banners: context.read<HomeBloc>().banners,
+                  );
+                },
+              ),
+            ),
 
             // ── Section: Popular ──────────────────────
             const SliverToBoxAdapter(
@@ -83,7 +56,21 @@ class HomePage extends StatelessWidget {
             ),
 
             // ── Movies Grid ───────────────────────────
-            const SliverToBoxAdapter(child: MoviesGrid()),
+            SliverToBoxAdapter(
+              child: BlocBuilder<HomeBloc, HomeState>(
+                bloc: homeBloc,
+                buildWhen: (_, state) => state is FetchMoviesState,
+                builder: (context, state) {
+                  if (state is FetchMoviesState &&
+                      state.state == BaseState.loading) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: ColorName.accent),
+                    );
+                  }
+                  return MoviesGrid(movies: homeBloc.movies);
+                },
+              ),
+            ),
 
             // ── Section: Categories ───────────────────
             const SliverToBoxAdapter(
@@ -91,13 +78,70 @@ class HomePage extends StatelessWidget {
             ),
 
             // ── Categories Wrap ───────────────────────
-            const SliverToBoxAdapter(child: _CategoriesWrap()),
+            SliverToBoxAdapter(child: _buildCategoriesWrap(homeBloc)),
 
             // ── Bottom padding ────────────────────────
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
       ),
+    );
+  }
+
+  // ─────────────────────────────────────────
+  //  CATEGORIES WRAP
+  // ─────────────────────────────────────────
+
+  Widget _buildCategoriesWrap(HomeBloc bloc) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      bloc: bloc,
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: List.generate(bloc.categories.length, (index) {
+              return GestureDetector(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorName.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: ColorName.surfaceSecondary,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Icon(
+                      //   cat.icon,
+                      //   size: 14,
+                      //   color: Colors.white ,
+                      // ),
+                      // const SizedBox(width: 6),
+                      Text(
+                        bloc.categories[index].name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        );
+      },
     );
   }
 }
@@ -161,9 +205,7 @@ class _Header extends StatelessWidget {
           ),
           // Notification bell
           GestureDetector(
-            onTap: () {
-              
-            },
+            onTap: () {},
             child: Container(
               width: 40,
               height: 40,
@@ -172,7 +214,11 @@ class _Header extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: ColorName.surfaceSecondary),
               ),
-              child: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.notifications_none_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -225,7 +271,11 @@ class _SearchBar extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 16),
-            Icon(Icons.search_rounded, color: ColorName.contentSecondary, size: 20),
+            Icon(
+              Icons.search_rounded,
+              color: ColorName.contentSecondary,
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: TextField(
@@ -312,78 +362,6 @@ class _SectionTitle extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────
-//  CATEGORIES WRAP
-// ─────────────────────────────────────────
-class _CategoriesWrap extends StatefulWidget {
-  const _CategoriesWrap();
-
-  @override
-  State<_CategoriesWrap> createState() => _CategoriesWrapState();
-}
-
-class _CategoriesWrapState extends State<_CategoriesWrap> {
-  int? _selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: List.generate(kCategories.length, (index) {
-          final cat = kCategories[index];
-          final isActive = _selected == index;
-          return GestureDetector(
-            onTap: () => setState(() => _selected = isActive ? null : index),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: isActive ? ColorName.accent : ColorName.backgroundSecondary,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(
-                  color: isActive ? ColorName.accent : ColorName.surfaceSecondary,
-                  width: 1,
-                ),
-                boxShadow: isActive
-                    ? [
-                        BoxShadow(
-                          color: ColorName.accent.withValues(alpha: .35),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        )
-                      ]
-                    : [],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    cat.icon,
-                    size: 14,
-                    color: isActive ? Colors.white : ColorName.contentSecondary,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    cat.label,
-                    style: TextStyle(
-                      color: isActive ? Colors.white : ColorName.contentSecondary,
-                      fontSize: 13,
-                      fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
       ),
     );
   }

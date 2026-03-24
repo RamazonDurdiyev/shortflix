@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
-import 'package:shortflix/src/models/featured_carousel_model/featured_carousel_model.dart';
+import 'package:shortflix/src/models/banner_model/banner_model.dart';
 
 class FeaturedCarousel extends StatefulWidget {
-  const FeaturedCarousel({super.key});
+  final List<BannerModel> banners;
+  const FeaturedCarousel({super.key, required this.banners});
 
   @override
   State<FeaturedCarousel> createState() => _FeaturedCarouselState();
@@ -21,83 +22,16 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
 
   @override
   Widget build(BuildContext context) {
-
-    // ─────────────────────────────────────────
-//  SAMPLE DATA
-// ─────────────────────────────────────────
- List<FeaturedCarouselModel> kCarouselItems = [
-  FeaturedCarouselModel(
-    id: 1,
-    title: 'Oppenheimer',
-    tag: 'TRENDING #1',
-  ),
-  FeaturedCarouselModel(
-    id: 2,
-    title: 'Dune: Part Two',
-    tag: 'NEW RELEASE',
-  ),
-  FeaturedCarouselModel(
-    id: 3,
-    title: 'Poor Things',
-    tag: 'AWARD WINNER',
-  ),
-  FeaturedCarouselModel(
-    id: 4,
-    title: 'The Bear',
-    tag: 'HOT SERIES',
-  ),
-  FeaturedCarouselModel(
-    id: 5,
-    title: 'Killers of the Flower Moon',
-    tag: 'EPIC DRAMA',
-  ),
-  FeaturedCarouselModel(
-    id: 6,
-    title: 'Past Lives',
-    tag: 'MUST WATCH',
-  ),
-  FeaturedCarouselModel(
-    id: 7,
-    title: 'Maestro',
-    tag: 'BIOGRAPHY',
-  ),
-  FeaturedCarouselModel(
-    id: 8,
-    title: 'Saltburn',
-    tag: 'THRILLER',
-  ),
-  FeaturedCarouselModel(
-    id: 9,
-    title: 'Zone of Interest',
-    tag: 'ACCLAIMED',
-  ),
-  FeaturedCarouselModel(
-    id: 10,
-    title: 'Priscilla',
-    tag: 'BIOGRAPHY',
-  ),
-  FeaturedCarouselModel(
-    id: 11,
-    title: 'All of Us Strangers',
-    tag: 'EMOTIONAL',
-  ),
-  FeaturedCarouselModel(
-    id: 12,
-    title: 'American Fiction',
-    tag: 'COMEDY DRAMA',
-  ),
-];
-
     return Column(
       children: [
         SizedBox(
           height: 200,
           child: PageView.builder(
             controller: _pageController,
-            itemCount: kCarouselItems.length,
+            itemCount: widget.banners.length,
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemBuilder: (context, index) {
-              final item = kCarouselItems[index];
+              final item = widget.banners[index];
               final isActive = index == _currentPage;
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
@@ -125,7 +59,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              item.tag,
+                              item.category.name,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 9,
@@ -176,7 +110,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
         // Page indicator dots
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(kCarouselItems.length, (i) {
+          children: List.generate(widget.banners.length, (i) {
             final active = i == _currentPage;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
