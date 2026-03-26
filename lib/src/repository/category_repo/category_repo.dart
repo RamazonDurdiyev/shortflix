@@ -11,7 +11,7 @@ class CategoryRepo {
   final Box localStorage;
 
   CategoryRepo({
-    required this.networkInfo, 
+    required this.networkInfo,
     required this.client,
     required this.localStorage,
   });
@@ -25,7 +25,6 @@ class CategoryRepo {
 
     if (await networkInfo.isConnected) {
       final res = await client.get(CATEGORIES);
-      print(res);
       return res.data.map<CategoryModel>((category) {
         return CategoryModel.fromJson(category);
       }).toList();
@@ -33,6 +32,4 @@ class CategoryRepo {
       throw NetworkException();
     }
   }
-
-
 }

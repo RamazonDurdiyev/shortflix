@@ -14,7 +14,6 @@ class MoviesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("movies in grid = > $movies");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GridView.builder(

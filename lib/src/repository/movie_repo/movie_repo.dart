@@ -26,9 +26,7 @@ class MovieRepo {
 
     if (await networkInfo.isConnected) {
       final res = await client.get(GET_ALL_MOVIES);
-      print(res);
       return res.data["data"].map<MovieModel>((movie) {
-        print("movie ============ > > > $movie");
         return MovieModel.fromJson(movie);
       }).toList();
     } else {

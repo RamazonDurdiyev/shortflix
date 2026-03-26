@@ -5,9 +5,14 @@ import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_page.dart';
+import 'package:shortflix/src/ui/pages/notifications_page/notifications_bloc.dart';
+import 'package:shortflix/src/ui/pages/notifications_page/notifications_page.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
-
+import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
+import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
+import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
+import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_page.dart';
 
 Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
   final args = settings.arguments;
@@ -178,7 +183,76 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
         ),
       );
 
-      case Navigation.playPage:
+    case Navigation.notificationsPage:
+      return buildRoute(
+        settings,
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<NotificationsBloc>(
+              create: (context) => NotificationsBloc(
+                // categoryRepo: GetIt.instance.get(),
+                // movieRepo: GetIt.instance.get(),
+                // repo: GetIt.instance.get(),
+                // regionRepo: GetIt.instance.get(),
+              ),
+            ),
+            // BlocProvider<RegionAndDistrictCubit>(
+            //   create: (context) => RegionAndDistrictCubit(
+            //     // regionRepo: GetIt.instance.get(),
+            //   ),
+            // ),
+          ],
+          child: const NotificationsPage(),
+        ),
+      );
+
+    case Navigation.profilePage:
+      return buildRoute(
+        settings,
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<ProfileBloc>(
+              create: (context) => ProfileBloc(
+                // categoryRepo: GetIt.instance.get(),
+                // movieRepo: GetIt.instance.get(),
+                // repo: GetIt.instance.get(),
+                // regionRepo: GetIt.instance.get(),
+              ),
+            ),
+            // BlocProvider<RegionAndDistrictCubit>(
+            //   create: (context) => RegionAndDistrictCubit(
+            //     // regionRepo: GetIt.instance.get(),
+            //   ),
+            // ),
+          ],
+          child: const ProfilePage(),
+        ),
+      );
+
+    case Navigation.signUpPage:
+      return buildRoute(
+        settings,
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<SignUpBloc>(
+              create: (context) => SignUpBloc(
+                // categoryRepo: GetIt.instance.get(),
+                // movieRepo: GetIt.instance.get(),
+                // repo: GetIt.instance.get(),
+                // regionRepo: GetIt.instance.get(),
+              ),
+            ),
+            // BlocProvider<RegionAndDistrictCubit>(
+            //   create: (context) => RegionAndDistrictCubit(
+            //     // regionRepo: GetIt.instance.get(),
+            //   ),
+            // ),
+          ],
+          child: const SignUpPage(),
+        ),
+      );
+
+    case Navigation.playPage:
       return buildRoute(
         settings,
         MultiBlocProvider(
@@ -200,8 +274,6 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
           child: const PlayPage(),
         ),
       );
-
-      
 
     // case Navigation.myTasksPage:
     //   return buildRoute(

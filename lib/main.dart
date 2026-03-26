@@ -5,7 +5,7 @@ import 'package:shortflix/injection_container.dart' as di;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/src/models/login_model/login_model_adapter.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
-import 'package:shortflix/src/ui/pages/home_page/home_page.dart';
+import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Shortflix',
         debugShowCheckedModeBanner: false,
-        home: const HomePage()
+        home: const SignInPage()
       ),
     );
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/src/services/navigation.dart';
+import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_event.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
@@ -205,7 +207,14 @@ class _Header extends StatelessWidget {
           ),
           // Notification bell
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                generateRoutes(
+                  RouteSettings(name: Navigation.notificationsPage),
+                )!,
+              );
+            },
             child: Container(
               width: 40,
               height: 40,
@@ -223,24 +232,32 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           // Avatar
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [ColorName.accent, ColorName.accentDark],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                generateRoutes(RouteSettings(name: Navigation.profilePage))!,
+              );
+            },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [ColorName.accent, ColorName.accentDark],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Text(
-                'S',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              child: const Center(
+                child: Text(
+                  'S',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
