@@ -24,12 +24,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     on<FetchBannersEvent>((event, emit) async{
       await _fetchBanners(emit);
     },);
+    on<ChangeNavBarIndexEvent>((event, emit) {
+       _changeNavBarIndex(emit, event.navBarIndex);
+    },);
   }
 
  
   List<CategoryModel> categories = [];
   List<MovieModel> movies = [];
   List<BannerModel> banners = [];
+  int currentNavBarIndex = 0;
   
   Future<void> _fetchCategories(Emitter<HomeState> emit) async {
     try {
@@ -63,6 +67,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
       printDebug("HomeBloc _fetchBanners error => $e");
     }
   }
+  
+ void _changeNavBarIndex(Emitter<HomeState> emit, int index) {
+  currentNavBarIndex = index;
+  emit(ChangeNavBarIndexState(state: BaseState.loaded));
+}
 
   
 }

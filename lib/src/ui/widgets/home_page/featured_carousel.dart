@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
+import 'package:shortflix/src/services/navigation.dart';
+import 'package:shortflix/src/services/routes.dart';
 
 class FeaturedCarousel extends StatefulWidget {
   final List<BannerModel> banners;
@@ -53,7 +55,10 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: ColorName.accent,
                               borderRadius: BorderRadius.circular(4),
@@ -88,12 +93,21 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                 icon: Icons.play_arrow_rounded,
                                 label: 'Play',
                                 filled: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    generateRoutes(
+                                      RouteSettings(name: Navigation.playPage),
+                                    )!,
+                                  );
+                                },
                               ),
                               const SizedBox(width: 8),
                               _CarouselButton(
                                 icon: Icons.add_rounded,
                                 label: 'Watchlist',
                                 filled: false,
+                                onTap: () {},
                               ),
                             ],
                           ),
@@ -133,31 +147,42 @@ class _CarouselButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool filled;
-  const _CarouselButton({required this.icon, required this.label, required this.filled});
+  final Function()? onTap;
+  const _CarouselButton({
+    required this.icon,
+    required this.label,
+    required this.filled,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-      decoration: BoxDecoration(
-        color: filled ? Colors.white : Colors.white.withValues(alpha: .15),
-        borderRadius: BorderRadius.circular(8),
-        border: filled ? null : Border.all(color: Colors.white.withValues(alpha: .3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: filled ? Colors.black : Colors.white, size: 16),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: filled ? Colors.black : Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: filled ? Colors.white : Colors.white.withValues(alpha: .15),
+          borderRadius: BorderRadius.circular(8),
+          border: filled
+              ? null
+              : Border.all(color: Colors.white.withValues(alpha: .3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: filled ? Colors.black : Colors.white, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: filled ? Colors.black : Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

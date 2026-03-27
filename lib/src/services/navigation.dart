@@ -10,4 +10,7 @@ class Navigation {
   static const String notificationsPage = "/notifications_page";
   static const String profilePage = "/profile_page";
   static const String playPage = "/play_page";
+  static const String playlistsPage = "/playlists_page";
+  static const String recPage = "/rec_page";
+  static const String postPage = "/post_page";
 }

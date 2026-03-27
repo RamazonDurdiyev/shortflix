@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 
 abstract class HomeState extends Equatable{}
@@ -31,4 +32,12 @@ class FetchBannersState extends HomeState{
   FetchBannersState({required this.state});
   @override
   List<Object?> get props => [state];
+}
+
+class ChangeNavBarIndexState extends HomeState{
+  final BaseState state;
+
+  ChangeNavBarIndexState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
 }

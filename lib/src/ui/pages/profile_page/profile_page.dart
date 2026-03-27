@@ -112,23 +112,6 @@ Widget _buildTopBar(BuildContext context) {
     padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
     child: Row(
       children: [
-        GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: ColorName.backgroundSecondary,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: ColorName.surfaceSecondary),
-            ),
-            child: const Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
-              size: 16,
-            ),
-          ),
-        ),
         const SizedBox(width: 14),
         const Expanded(
           child: Text(

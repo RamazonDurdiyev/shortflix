@@ -9,8 +9,12 @@ import 'package:shortflix/src/ui/pages/notifications_page/notifications_bloc.dar
 import 'package:shortflix/src/ui/pages/notifications_page/notifications_page.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
+import 'package:shortflix/src/ui/pages/playlists_page/playlists_bloc.dart';
+import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
+import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
+import 'package:shortflix/src/ui/pages/rec_page/rec_page.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_page.dart';
 
@@ -249,6 +253,52 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
             // ),
           ],
           child: const SignUpPage(),
+        ),
+      );
+
+      case Navigation.playlistsPage:
+      return buildRoute(
+        settings,
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<PlaylistsBloc>(
+              create: (context) => PlaylistsBloc(
+                // categoryRepo: GetIt.instance.get(),
+                // movieRepo: GetIt.instance.get(),
+                // repo: GetIt.instance.get(),
+                // regionRepo: GetIt.instance.get(),
+              ),
+            ),
+            // BlocProvider<RegionAndDistrictCubit>(
+            //   create: (context) => RegionAndDistrictCubit(
+            //     // regionRepo: GetIt.instance.get(),
+            //   ),
+            // ),
+          ],
+          child: const PlaylistsPage(),
+        ),
+      );
+
+      case Navigation.recPage:
+      return buildRoute(
+        settings,
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<RecBloc>(
+              create: (context) => RecBloc(
+                // categoryRepo: GetIt.instance.get(),
+                // movieRepo: GetIt.instance.get(),
+                // repo: GetIt.instance.get(),
+                // regionRepo: GetIt.instance.get(),
+              ),
+            ),
+            // BlocProvider<RegionAndDistrictCubit>(
+            //   create: (context) => RegionAndDistrictCubit(
+            //     // regionRepo: GetIt.instance.get(),
+            //   ),
+            // ),
+          ],
+          child: const RecPage(),
         ),
       );
 
