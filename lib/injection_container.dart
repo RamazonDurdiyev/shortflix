@@ -7,7 +7,7 @@ import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/core/network/network_info.dart';
 import 'package:shortflix/core/network/network_interceptor.dart';
 import 'package:shortflix/src/repository/category_repo/category_repo.dart';
-import 'package:shortflix/src/repository/login_repo/login_repo.dart';
+import 'package:shortflix/src/repository/auth_repo/auth_repo.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
 import 'package:shortflix/src/repository/post_repo/post_repo.dart';
 
@@ -47,7 +47,7 @@ Future<void> init() async {
 
   // Repositories
   sl.registerLazySingleton(
-    () => LoginRepo(
+    () => AuthRepo(
       networkInfo: sl.get(),
       client: sl.get(),
       localStorage: hiveBox,

@@ -6,8 +6,11 @@ const int SEND_TIME_OUT = 30000;
 const int RECEIVE_TIME_OUT = 30000;
 
 const CATEGORIES = "/api/categories";
+const SIGN_IN = "/api/auth/login";
+const SIGN_UP = "/api/auth/register";
+const VERIFY_CODE = "/api/auth/verify-otp";
 
-const REFRESH = "";
+const REFRESH = "/api/auth/refresh";
 const SEND_CODE = "";
 const CHECK_CODE = "";
 const REGISTER = "";
@@ -19,4 +22,4 @@ const GET_ALL_MOVIES = "/api/movies";
 const GET_BANNERS = "/api/movies/banner";
 const CREATE_POST = "/api/movies";
 
-const USER_TOKEN = "";
+const USER_TOKEN = "auth";

@@ -210,7 +210,7 @@ class _PostViewState extends State<_PostView> {
               color: ColorName.backgroundSecondary,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isPicked ? ColorName.accent : ColorName.accent.withOpacity(0.4),
+                color: isPicked ? ColorName.accent : ColorName.accent.withValues(alpha: .4),
                 width: 1.5,
               ),
             ),
@@ -232,7 +232,7 @@ class _PostViewState extends State<_PostView> {
         Container(
           width: 52,
           height: 52,
-          decoration: BoxDecoration(color: ColorName.accent.withOpacity(0.1), shape: BoxShape.circle),
+          decoration: BoxDecoration(color: ColorName.accent.withValues(alpha: .1), shape: BoxShape.circle),
           child: Icon(Icons.cloud_upload_outlined, color: ColorName.accent, size: 26),
         ),
         const SizedBox(height: 12),
@@ -348,7 +348,7 @@ class _PostViewState extends State<_PostView> {
                                 decoration: BoxDecoration(
                                   color: ColorName.backgroundSecondary,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: ColorName.accent.withOpacity(0.5)),
+                                  border: Border.all(color: ColorName.accent.withValues(alpha: .5)),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -621,7 +621,7 @@ void _showCategoriesSheet(BuildContext context, PostBloc bloc) {
           child: Container(
             height: 52,
             decoration: BoxDecoration(
-              color: isLoading ? ColorName.accent.withOpacity(0.5) : ColorName.accent,
+              color: isLoading ? ColorName.accent.withValues(alpha: .5) : ColorName.accent,
               borderRadius: BorderRadius.circular(14),
             ),
             child: isLoading

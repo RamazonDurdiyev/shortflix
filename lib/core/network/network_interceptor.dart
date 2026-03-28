@@ -5,8 +5,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/core/utils/print_debug.dart';
-import 'package:shortflix/src/models/login_model/login_model.dart';
-import 'package:shortflix/src/repository/login_repo/login_repo.dart';
+import 'package:shortflix/src/models/auth_model/auth_model.dart';
+import 'package:shortflix/src/repository/auth_repo/auth_repo.dart';
 
 Dio addInterceptor(Dio dio) {
   final tokenHelper = GetIt.instance.get<RefreshTokenHelper>();
@@ -92,7 +92,7 @@ class RefreshTokenHelper {
   }
 
   Future<bool> _updateToken() async {
-    final LoginRepo loginRepo = GetIt.instance.get<LoginRepo>();
+    final AuthRepo loginRepo = GetIt.instance.get<AuthRepo>();
 
     try {
       final lastToken = getToken(true);
@@ -115,7 +115,7 @@ class RefreshTokenHelper {
   }
 
   String? getToken([bool isRefresh = false]) {
-    final loginData = box.get(USER_TOKEN) as LoginModel?;
+    final loginData = box.get(USER_TOKEN) as AuthModel?;
     if (loginData != null) {
       return isRefresh ? loginData.refreshToken : loginData.accessToken;
     }

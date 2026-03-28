@@ -7,6 +7,7 @@ class Navigation {
   static const String homePage = "/home_page";
   static const String signInPage = "/sign_in_page";
   static const String signUpPage = "/sign_up_page";
+  static const String confirmationPage = "/confirmation_page";
   static const String notificationsPage = "/notifications_page";
   static const String profilePage = "/profile_page";
   static const String playPage = "/play_page";

@@ -23,28 +23,6 @@ class ProfilePage extends StatelessWidget {
                   _buildProfileHeader(),
                   _buildStatsRow(),
                   const SizedBox(height: 8),
-                  _buildSectionTitle('My Content'),
-                  _buildMenuGroup([
-                    _MenuItem(
-                      icon: Icons.bookmark_rounded,
-                      label: 'Watchlist',
-                      trailing: _buildBadge('12'),
-                    ),
-                    _MenuItem(
-                      icon: Icons.history_rounded,
-                      label: 'Watch History',
-                    ),
-                    _MenuItem(
-                      icon: Icons.download_rounded,
-                      label: 'Downloads',
-                      trailing: _buildBadge('3'),
-                    ),
-                    _MenuItem(
-                      icon: Icons.favorite_rounded,
-                      label: 'Liked Videos',
-                      color: ColorName.accent,
-                    ),
-                  ]),
                   _buildSectionTitle('Account'),
                   _buildMenuGroup([
                     _MenuItem(
@@ -94,13 +72,11 @@ class _MenuItem {
   final IconData icon;
   final String label;
   final Widget? trailing;
-  final Color? color;
 
   const _MenuItem({
     required this.icon,
     required this.label,
     this.trailing,
-    this.color,
   });
 }
 
@@ -154,7 +130,6 @@ Widget _buildProfileHeader() {
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     child: Row(
       children: [
-        // Avatar
         Container(
           width: 72,
           height: 72,
@@ -178,7 +153,6 @@ Widget _buildProfileHeader() {
           ),
         ),
         const SizedBox(width: 16),
-        // Name & email
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,15 +175,12 @@ Widget _buildProfileHeader() {
                 ),
               ),
               const SizedBox(height: 8),
-              // Premium badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
                   color: ColorName.accent.withValues(alpha: .15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: ColorName.accent.withValues(alpha: .4),
-                  ),
+                  border: Border.all(color: ColorName.accent.withValues(alpha: .4)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -231,7 +202,6 @@ Widget _buildProfileHeader() {
             ],
           ),
         ),
-        // Edit icon
         GestureDetector(
           onTap: () {},
           child: Container(
@@ -293,10 +263,7 @@ Widget _buildStatItem(String value, String label) {
         const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            color: ColorName.contentSecondary,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: ColorName.contentSecondary, fontSize: 12),
         ),
       ],
     ),
@@ -304,11 +271,7 @@ Widget _buildStatItem(String value, String label) {
 }
 
 Widget _buildStatDivider() {
-  return Container(
-    width: 1,
-    height: 32,
-    color: ColorName.surfaceSecondary,
-  );
+  return Container(width: 1, height: 32, color: ColorName.surfaceSecondary);
 }
 
 // ─────────────────────────────────────────
@@ -374,7 +337,7 @@ Widget _buildMenuGroup(List<_MenuItem> items) {
 }
 
 Widget _buildMenuItem(_MenuItem item) {
-  final color = item.color ?? Colors.white;
+  Colors.white;
   return GestureDetector(
     onTap: () {},
     child: Padding(
@@ -385,17 +348,17 @@ Widget _buildMenuItem(_MenuItem item) {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: (item.color ?? ColorName.contentSecondary).withValues(alpha: .1),
+              color: (ColorName.contentSecondary).withValues(alpha: .1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(item.icon, color: color, size: 18),
+            child: Icon(item.icon, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Text(
               item.label,
               style: TextStyle(
-                color: color,
+                color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -416,34 +379,10 @@ Widget _buildMenuItem(_MenuItem item) {
   );
 }
 
-// ─────────────────────────────────────────
-//  TRAILING WIDGETS
-// ─────────────────────────────────────────
-Widget _buildBadge(String count) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-    decoration: BoxDecoration(
-      color: ColorName.accent.withValues(alpha: .15),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Text(
-      count,
-      style: TextStyle(
-        color: ColorName.accent,
-        fontSize: 11,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
-}
-
 Widget _buildValueLabel(String value) {
   return Text(
     value,
-    style: TextStyle(
-      color: ColorName.contentSecondary,
-      fontSize: 13,
-    ),
+    style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
   );
 }
 
@@ -489,10 +428,7 @@ Widget _buildVersionLabel() {
   return Center(
     child: Text(
       'Shortflix v1.0.0',
-      style: TextStyle(
-        color: ColorName.contentSecondary,
-        fontSize: 11,
-      ),
+      style: TextStyle(color: ColorName.contentSecondary, fontSize: 11),
     ),
   );
 }

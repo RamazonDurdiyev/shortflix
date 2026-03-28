@@ -7,7 +7,6 @@ import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_event.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
-import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
 import 'package:shortflix/src/ui/pages/post_page/post_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
@@ -503,7 +502,7 @@ class BottomNavBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color: ColorName.accent.withOpacity(0.4),
+                          color: ColorName.accent.withValues(alpha: .4),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -532,7 +531,7 @@ class BottomNavBar extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isActive
-                              ? ColorName.accent.withOpacity(0.12)
+                              ? ColorName.accent.withValues(alpha: .12)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
                         ),
