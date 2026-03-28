@@ -5,6 +5,7 @@ import 'package:shortflix/injection_container.dart' as di;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/src/models/login_model/login_model_adapter.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
+import 'package:shortflix/src/ui/pages/post_page/post_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_page.dart';
 
 void main() async{
@@ -14,7 +15,6 @@ void main() async{
 
   runApp(const MyApp());
 }
-
 
 Future<void> _init() async {
   await Hive.initFlutter();
@@ -38,6 +38,13 @@ class MyApp extends StatelessWidget {
           create: (context) => HomeBloc(
             categoryRepo: GetIt.instance.get(),
             movieRepo: GetIt.instance.get(),
+          ),
+        ),
+        BlocProvider<PostBloc>(
+          create: (context) => PostBloc(
+            postRepo: GetIt.instance.get(),
+            categoryRepo: GetIt.instance.get()
+            // movieRepo: GetIt.instance.get(),
           ),
         ),
       ],

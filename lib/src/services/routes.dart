@@ -11,6 +11,8 @@ import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_bloc.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
+import 'package:shortflix/src/ui/pages/post_page/post_bloc.dart';
+import 'package:shortflix/src/ui/pages/post_page/post_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
@@ -322,6 +324,30 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
             // ),
           ],
           child: const PlayPage(),
+        ),
+      );
+
+       case Navigation.postPage:
+      return buildRoute(
+        settings,
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<PostBloc>(
+              create: (context) => PostBloc(
+                postRepo: GetIt.instance.get(),
+                categoryRepo: GetIt.instance.get()
+                // executorRepo: GetIt.instance.get(),
+                // repo: GetIt.instance.get(),
+                // regionRepo: GetIt.instance.get(),
+              ),
+            ),
+            // BlocProvider<RegionAndDistrictCubit>(
+            //   create: (context) => RegionAndDistrictCubit(
+            //     // regionRepo: GetIt.instance.get(),
+            //   ),
+            // ),
+          ],
+          child: const PostPage(),
         ),
       );
 

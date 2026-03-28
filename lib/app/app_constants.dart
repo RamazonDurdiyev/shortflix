@@ -17,5 +17,6 @@ const USER_IS_GUEST = "";
 
 const GET_ALL_MOVIES = "/api/movies";
 const GET_BANNERS = "/api/movies/banner";
+const CREATE_POST = "/api/movies";
 
 const USER_TOKEN = "";
