@@ -23,16 +23,18 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   final List<FocusNode> _focuses =
       List.generate(6, (_) => FocusNode());
 
-  late String _email;
+  String _email = '';
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map?;
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map?;
+    setState(() {
       _email = (args?['email'] as String?) ?? '';
     });
-  }
+  });
+}
 
   @override
   void dispose() {

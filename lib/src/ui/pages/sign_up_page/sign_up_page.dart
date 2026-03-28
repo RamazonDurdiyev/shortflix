@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/services/navigation.dart';
-import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_event.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_state.dart';
@@ -16,34 +15,26 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _fullNameCtrl     = TextEditingController();
-  final _emailCtrl        = TextEditingController();
-  final _emailConfirmCtrl = TextEditingController();
-  final _passwordCtrl     = TextEditingController();
-  bool _obscure           = true;
+  final _fullNameCtrl = TextEditingController();
+  final _emailCtrl    = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  bool _obscure       = true;
   DateTime? _selectedDate;
-  String? _emailMatchError;
 
   // ── Regex ────────────────────────────────────────────────────
   static final _emailRegex    = RegExp(r'^[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}$');
   static final _passwordRegex = RegExp(r'^.{6,}$');
   static final _fullNameRegex = RegExp(r'^.{2,}$');
 
-  // ── Derived validators ───────────────────────────────────────
+  // ── Validators ───────────────────────────────────────────────
   bool get _fullNameValid => _fullNameRegex.hasMatch(_fullNameCtrl.text.trim());
   bool get _emailValid    => _emailRegex.hasMatch(_emailCtrl.text.trim());
   bool get _passwordValid => _passwordRegex.hasMatch(_passwordCtrl.text);
-  bool get _emailsMatch   => _emailCtrl.text.trim() == _emailConfirmCtrl.text.trim();
 
   bool get _canSubmit =>
-      _fullNameValid &&
-      _emailValid &&
-      _emailsMatch &&
-      _emailMatchError == null &&
-      _passwordValid &&
-      _selectedDate != null;
+      _fullNameValid && _emailValid && _passwordValid && _selectedDate != null;
 
-  // ── ISO 8601 UTC date ────────────────────────────────────────
+  // ── ISO 8601 UTC ─────────────────────────────────────────────
   String get _birthDateIso {
     if (_selectedDate == null) return '';
     return DateTime.utc(
@@ -68,17 +59,8 @@ class _SignUpPageState extends State<SignUpPage> {
   void dispose() {
     _fullNameCtrl.dispose();
     _emailCtrl.dispose();
-    _emailConfirmCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
-  }
-
-  void _validateEmails() {
-    setState(() {
-      _emailMatchError = _emailConfirmCtrl.text.isNotEmpty && !_emailsMatch
-          ? 'Emails do not match'
-          : null;
-    });
   }
 
   Future<void> _pickDate() async {
@@ -88,17 +70,15 @@ class _SignUpPageState extends State<SignUpPage> {
       initialDate: DateTime(now.year - 18, now.month, now.day),
       firstDate: DateTime(1900),
       lastDate: DateTime(now.year - 5),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.dark(
-              primary: ColorName.accent,
-              surface: ColorName.backgroundSecondary,
-            ),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: ColorScheme.dark(
+            primary: ColorName.accent,
+            surface: ColorName.backgroundSecondary,
           ),
-          child: child!,
-        );
-      },
+        ),
+        child: child!,
+      ),
     );
     if (picked != null) setState(() => _selectedDate = picked);
   }
@@ -110,10 +90,11 @@ class _SignUpPageState extends State<SignUpPage> {
     return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
         if (state is SignUpSubmitState && state.state == BaseState.loaded) {
-          Navigator.pushAndRemoveUntil(
+          // register succeeded — backend already sent OTP → go to confirmation
+          Navigator.pushNamed(
             context,
-            generateRoutes(RouteSettings(name: Navigation.homePage))!,
-            (_) => false,
+            Navigation.confirmationPage,
+            arguments: {'email': state.email},
           );
         }
         if (state is SignUpSubmitState && state.state == BaseState.error) {
@@ -136,7 +117,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 _buildHeading(),
                 const SizedBox(height: 32),
 
-                // ── Full Name ─────────────────────────────
                 _buildInputField(
                   label: 'Full Name',
                   hint: 'John Doe',
@@ -149,36 +129,19 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // ── Email ─────────────────────────────────
                 _buildInputField(
                   label: 'Email',
                   hint: 'you@example.com',
                   icon: Icons.mail_outline_rounded,
                   ctrl: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
-                  onChanged: (_) {
-                    _validateEmails();
-                    setState(() {});
-                  },
+                  onChanged: (_) => setState(() {}),
                   errorText: _emailCtrl.text.isNotEmpty && !_emailValid
                       ? 'Enter a valid email'
                       : null,
                 ),
                 const SizedBox(height: 16),
 
-                // ── Confirm Email ─────────────────────────
-                _buildInputField(
-                  label: 'Confirm Email',
-                  hint: 'you@example.com',
-                  icon: Icons.mail_outline_rounded,
-                  ctrl: _emailConfirmCtrl,
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (_) => _validateEmails(),
-                  errorText: _emailMatchError,
-                ),
-                const SizedBox(height: 16),
-
-                // ── Password ──────────────────────────────
                 _buildInputField(
                   label: 'Password',
                   hint: '••••••••',
@@ -205,11 +168,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // ── Date of Birth ─────────────────────────
                 _buildDateField(),
                 const SizedBox(height: 28),
 
-                // ── Submit ────────────────────────────────
                 _buildSubmitButton(bloc),
                 const SizedBox(height: 32),
                 _buildSignInRow(context),
@@ -270,11 +231,7 @@ class _SignUpPageState extends State<SignUpPage> {
             const SizedBox(width: 8),
             const Text(
               'Shortflix',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -386,7 +343,6 @@ class _SignUpPageState extends State<SignUpPage> {
   // ─────────────────────────────────────────
   Widget _buildSubmitButton(SignUpBloc bloc) {
     return BlocBuilder<SignUpBloc, SignUpState>(
-      buildWhen: (_, state) => state is SignUpSubmitState,
       builder: (context, state) {
         final isLoading =
             state is SignUpSubmitState && state.state == BaseState.loading;

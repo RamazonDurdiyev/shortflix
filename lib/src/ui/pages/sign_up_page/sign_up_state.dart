@@ -10,7 +10,10 @@ class SignUpInitial extends SignUpState {
 
 class SignUpSubmitState extends SignUpState {
   final BaseState state;
-  SignUpSubmitState({required this.state});
+  final String email;
+
+  SignUpSubmitState({required this.state, required this.email});
+
   @override
-  List<Object?> get props => [state];
+  List<Object?> get props => [state, email];
 }

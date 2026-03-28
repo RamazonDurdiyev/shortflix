@@ -19,8 +19,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     SignUpSubmitEvent event,
   ) async {
     try {
-      emit(SignUpSubmitState(state: BaseState.loading));
+      emit(SignUpSubmitState(state: BaseState.loading, email: event.email));
 
+      // register — backend sends OTP automatically
       await authRepo.signUp(
         fullName: event.fullName,
         email: event.email,
@@ -28,9 +29,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         birthDateIso: event.birthDateIso,
       );
 
-      emit(SignUpSubmitState(state: BaseState.loaded));
+      emit(SignUpSubmitState(state: BaseState.loaded, email: event.email));
     } catch (e) {
-      emit(SignUpSubmitState(state: BaseState.error));
+      emit(SignUpSubmitState(state: BaseState.error, email: event.email));
       printDebug('SignUpBloc _signUp error => $e');
     }
   }

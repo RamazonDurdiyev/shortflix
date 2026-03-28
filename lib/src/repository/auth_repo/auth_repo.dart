@@ -34,11 +34,15 @@ class AuthRepo {
         },
       );
 
-      final auth = AuthModel.fromJson(res.data);
-      await _saveAuth(auth);
+      final auth = AuthModel.fromJson(
+        Map<String, dynamic>.from(res.data as Map),
+      );
+      await localStorage.put(USER_TOKEN, auth);
     } on DioException catch (e) {
-      final message = e.response?.data?['message']?.toString().toLowerCase() ?? '';
-      if (message.contains('not signed up') || message.contains('user not found')) {
+      final message =
+          e.response?.data?['message']?.toString().toLowerCase() ?? '';
+      if (message.contains('not signed up') ||
+          message.contains('user not found')) {
         throw NotSignedUpException();
       }
       rethrow;
@@ -96,32 +100,38 @@ class AuthRepo {
       },
     );
 
-    final auth = AuthModel.fromJson(res.data);
-    await _saveAuth(auth);
+    final auth = AuthModel.fromJson(
+      Map<String, dynamic>.from(res.data as Map),
+    );
+    await localStorage.put(USER_TOKEN, auth);
   }
 
   // ─────────────────────────────────────────
   //  REFRESH TOKEN
+  //  matches old LoginRepo.refresh(String) pattern
+  //  network_interceptor calls refresh(lastToken)
   // ─────────────────────────────────────────
   Future<AuthModel> refresh(String refreshToken) async {
     if (!await networkInfo.isConnected) throw NetworkException();
+
     final res = await client.post(
       REFRESH,
       data: {'refreshToken': refreshToken},
     );
 
-    final auth = AuthModel.fromJson(res.data);
-    await _saveAuth(auth);
+    final auth = AuthModel.fromJson(
+      Map<String, dynamic>.from(res.data as Map),
+    );
+    await localStorage.put(USER_TOKEN, auth);
     return auth;
   }
 
   // ─────────────────────────────────────────
-  //  HELPERS
+  //  CLEAR AUTH
   // ─────────────────────────────────────────
-  Future<void> _saveAuth(AuthModel auth) async {
-    await localStorage.put('auth', auth.toJson());
+  Future<void> clearAuth() async {
+    await localStorage.delete(USER_TOKEN);
   }
-
 }
 
 // ─────────────────────────────────────────

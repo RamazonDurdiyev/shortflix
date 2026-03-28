@@ -11,7 +11,7 @@ const SIGN_UP = "/api/auth/register";
 const VERIFY_CODE = "/api/auth/verify-otp";
 
 const REFRESH = "/api/auth/refresh";
-const SEND_CODE = "";
+const SEND_CODE = "/api/auth/login";
 const CHECK_CODE = "";
 const REGISTER = "";
 
