@@ -226,7 +226,7 @@ class _SignInPageState extends State<SignInPage> {
             decoration: BoxDecoration(
               color: isEnabled
                   ? ColorName.accent
-                  : ColorName.accent.withOpacity(0.4),
+                  : ColorName.accent.withValues(alpha: .4),
               borderRadius: BorderRadius.circular(14),
             ),
             child: isLoading
@@ -344,7 +344,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
-              if (suffix != null) suffix,
+              ?suffix,
             ],
           ),
         ),

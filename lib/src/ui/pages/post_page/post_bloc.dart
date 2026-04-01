@@ -14,7 +14,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   final PostRepo postRepo;
   final CategoryRepo categoryRepo;
 
-  PostBloc({required this.postRepo, required this.categoryRepo}) : super(PostInitial()) {
+  PostBloc({required this.postRepo, required this.categoryRepo})
+      : super(PostInitial()) {
     on<PickVideoEvent>((event, emit) async {
       await _pickVideo(emit);
     });
@@ -23,27 +24,30 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       await _pickThumbnail(emit);
     });
 
+    on<FetchCategoriesEvent>((event, emit) async {
+      await _fetchCategories(emit);
+    });
+
+    on<SelectCategoryEvent>((event, emit) {
+      selectedCategoryId = event.categoryId;
+      emit(SelectCategoryState(categoryId: event.categoryId));
+    });
+
+    on<SelectAgeLimitEvent>((event, emit) {
+      selectedAgeLimit = event.ageLimit;
+      emit(SelectAgeLimitState(ageLimit: event.ageLimit));
+    });
+
     on<CreatePostEvent>((event, emit) async {
       await _createPost(emit, event);
     });
-
-    on<FetchCategoriesEvent>((event, emit) async{
-      await _fetchCategories(emit);
-    },);
-
-    on<SelectCategoryEvent>((event, emit) {
-      _selectCategory(emit, event.categoryId);
-    },);
   }
 
-  // ── Data ────────────────────────────────────────
-
-List<CategoryModel> categories = [];
-
-  // ── Picked file paths ────────────────────────────────────────
   String? videoPath;
   String? thumbnailPath;
-  String selectedCategoryId = "";
+  String selectedCategoryId = '';
+  String selectedAgeLimit   = '';
+  List<CategoryModel> categories = [];
 
   // ─────────────────────────────────────────
   //  PICK VIDEO
@@ -51,17 +55,14 @@ List<CategoryModel> categories = [];
   Future<void> _pickVideo(Emitter<PostState> emit) async {
     try {
       emit(PickVideoState(state: BaseState.loading));
-
       final result = await FilePicker.platform.pickFiles(
         type: FileType.video,
         allowMultiple: false,
       );
-
       if (result != null && result.files.single.path != null) {
         videoPath = result.files.single.path!;
         emit(PickVideoState(state: BaseState.loaded));
       } else {
-        // user cancelled — go back to initial without clearing existing path
         emit(PickVideoState(state: BaseState.initial));
       }
     } catch (e) {
@@ -76,12 +77,10 @@ List<CategoryModel> categories = [];
   Future<void> _pickThumbnail(Emitter<PostState> emit) async {
     try {
       emit(PickThumbnailState(state: BaseState.loading));
-
       final picked = await ImagePicker().pickImage(
         source: ImageSource.gallery,
         imageQuality: 90,
       );
-
       if (picked != null) {
         thumbnailPath = picked.path;
         emit(PickThumbnailState(state: BaseState.loaded));
@@ -95,6 +94,20 @@ List<CategoryModel> categories = [];
   }
 
   // ─────────────────────────────────────────
+  //  FETCH CATEGORIES
+  // ─────────────────────────────────────────
+  Future<void> _fetchCategories(Emitter<PostState> emit) async {
+    try {
+      emit(FetchCategoriesState(state: BaseState.loading));
+      categories = await categoryRepo.fetchCategories();
+      emit(FetchCategoriesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchCategoriesState(state: BaseState.error));
+      printDebug('PostBloc _fetchCategories error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
   //  CREATE POST
   // ─────────────────────────────────────────
   Future<void> _createPost(
@@ -103,45 +116,27 @@ List<CategoryModel> categories = [];
   ) async {
     try {
       emit(CreatePostState(state: BaseState.loading));
-
       await postRepo.createPost(
         PostModel(
-          season: event.season,
-          episode: event.episode,
-          titleUz: event.titleUz,
-          titleRu: event.titleRu,
-          titleEn: event.titleEn,
+          season:        event.season,
+          episode:       event.episode,
+          titleUz:       event.titleUz,
+          titleRu:       event.titleRu,
+          titleEn:       event.titleEn,
           descriptionUz: event.descriptionUz,
           descriptionRu: event.descriptionRu,
           descriptionEn: event.descriptionEn,
-          releaseYear: event.releaseYear,
-          categoryId: event.categoryId,
-          videoPath: videoPath!,
-          imagePath: thumbnailPath!,
+          releaseYear:   event.releaseYear,
+          categoryId:    event.categoryId,
+          ageLimit:      event.ageLimit,
+          videoPath:     videoPath!,
+          imagePath:     thumbnailPath!,
         ),
       );
-
       emit(CreatePostState(state: BaseState.loaded));
     } catch (e) {
       emit(CreatePostState(state: BaseState.error));
       printDebug('PostBloc _createPost error => $e');
     }
   }
-  
-  Future<void> _fetchCategories(Emitter<PostState> emit) async {
-    try {
-      emit(FetchCategoriesState(state: BaseState.loading));
-      categories = await categoryRepo.fetchCategories();
-      emit(FetchCategoriesState(state: BaseState.loaded));
-    } catch (e) {
-      emit(FetchCategoriesState(state: BaseState.error));
-    }
-  }
-  
-  void _selectCategory(Emitter<PostState> emit, String categoryId) {
-    selectedCategoryId = categoryId;
-    emit(SelectCategoryState(state: BaseState.loaded));
-  }
-
-
 }

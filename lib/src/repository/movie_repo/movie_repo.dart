@@ -17,7 +17,7 @@ class MovieRepo {
     required this.localStorage,
   });
 
-   // **************************************************************************
+  // **************************************************************************
   // fetch movies
   // **************************************************************************
 
@@ -34,7 +34,11 @@ class MovieRepo {
     }
   }
 
-    Future<List<BannerModel>> fetchMovieBanners() async {
+  // **************************************************************************
+  // fetch movies
+  // **************************************************************************
+
+  Future<List<BannerModel>> fetchMovieBanners() async {
     // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
 
     if (await networkInfo.isConnected) {
@@ -47,4 +51,89 @@ class MovieRepo {
     }
   }
 
+  // **************************************************************************
+  // fetch movie details
+  // **************************************************************************
+
+  Future<MovieDetailsModel> fetchMovieDetails(String movieId) async {
+    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
+
+    if (await networkInfo.isConnected) {
+      final res = await client.get(GET_MOVIE_DETAILS + movieId);
+      return MovieDetailsModel.fromJson(res.data);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // fetch episodes
+  // **************************************************************************
+
+  Future<List<EpisodeModel>> fetchEpisodes(String movieId) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final res = await client.get(GET_EPISODES + movieId);
+
+        final List data = res.data as List;
+
+        return data.map((episode) {
+          return EpisodeModel.fromJson(episode);
+        }).toList();
+      } catch (e) {
+        print("Fetch episodes ======== $e");
+        throw Exception("Failed to fetch episodes");
+      }
+    } else {
+      throw NetworkException();
+    }
+  }
+
+    // **************************************************************************
+  // fetch movie details
+  // **************************************************************************
+
+  Future<EpisodeDetailsModel> fetchEpisode(String movieId) async {
+    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
+
+    if (await networkInfo.isConnected) {
+      
+      final res = await client.get(GET_EPISODE, queryParameters: {
+        "movieId": movieId,
+        "episodeNumber": 1,
+        "seasonNumber": 1
+      });
+      return EpisodeDetailsModel.fromJson(res.data);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // Like movie
+  // **************************************************************************
+
+  Future<void> likeMovie(String episodeId) async {
+    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
+
+    if (await networkInfo.isConnected) {
+      await client.post(LIKE_MOVIE + episodeId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // Save movie
+  // **************************************************************************
+
+  Future<void> saveMovie(String episodeId) async {
+    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
+
+    if (await networkInfo.isConnected) {
+      await client.post(SAVE_MOVIE + episodeId);
+    } else {
+      throw NetworkException();
+    }
+  }
 }

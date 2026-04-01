@@ -44,7 +44,8 @@ class _MovieCard extends StatelessWidget {
               context,
               generateRoutes(
                 RouteSettings(
-                  name: Navigation.playPage,
+                  name: Navigation.episodesPage,
+                  arguments: {"movieId": movie.id}
                 ),
               )!,
             );
@@ -60,9 +61,9 @@ class _MovieCard extends StatelessWidget {
                 border: Border.all(color: ColorName.surfaceSecondary, width: 0.5),
               ),
               clipBehavior: Clip.antiAlias,
-              child: movie.imageUrl.isEmpty
+              child: movie.media != null && movie.media!.isNotEmpty
                   ? Image.network(
-                      movie.imageUrl,
+                      movie.media ?? "",
                       fit: BoxFit.cover,
                       width: double.infinity,
                       errorBuilder: (_, _, _) => movieImagePlaceholder(),
@@ -73,7 +74,7 @@ class _MovieCard extends StatelessWidget {
           const SizedBox(height: 6),
           // Title
           Text(
-            movie.title,
+            movie.title ?? "",
             style: const TextStyle(
               color: ColorName.contentPrimary,
               fontSize: 11.5,

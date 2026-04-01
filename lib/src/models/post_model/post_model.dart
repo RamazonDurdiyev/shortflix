@@ -9,8 +9,9 @@ class PostModel {
   final String descriptionEn;
   final int releaseYear;
   final String categoryId;
-  final String videoPath;   // local path — used to build multipart
-  final String imagePath;   // local path — used to build multipart
+  final String ageLimit;
+  final String videoPath;
+  final String imagePath;
 
   const PostModel({
     required this.season,
@@ -23,6 +24,7 @@ class PostModel {
     required this.descriptionEn,
     required this.releaseYear,
     required this.categoryId,
+    required this.ageLimit,
     required this.videoPath,
     required this.imagePath,
   });

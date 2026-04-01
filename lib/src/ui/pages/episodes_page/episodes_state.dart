@@ -1,0 +1,23 @@
+import 'package:equatable/equatable.dart';
+import 'package:shortflix/core/utils/base_state.dart';
+
+abstract class EpisodesState extends Equatable {}
+
+class EpisodesInitial extends EpisodesState {
+  @override
+  List<Object?> get props => [];
+}
+
+class EpisodesFetchState extends EpisodesState {
+  final BaseState state;
+  EpisodesFetchState({required this.state});
+  @override
+  List<Object?> get props => [state];
+}
+
+class EpisodesSelectSeasonState extends EpisodesState {
+  final int season;
+  EpisodesSelectSeasonState({required this.season});
+  @override
+  List<Object?> get props => [season];
+}

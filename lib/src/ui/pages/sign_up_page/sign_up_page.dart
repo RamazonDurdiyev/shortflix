@@ -363,7 +363,7 @@ class _SignUpPageState extends State<SignUpPage> {
             decoration: BoxDecoration(
               color: isEnabled
                   ? ColorName.accent
-                  : ColorName.accent.withOpacity(0.4),
+                  : ColorName.accent.withValues(alpha: .4),
               borderRadius: BorderRadius.circular(14),
             ),
             child: isLoading
@@ -482,7 +482,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              if (suffix != null) suffix,
+              ?suffix,
             ],
           ),
         ),

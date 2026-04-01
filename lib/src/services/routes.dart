@@ -5,6 +5,8 @@ import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/confirmation_page/confirmation_bloc.dart';
 import 'package:shortflix/src/ui/pages/confirmation_page/confirmation_page.dart';
+import 'package:shortflix/src/ui/pages/episodes_page/episodes_bloc.dart';
+import 'package:shortflix/src/ui/pages/episodes_page/episodes_page.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_page.dart';
 import 'package:shortflix/src/ui/pages/notifications_page/notifications_bloc.dart';
@@ -23,22 +25,19 @@ import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_page.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_page.dart';
+import 'package:shortflix/src/ui/pages/splash_page/splash_cubit.dart';
+import 'package:shortflix/src/ui/pages/splash_page/splash_page.dart';
 
 Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
   final args = settings.arguments;
   printDebug("arguments -> $args");
 
   switch (settings.name) {
-
-    // ── '/' and signInPage both go to SignIn ──────────────────
-    case '/':
     case Navigation.signInPage:
       return buildRoute(
         settings,
         BlocProvider<SignInBloc>(
-          create: (_) => SignInBloc(
-            authRepo: GetIt.instance.get(),
-          ),
+          create: (_) => SignInBloc(authRepo: GetIt.instance.get()),
           child: const SignInPage(),
         ),
       );
@@ -47,9 +46,7 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<SignUpBloc>(
-          create: (_) => SignUpBloc(
-            authRepo: GetIt.instance.get(),
-          ),
+          create: (_) => SignUpBloc(authRepo: GetIt.instance.get()),
           child: const SignUpPage(),
         ),
       );
@@ -58,9 +55,7 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<ConfirmationBloc>(
-          create: (_) => ConfirmationBloc(
-            authRepo: GetIt.instance.get(),
-          ),
+          create: (_) => ConfirmationBloc(authRepo: GetIt.instance.get()),
           child: const ConfirmationPage(),
         ),
       );
@@ -107,18 +102,39 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
     case Navigation.recPage:
       return buildRoute(
         settings,
-        BlocProvider<RecBloc>(
-          create: (_) => RecBloc(),
-          child: const RecPage(),
-        ),
+        BlocProvider<RecBloc>(create: (_) => RecBloc(), child: const RecPage()),
       );
 
     case Navigation.playPage:
       return buildRoute(
         settings,
         BlocProvider<PlayBloc>(
-          create: (_) => PlayBloc(),
+          create: (_) => PlayBloc(
+            movieRepo: GetIt.instance.get()
+          ),
           child: const PlayPage(),
+        ),
+      );
+      case Navigation.episodesPage:
+      return buildRoute(
+        settings,
+        BlocProvider<EpisodesBloc>(
+          create: (_) => EpisodesBloc(
+            movieRepo: GetIt.instance.get()
+          ),
+          child: const EpisodesPage(),
+        ),
+      );
+
+    case Navigation.splashPage:
+      return buildRoute(
+        settings,
+        BlocProvider<SplashCubit>(
+          create: (_) => SplashCubit(
+            localStorage: GetIt.instance.get(),
+            networkInfo: GetIt.instance.get(),
+          ),
+          child: const SplashPage(),
         ),
       );
 

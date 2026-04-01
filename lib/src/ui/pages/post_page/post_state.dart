@@ -22,25 +22,30 @@ class PickThumbnailState extends PostState {
   List<Object?> get props => [state];
 }
 
-class CreatePostState extends PostState {
+class FetchCategoriesState extends PostState {
   final BaseState state;
-  CreatePostState({required this.state});
-  @override
-  List<Object?> get props => [state];
-}
-
-class FetchCategoriesState extends PostState{
-  final BaseState state;
-
   FetchCategoriesState({required this.state});
   @override
   List<Object?> get props => [state];
 }
 
-class SelectCategoryState extends PostState{
-  final BaseState state;
+class SelectCategoryState extends PostState {
+  final String categoryId;
+  SelectCategoryState({required this.categoryId});
+  @override
+  List<Object?> get props => [categoryId];
+}
 
-  SelectCategoryState({required this.state});
+class SelectAgeLimitState extends PostState {
+  final String ageLimit;
+  SelectAgeLimitState({required this.ageLimit});
+  @override
+  List<Object?> get props => [ageLimit];
+}
+
+class CreatePostState extends PostState {
+  final BaseState state;
+  CreatePostState({required this.state});
   @override
   List<Object?> get props => [state];
 }

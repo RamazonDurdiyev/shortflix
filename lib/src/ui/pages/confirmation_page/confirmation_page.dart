@@ -38,8 +38,12 @@ void initState() {
 
   @override
   void dispose() {
-    for (final c in _ctrls) c.dispose();
-    for (final f in _focuses) f.dispose();
+    for (final c in _ctrls) {
+      c.dispose();
+    }
+    for (final f in _focuses) {
+      f.dispose();
+    }
     super.dispose();
   }
 
@@ -136,7 +140,7 @@ void initState() {
           width: 56,
           height: 56,
           decoration: BoxDecoration(
-            color: ColorName.accent.withOpacity(0.1),
+            color: ColorName.accent.withValues(alpha: .1),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(Icons.mark_email_read_outlined, color: ColorName.accent, size: 28),
@@ -239,7 +243,7 @@ void initState() {
             height: 52,
             decoration: BoxDecoration(
               color: isLoading || !canSubmit
-                  ? ColorName.accent.withOpacity(0.4)
+                  ? ColorName.accent.withValues(alpha: .4)
                   : ColorName.accent,
               borderRadius: BorderRadius.circular(14),
             ),

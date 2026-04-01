@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         title: 'Shortflix',
         debugShowCheckedModeBanner: false,
         onGenerateRoute: generateRoutes,
-        initialRoute: Navigation.signInPage,  // ← router handles SignInPage + its BlocProvider
+        initialRoute: Navigation.splashPage,  // ← router handles SignInPage + its BlocProvider
       ),
     );
   }
