@@ -88,18 +88,18 @@ class PostMovieBloc extends Bloc<PostMovieEvent, PostMovieState> {
     try {
       emit(CreateMovieState(state: BaseState.loading));
 
-      // TODO: call movieRepo.createMovie(
-      //   titleUz: event.titleUz,
-      //   titleRu: event.titleRu,
-      //   titleEn: event.titleEn,
-      //   descriptionUz: event.descriptionUz,
-      //   descriptionRu: event.descriptionRu,
-      //   descriptionEn: event.descriptionEn,
-      //   ageLimit: selectedAgeLimit,
-      //   releaseYear: event.releaseYear,
-      //   categoryId: selectedCategoryId,
-      //   imagePath: imagePath,
-      // );
+      await movieRepo.postMovie(
+        titleUz: event.titleUz,
+        titleRu: event.titleRu,
+        titleEn: event.titleEn,
+        descriptionUz: event.descriptionUz,
+        descriptionRu: event.descriptionRu,
+        descriptionEn: event.descriptionEn,
+        ageLimit: selectedAgeLimit,
+        releaseYear: event.releaseYear,
+        categoryId: selectedCategoryId,
+        imageUrl: imagePath ?? '',
+      );
 
       emit(CreateMovieState(state: BaseState.loaded));
     } catch (e) {

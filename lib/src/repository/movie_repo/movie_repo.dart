@@ -5,7 +5,6 @@ import 'package:shortflix/core/error/exceptions.dart';
 import 'package:shortflix/core/network/network_info.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
-import 'package:shortflix/src/models/post_model/post_model.dart';
 
 class MovieRepo {
   final NetworkInfo networkInfo;
@@ -154,38 +153,74 @@ class MovieRepo {
     }
   }
 
+  // **************************************************************************
+  // post movie
+  // **************************************************************************
 
-    // ─────────────────────────────────────────
-  //  CREATE POST
-  //  media field carries both video + image
-  //  as multipart — backend handles both
-  // ─────────────────────────────────────────
-  Future<void> createPost(PostModel post) async {
-    if (!await networkInfo.isConnected) throw NetworkException();
-
-    final formData = FormData.fromMap({
-      'movieId': post.movieId,
-      'season': post.season,
-      'episode': post.episode,
-      'titleUz': post.titleUz,
-      'titleRu': post.titleRu,
-      'titleEn': post.titleEn,
-      'descriptionUz': post.descriptionUz,
-      'descriptionRu': post.descriptionRu,
-      'descriptionEn': post.descriptionEn,
-      // media field sends both files under the same key
-      'media': [
-        await MultipartFile.fromFile(post.videoPath),
-        await MultipartFile.fromFile(post.imagePath),
-      ],
-    });
-
-    await client.post(
-      CREATE_EPISODE, // add to app_constants.dart
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
-    );
+  Future<void> postMovie({
+    required String titleUz,
+    required String titleRu,
+    required String titleEn,
+    required String descriptionUz,
+    required String descriptionRu,
+    required String descriptionEn,
+    required String ageLimit,
+    required int releaseYear,
+    required String categoryId,
+    required String imageUrl,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.post(CREATE_MOVIE, data: {
+        "titleUz": titleUz,
+        "titleRu": titleRu,
+        "titleEn": titleEn,
+        "descriptionUz": descriptionUz,
+        "descriptionRu": descriptionRu,
+        "descriptionEn": descriptionEn,
+        "ageLimit": ageLimit,
+        "releaseYear": releaseYear,
+        "categoryId": categoryId,
+        "imageUrl": imageUrl,
+      });
+    } else {
+      throw NetworkException();
+    }
   }
 
+  // **************************************************************************
+  // post episode
+  // **************************************************************************
+
+  Future<void> postEpisode({
+    required int season,
+    required int episodeNumber,
+    required String movieId,
+    required String titleUz,
+    required String titleRu,
+    required String titleEn,
+    String? descriptionUz,
+    String? descriptionRu,
+    String? descriptionEn,
+    String? videoUrl,
+    int? duration,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.post(CREATE_EPISODE, data: {
+        "season": season,
+        "episodeNumber": episodeNumber,
+        "movieId": movieId,
+        "titleUz": titleUz,
+        "titleRu": titleRu,
+        "titleEn": titleEn,
+        if (descriptionUz != null) "descriptionUz": descriptionUz,
+        if (descriptionRu != null) "descriptionRu": descriptionRu,
+        if (descriptionEn != null) "descriptionEn": descriptionEn,
+        if (videoUrl != null) "videoUrl": videoUrl,
+        if (duration != null) "duration": duration,
+      });
+    } else {
+      throw NetworkException();
+    }
+  }
 
 }

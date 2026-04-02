@@ -107,16 +107,18 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
     try {
       emit(CreateEpisodeState(state: BaseState.loading));
 
-      // TODO: call movieRepo.createEpisode(
-      //   season: event.season,
-      //   episodeNumber: event.episodeNumber,
-      //   movieId: selectedMovieId,
-      //   title: event.title,
-      //   description: event.description,
-      //   videoPath: videoPath,
-      //   imagePath: imagePath,
-      //   duration: event.duration,
-      // );
+      await movieRepo.postEpisode(
+        season: event.season,
+        episodeNumber: event.episodeNumber,
+        movieId: selectedMovieId,
+        titleUz: event.titleUz,
+        titleRu: event.titleRu,
+        titleEn: event.titleEn,
+        descriptionUz: event.descriptionUz,
+        descriptionRu: event.descriptionRu,
+        descriptionEn: event.descriptionEn,
+        duration: event.duration,
+      );
 
       emit(CreateEpisodeState(state: BaseState.loaded));
     } catch (e) {

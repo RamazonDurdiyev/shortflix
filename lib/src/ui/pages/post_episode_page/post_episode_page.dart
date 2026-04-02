@@ -25,8 +25,12 @@ class _PostEpisodeView extends StatefulWidget {
 }
 
 class _PostEpisodeViewState extends State<_PostEpisodeView> {
-  final _titleCtrl = TextEditingController();
-  final _descCtrl = TextEditingController();
+  final _titleUzCtrl = TextEditingController();
+  final _titleRuCtrl = TextEditingController();
+  final _titleEnCtrl = TextEditingController();
+  final _descUzCtrl = TextEditingController();
+  final _descRuCtrl = TextEditingController();
+  final _descEnCtrl = TextEditingController();
   final _seasonCtrl = TextEditingController();
   final _episodeCtrl = TextEditingController();
   final _durationCtrl = TextEditingController();
@@ -40,8 +44,12 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
 
   @override
   void dispose() {
-    _titleCtrl.dispose();
-    _descCtrl.dispose();
+    _titleUzCtrl.dispose();
+    _titleRuCtrl.dispose();
+    _titleEnCtrl.dispose();
+    _descUzCtrl.dispose();
+    _descRuCtrl.dispose();
+    _descEnCtrl.dispose();
     _seasonCtrl.dispose();
     _episodeCtrl.dispose();
     _durationCtrl.dispose();
@@ -191,12 +199,28 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
               ),
               const SizedBox(height: 12),
 
-              // ── Title ───────────────────────────────
-              _buildTextField(_titleCtrl, 'Episode Title'),
+              // ── Title (UZ) ────────────────────────────
+              _buildTextField(_titleUzCtrl, 'Title (UZ)'),
               const SizedBox(height: 12),
 
-              // ── Description ─────────────────────────
-              _buildTextField(_descCtrl, 'Description', maxLines: 4),
+              // ── Title (RU) ────────────────────────────
+              _buildTextField(_titleRuCtrl, 'Title (RU)'),
+              const SizedBox(height: 12),
+
+              // ── Title (EN) ────────────────────────────
+              _buildTextField(_titleEnCtrl, 'Title (EN)'),
+              const SizedBox(height: 12),
+
+              // ── Description (UZ) ───────────────────────
+              _buildTextField(_descUzCtrl, 'Description (UZ)', maxLines: 4),
+              const SizedBox(height: 12),
+
+              // ── Description (RU) ───────────────────────
+              _buildTextField(_descRuCtrl, 'Description (RU)', maxLines: 4),
+              const SizedBox(height: 12),
+
+              // ── Description (EN) ───────────────────────
+              _buildTextField(_descEnCtrl, 'Description (EN)', maxLines: 4),
               const SizedBox(height: 12),
 
               // ── Duration ────────────────────────────
@@ -238,6 +262,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      cursorColor: ColorName.accent,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
@@ -246,6 +271,10 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: ColorName.surfaceSecondary),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: ColorName.accent),
         ),
         filled: true,
         fillColor: ColorName.backgroundSecondary,
@@ -481,8 +510,12 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
         bloc.add(CreateEpisodeEvent(
           season: int.tryParse(_seasonCtrl.text) ?? 0,
           episodeNumber: int.tryParse(_episodeCtrl.text) ?? 0,
-          title: _titleCtrl.text,
-          description: _descCtrl.text,
+          titleUz: _titleUzCtrl.text,
+          titleRu: _titleRuCtrl.text,
+          titleEn: _titleEnCtrl.text,
+          descriptionUz: _descUzCtrl.text,
+          descriptionRu: _descRuCtrl.text,
+          descriptionEn: _descEnCtrl.text,
           duration: int.tryParse(_durationCtrl.text) ?? 0,
         ));
       },

@@ -14,15 +14,23 @@ class SelectMovieEvent extends PostEpisodeEvent {
 class CreateEpisodeEvent extends PostEpisodeEvent {
   final int season;
   final int episodeNumber;
-  final String title;
-  final String description;
+  final String titleUz;
+  final String titleRu;
+  final String titleEn;
+  final String descriptionUz;
+  final String descriptionRu;
+  final String descriptionEn;
   final int duration;
 
   CreateEpisodeEvent({
     required this.season,
     required this.episodeNumber,
-    required this.title,
-    required this.description,
+    required this.titleUz,
+    required this.titleRu,
+    required this.titleEn,
+    required this.descriptionUz,
+    required this.descriptionRu,
+    required this.descriptionEn,
     required this.duration,
   });
 }

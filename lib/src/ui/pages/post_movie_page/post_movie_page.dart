@@ -157,9 +157,9 @@ class _PostMovieViewState extends State<_PostMovieView> {
               // ── Titles ──────────────────────────────
               _buildSectionLabel('Title'),
               const SizedBox(height: 8),
-              _buildTextField(_titleUzCtrl, 'Sarlavha (UZ)'),
+              _buildTextField(_titleUzCtrl, 'Title (UZ)'),
               const SizedBox(height: 10),
-              _buildTextField(_titleRuCtrl, 'Название (RU)'),
+              _buildTextField(_titleRuCtrl, 'Title (RU)'),
               const SizedBox(height: 10),
               _buildTextField(_titleEnCtrl, 'Title (EN)'),
 
@@ -168,9 +168,9 @@ class _PostMovieViewState extends State<_PostMovieView> {
               // ── Descriptions ────────────────────────
               _buildSectionLabel('Description'),
               const SizedBox(height: 8),
-              _buildTextField(_descUzCtrl, 'Tavsif (UZ)', maxLines: 3),
+              _buildTextField(_descUzCtrl, 'Description (UZ)', maxLines: 3),
               const SizedBox(height: 10),
-              _buildTextField(_descRuCtrl, 'Описание (RU)', maxLines: 3),
+              _buildTextField(_descRuCtrl, 'Description (RU)', maxLines: 3),
               const SizedBox(height: 10),
               _buildTextField(_descEnCtrl, 'Description (EN)', maxLines: 3),
 
@@ -235,6 +235,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      cursorColor: ColorName.accent,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
@@ -243,6 +244,10 @@ class _PostMovieViewState extends State<_PostMovieView> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: ColorName.surfaceSecondary),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: ColorName.accent),
         ),
         filled: true,
         fillColor: ColorName.backgroundSecondary,
