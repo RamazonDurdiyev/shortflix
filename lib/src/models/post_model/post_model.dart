@@ -1,4 +1,5 @@
 class PostModel {
+  final String movieId;
   final int season;
   final int episode;
   final String titleUz;
@@ -14,6 +15,7 @@ class PostModel {
   final String imagePath;
 
   const PostModel({
+    required this.movieId,
     required this.season,
     required this.episode,
     required this.titleUz,

@@ -1,0 +1,127 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shortflix/core/utils/base_state.dart';
+import 'package:shortflix/core/utils/print_debug.dart';
+import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
+import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_event.dart';
+import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_state.dart';
+
+class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
+  final MovieRepo movieRepo;
+
+  PostEpisodeBloc({required this.movieRepo}) : super(PostEpisodeInitial()) {
+    on<FetchUserMoviesEvent>((event, emit) async {
+      await _fetchUserMovies(emit);
+    });
+
+    on<PickVideoEvent>((event, emit) async {
+      await _pickVideo(emit);
+    });
+
+    on<PickImageEvent>((event, emit) async {
+      await _pickImage(emit);
+    });
+
+    on<SelectMovieEvent>((event, emit) {
+      selectedMovieId = event.movieId;
+      emit(SelectMovieState(movieId: event.movieId));
+    });
+
+    on<CreateEpisodeEvent>((event, emit) async {
+      await _createEpisode(emit, event);
+    });
+  }
+
+  String? videoPath;
+  String? imagePath;
+  String selectedMovieId = '';
+  List<MovieModel> userMovies = [];
+
+  // ─────────────────────────────────────────
+  //  FETCH USER MOVIES
+  // ─────────────────────────────────────────
+  Future<void> _fetchUserMovies(Emitter<PostEpisodeState> emit) async {
+    try {
+      emit(FetchUserMoviesState(state: BaseState.loading));
+      userMovies = await movieRepo.fetchMoviesOfUser();
+      emit(FetchUserMoviesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchUserMoviesState(state: BaseState.error));
+      printDebug('PostEpisodeBloc _fetchUserMovies error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  PICK VIDEO
+  // ─────────────────────────────────────────
+  Future<void> _pickVideo(Emitter<PostEpisodeState> emit) async {
+    try {
+      emit(PickVideoState(state: BaseState.loading));
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.video,
+        allowMultiple: false,
+      );
+      if (result != null && result.files.single.path != null) {
+        videoPath = result.files.single.path!;
+        emit(PickVideoState(state: BaseState.loaded));
+      } else {
+        emit(PickVideoState(state: BaseState.initial));
+      }
+    } catch (e) {
+      emit(PickVideoState(state: BaseState.error));
+      printDebug('PostEpisodeBloc _pickVideo error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  PICK IMAGE
+  // ─────────────────────────────────────────
+  Future<void> _pickImage(Emitter<PostEpisodeState> emit) async {
+    try {
+      emit(PickImageState(state: BaseState.loading));
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+      );
+      if (picked != null) {
+        imagePath = picked.path;
+        emit(PickImageState(state: BaseState.loaded));
+      } else {
+        emit(PickImageState(state: BaseState.initial));
+      }
+    } catch (e) {
+      emit(PickImageState(state: BaseState.error));
+      printDebug('PostEpisodeBloc _pickImage error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  CREATE EPISODE
+  // ─────────────────────────────────────────
+  Future<void> _createEpisode(
+    Emitter<PostEpisodeState> emit,
+    CreateEpisodeEvent event,
+  ) async {
+    try {
+      emit(CreateEpisodeState(state: BaseState.loading));
+
+      // TODO: call movieRepo.createEpisode(
+      //   season: event.season,
+      //   episodeNumber: event.episodeNumber,
+      //   movieId: selectedMovieId,
+      //   title: event.title,
+      //   description: event.description,
+      //   videoPath: videoPath,
+      //   imagePath: imagePath,
+      //   duration: event.duration,
+      // );
+
+      emit(CreateEpisodeState(state: BaseState.loaded));
+    } catch (e) {
+      emit(CreateEpisodeState(state: BaseState.error));
+      printDebug('PostEpisodeBloc _createEpisode error => $e');
+    }
+  }
+}

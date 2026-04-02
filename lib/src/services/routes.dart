@@ -15,8 +15,10 @@ import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_bloc.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
-import 'package:shortflix/src/ui/pages/post_page/post_bloc.dart';
-import 'package:shortflix/src/ui/pages/post_page/post_page.dart';
+import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
+import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_page.dart';
+import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
+import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
@@ -27,6 +29,7 @@ import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_page.dart';
 import 'package:shortflix/src/ui/pages/splash_page/splash_cubit.dart';
 import 'package:shortflix/src/ui/pages/splash_page/splash_page.dart';
+import 'package:shortflix/src/ui/post_page/post_page.dart';
 
 Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
   final args = settings.arguments;
@@ -138,15 +141,31 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
         ),
       );
 
-    case Navigation.postPage:
+
+
+  case Navigation.postPage:
+  return buildRoute(settings, const PostPage());
+
+  case Navigation.postMoviePage:
       return buildRoute(
         settings,
-        BlocProvider<PostBloc>(
-          create: (_) => PostBloc(
-            postRepo: GetIt.instance.get(),
+        BlocProvider<PostMovieBloc>(
+          create: (_) => PostMovieBloc(
             categoryRepo: GetIt.instance.get(),
+            movieRepo: GetIt.instance.get()
           ),
-          child: const PostPage(),
+          child: const PostMoviePage(),
+        ),
+      );
+
+    case Navigation.postEpisodePage:
+      return buildRoute(
+        settings,
+        BlocProvider<PostEpisodeBloc>(
+          create: (_) => PostEpisodeBloc(
+            movieRepo: GetIt.instance.get(),
+          ),
+          child: const PostEpisodePage(),
         ),
       );
 

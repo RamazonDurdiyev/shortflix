@@ -5,7 +5,7 @@ import 'package:shortflix/injection_container.dart' as di;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/src/models/auth_model/auth_model_adapter.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
-import 'package:shortflix/src/ui/pages/post_page/post_bloc.dart';
+import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 
@@ -34,10 +34,9 @@ class MyApp extends StatelessWidget {
             movieRepo: GetIt.instance.get(),
           ),
         ),
-        BlocProvider<PostBloc>(
-          create: (context) => PostBloc(
-            postRepo: GetIt.instance.get(),
-            categoryRepo: GetIt.instance.get(),
+        BlocProvider<PostEpisodeBloc>(
+          create: (context) => PostEpisodeBloc(
+            movieRepo: GetIt.instance.get(),
           ),
         ),
       ],

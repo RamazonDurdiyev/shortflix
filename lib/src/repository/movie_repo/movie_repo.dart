@@ -5,6 +5,7 @@ import 'package:shortflix/core/error/exceptions.dart';
 import 'package:shortflix/core/network/network_info.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/models/post_model/post_model.dart';
 
 class MovieRepo {
   final NetworkInfo networkInfo;
@@ -34,8 +35,25 @@ class MovieRepo {
     }
   }
 
-  // **************************************************************************
+   // **************************************************************************
   // fetch movies
+  // **************************************************************************
+
+  Future<List<MovieModel>> fetchMoviesOfUser() async {
+    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
+
+    if (await networkInfo.isConnected) {
+      final res = await client.get(GET_ALL_MOVIES_OF_USER);
+      return res.data["data"].map<MovieModel>((movie) {
+        return MovieModel.fromJson(movie);
+      }).toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // fetch movie banners
   // **************************************************************************
 
   Future<List<BannerModel>> fetchMovieBanners() async {
@@ -81,7 +99,6 @@ class MovieRepo {
           return EpisodeModel.fromJson(episode);
         }).toList();
       } catch (e) {
-        print("Fetch episodes ======== $e");
         throw Exception("Failed to fetch episodes");
       }
     } else {
@@ -136,4 +153,39 @@ class MovieRepo {
       throw NetworkException();
     }
   }
+
+
+    // ─────────────────────────────────────────
+  //  CREATE POST
+  //  media field carries both video + image
+  //  as multipart — backend handles both
+  // ─────────────────────────────────────────
+  Future<void> createPost(PostModel post) async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    final formData = FormData.fromMap({
+      'movieId': post.movieId,
+      'season': post.season,
+      'episode': post.episode,
+      'titleUz': post.titleUz,
+      'titleRu': post.titleRu,
+      'titleEn': post.titleEn,
+      'descriptionUz': post.descriptionUz,
+      'descriptionRu': post.descriptionRu,
+      'descriptionEn': post.descriptionEn,
+      // media field sends both files under the same key
+      'media': [
+        await MultipartFile.fromFile(post.videoPath),
+        await MultipartFile.fromFile(post.imagePath),
+      ],
+    });
+
+    await client.post(
+      CREATE_EPISODE, // add to app_constants.dart
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+  }
+
+
 }

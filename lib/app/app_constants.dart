@@ -19,9 +19,11 @@ const SEND_CODE = "/api/auth/login";
 // Movies
 
 const GET_ALL_MOVIES = "/api/movies";
+const GET_ALL_MOVIES_OF_USER = "/api/movies";
 const GET_MOVIE_DETAILS = "/api/movies/";
 const GET_BANNERS = "/api/movies/banner";
-const CREATE_POST = "/api/movies";
+const CREATE_MOVIE = "/api/movies";
+const CREATE_EPISODE = "/api/episodes";
 const LIKE_MOVIE = "/api/movies/like/";
 const SAVE_MOVIE = "/api/movies/save/";
 const GET_EPISODES = "/api/movies/episodes/";
