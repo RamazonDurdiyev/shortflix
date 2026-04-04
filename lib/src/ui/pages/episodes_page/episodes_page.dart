@@ -180,7 +180,7 @@ class _EpisodesContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Thumbnail placeholder ─────────────
+          // ── Thumbnail ───────────────────────
           Container(
             height: 200,
             width: double.infinity,
@@ -189,13 +189,40 @@ class _EpisodesContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: ColorName.surfaceSecondary),
             ),
-            child: Center(
-              child: Icon(
-                Icons.movie_creation_outlined,
-                color: ColorName.accent.withValues(alpha: .5),
-                size: 48,
-              ),
-            ),
+            clipBehavior: Clip.antiAlias,
+            child: movie.media != null && movie.media!.isNotEmpty
+                ? Image.network(
+                    movie.media!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 200,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: ColorName.accent,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                    errorBuilder: (_, _, _) => Center(
+                      child: Icon(
+                        Icons.movie_creation_outlined,
+                        color: ColorName.accent.withValues(alpha: .5),
+                        size: 48,
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Icon(
+                      Icons.movie_creation_outlined,
+                      color: ColorName.accent.withValues(alpha: .5),
+                      size: 48,
+                    ),
+                  ),
           ),
           const SizedBox(height: 16),
 
@@ -409,7 +436,7 @@ class _EpisodeItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          generateRoutes(RouteSettings(name: Navigation.playPage, arguments: {"movieId": movieId}))!,
+          generateRoutes(RouteSettings(name: Navigation.playPage, arguments: {"movieId": movieId, "episodeNumber": episode.episodeNumber}))!,
         );
       },
       child: Padding(
@@ -437,14 +464,29 @@ class _EpisodeItem extends StatelessWidget {
                     bottomLeft: Radius.circular(13),
                   ),
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Icon(
-                      Icons.play_circle_outline_rounded,
-                      color: Colors.white38,
-                      size: 32,
-                    ),
+                    if (episode.imageUrl != null &&
+                        episode.imageUrl!.isNotEmpty)
+                      Image.network(
+                        episode.imageUrl!,
+                        width: 100,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => Icon(
+                          Icons.play_circle_outline_rounded,
+                          color: Colors.white38,
+                          size: 32,
+                        ),
+                      )
+                    else
+                      Icon(
+                        Icons.play_circle_outline_rounded,
+                        color: Colors.white38,
+                        size: 32,
+                      ),
                     // Watched badge
                     if (episode.watched ?? false)
                       Positioned(

@@ -13,7 +13,7 @@ class PostMovieBloc extends Bloc<PostMovieEvent, PostMovieState> {
   final CategoryRepo categoryRepo;
 
   PostMovieBloc({required this.movieRepo, required this.categoryRepo})
-      : super(PostMovieInitial()) {
+    : super(PostMovieInitial()) {
     on<PickImageEvent>((event, emit) async {
       await _pickImage(emit);
     });
@@ -88,6 +88,13 @@ class PostMovieBloc extends Bloc<PostMovieEvent, PostMovieState> {
     try {
       emit(CreateMovieState(state: BaseState.loading));
 
+      // 1. Upload image, get real URL
+      String imageUrl = '';
+      if (imagePath != null) {
+        imageUrl = await movieRepo.uploadImage(imagePath!);
+      }
+
+      // 2. Create movie with uploaded image URL
       await movieRepo.postMovie(
         titleUz: event.titleUz,
         titleRu: event.titleRu,
@@ -98,7 +105,7 @@ class PostMovieBloc extends Bloc<PostMovieEvent, PostMovieState> {
         ageLimit: selectedAgeLimit,
         releaseYear: event.releaseYear,
         categoryId: selectedCategoryId,
-        imageUrl: imagePath ?? '',
+        imageUrl: imageUrl,
       );
 
       emit(CreateMovieState(state: BaseState.loaded));

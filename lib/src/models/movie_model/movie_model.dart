@@ -10,6 +10,7 @@ class MovieModel {
   final CategoryModel? category;
   final int? releaseYear;
   final double? rating;
+  @JsonKey(name: 'imageUrl')
   final String? media;
 
   const MovieModel({
@@ -35,6 +36,7 @@ class MovieDetailsModel {
   final CategoryModel? category;
   final int? releaseYear;
   final double? rating;
+  @JsonKey(name: 'imageUrl')
   final String? media;
   final String? ageLimit;
   final bool? isLiked;
@@ -74,6 +76,7 @@ class EpisodeModel {
   final String? title;
   final String? description;
   final String? videoUrl;
+  final String? imageUrl;
   final int? duration;
   final String? movieId;
   final bool? watched;
@@ -87,6 +90,7 @@ class EpisodeModel {
     required this.watched,
     required this.createdAt,
     required this.videoUrl,
+    required this.imageUrl,
     required this.duration,
     required this.movieId,
   });
@@ -110,6 +114,8 @@ class EpisodeDetailsModel {
   final int? duration;
   final String? movieId;
   final bool? watched;
+  final bool? isLiked;
+  final bool? isSaved;
 
   const EpisodeDetailsModel({
     required this.id,
@@ -122,6 +128,8 @@ class EpisodeDetailsModel {
     required this.videoUrl,
     required this.duration,
     required this.movieId,
+    this.isLiked,
+    this.isSaved,
   });
 
   factory EpisodeDetailsModel.fromJson(Map<String, dynamic> data) =>

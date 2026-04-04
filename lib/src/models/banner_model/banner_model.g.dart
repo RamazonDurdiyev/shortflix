@@ -10,6 +10,7 @@ BannerModel _$BannerModelFromJson(Map<String, dynamic> json) => BannerModel(
   id: json['id'] as String,
   title: json['title'] as String,
   category: CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
+  imageUrl: json['imageUrl'] as String?,
 );
 
 Map<String, dynamic> _$BannerModelToJson(BannerModel instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$BannerModelToJson(BannerModel instance) =>
       'id': instance.id,
       'title': instance.title,
       'category': instance.category,
+      'imageUrl': instance.imageUrl,
     };

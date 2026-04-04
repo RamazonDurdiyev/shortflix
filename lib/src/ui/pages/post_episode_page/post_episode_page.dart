@@ -199,29 +199,39 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
               ),
               const SizedBox(height: 12),
 
-              // ── Title (UZ) ────────────────────────────
-              _buildTextField(_titleUzCtrl, 'Title (UZ)'),
-              const SizedBox(height: 12),
+              // ── Titles ──────────────────────────────
+              _buildSectionLabel('Title'),
+              const SizedBox(height: 8),
+              _buildTextField(_titleUzCtrl, 'Title (UZ)',
+                  hint: 'ex: Yangi boshlanish'),
+              const SizedBox(height: 10),
+              _buildTextField(_titleRuCtrl, 'Title (RU)',
+                  hint: 'ex: Новое начало'),
+              const SizedBox(height: 10),
+              _buildTextField(_titleEnCtrl, 'Title (EN)',
+                  hint: 'ex: A New Beginning'),
 
-              // ── Title (RU) ────────────────────────────
-              _buildTextField(_titleRuCtrl, 'Title (RU)'),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
-              // ── Title (EN) ────────────────────────────
-              _buildTextField(_titleEnCtrl, 'Title (EN)'),
-              const SizedBox(height: 12),
+              // ── Descriptions ────────────────────────
+              _buildSectionLabel('Description'),
+              const SizedBox(height: 8),
+              _buildTextField(_descUzCtrl, 'Description (UZ)',
+                  maxLines: 4,
+                  hint:
+                      'ex: Qahramon yangi shahar keladi va kutilmagan dushman bilan yuzma-yuz bo\'ladi'),
+              const SizedBox(height: 10),
+              _buildTextField(_descRuCtrl, 'Description (RU)',
+                  maxLines: 4,
+                  hint:
+                      'ex: Герой прибывает в новый город и сталкивается с неожиданным врагом'),
+              const SizedBox(height: 10),
+              _buildTextField(_descEnCtrl, 'Description (EN)',
+                  maxLines: 4,
+                  hint:
+                      'ex: The hero arrives in a new city and faces an unexpected enemy'),
 
-              // ── Description (UZ) ───────────────────────
-              _buildTextField(_descUzCtrl, 'Description (UZ)', maxLines: 4),
-              const SizedBox(height: 12),
-
-              // ── Description (RU) ───────────────────────
-              _buildTextField(_descRuCtrl, 'Description (RU)', maxLines: 4),
-              const SizedBox(height: 12),
-
-              // ── Description (EN) ───────────────────────
-              _buildTextField(_descEnCtrl, 'Description (EN)', maxLines: 4),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
               // ── Duration ────────────────────────────
               _buildTextField(
@@ -250,6 +260,20 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   }
 
   // ─────────────────────────────────────────
+  //  SECTION LABEL
+  // ─────────────────────────────────────────
+  Widget _buildSectionLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────
   //  TEXT FIELD
   // ─────────────────────────────────────────
   Widget _buildTextField(
@@ -257,28 +281,45 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     String label, {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    String? hint,
   }) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      cursorColor: ColorName.accent,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: ColorName.contentSecondary),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: ColorName.surfaceSecondary),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: ColorName.contentSecondary,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: ColorName.accent),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          keyboardType: keyboardType,
+          cursorColor: ColorName.accent,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+                color: ColorName.contentSecondary.withValues(alpha: 0.5)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: ColorName.surfaceSecondary),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: ColorName.accent),
+            ),
+            filled: true,
+            fillColor: ColorName.backgroundSecondary,
+          ),
         ),
-        filled: true,
-        fillColor: ColorName.backgroundSecondary,
-      ),
+      ],
     );
   }
 

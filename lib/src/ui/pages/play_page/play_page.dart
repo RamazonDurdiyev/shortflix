@@ -30,9 +30,10 @@ class _PlayView extends StatefulWidget {
 }
 
 class _PlayViewState extends State<_PlayView> {
-  late String _episodeId;
-  late String _movieId;
   bool _initialized = false;
+  VideoPlayerController? _videoController;
+  bool _controllerReady = false;
+  bool _showPlayIcon = false;
 
   @override
   void didChangeDependencies() {
@@ -40,69 +41,15 @@ class _PlayViewState extends State<_PlayView> {
     if (!_initialized) {
       _initialized = true;
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
-      _episodeId = (args?['episodeId'] as String?) ?? '';
-      _movieId = (args?['movieId'] as String?) ?? '';
-      if (_movieId.isNotEmpty) {
-        context.read<PlayBloc>().add(FetchEpisodeEvent(movieId: _movieId, episodeId: _episodeId));
+      final episodeNumber = (args?['episodeNumber'] as int?) ?? 0;
+      final movieId = (args?['movieId'] as String?) ?? '';
+      print("movieId => $movieId");
+      if (movieId.isNotEmpty) {
+        context.read<PlayBloc>().add(
+              FetchEpisodeEvent(movieId: movieId, episodeNumber: episodeNumber),
+            );
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: BlocBuilder<PlayBloc, PlayState>(
-        builder: (context, state) {
-          if (state is FetchEpisodeState &&
-              state.state == BaseState.loading) {
-            return const Center(
-              child: CircularProgressIndicator(color: ColorName.accent),
-            );
-          }
-
-          return PageView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: 10,
-            onPageChanged: (index) =>
-                context.read<PlayBloc>().add(PlayPageChangedEvent(index: index)),
-            itemBuilder: (context, index) => const _PlayCard(),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────
-//  PLAY CARD
-// ─────────────────────────────────────────
-class _PlayCard extends StatefulWidget {
-  const _PlayCard();
-
-  @override
-  State<_PlayCard> createState() => _PlayCardState();
-}
-
-class _PlayCardState extends State<_PlayCard> {
-  VideoPlayerController? _videoController;
-  bool _controllerReady = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final episode = context.read<PlayBloc>().episode;
-    if (episode != null && !_controllerReady) {
-      _initVideo(episode.videoUrl ?? "");
-    }
-  }
-
-  Future<void> _initVideo(String url) async {
-    _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
-    await _videoController!.initialize();
-    _videoController!.setLooping(true);
-    _videoController!.play();
-    if (mounted) setState(() => _controllerReady = true);
   }
 
   @override
@@ -111,87 +58,198 @@ class _PlayCardState extends State<_PlayCard> {
     super.dispose();
   }
 
+  Future<void> _initVideo(String url) async {
+    if (url.isEmpty) return;
+    _videoController?.dispose();
+    _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
+    await _videoController!.initialize();
+    _videoController!.setLooping(true);
+    _videoController!.play();
+    if (mounted) setState(() => _controllerReady = true);
+  }
+
+  void _togglePlayPause() {
+    context.read<PlayBloc>().add(PlayTogglePlayPauseEvent());
+  }
+
+  void _onPlayToggle(bool isPlaying) {
+    if (_videoController == null) return;
+    if (isPlaying) {
+      _videoController!.play();
+    } else {
+      _videoController!.pause();
+    }
+    // Show icon briefly then fade out
+    setState(() => _showPlayIcon = true);
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) setState(() => _showPlayIcon = false);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<PlayBloc, PlayState>(
-      listenWhen: (_, state) => state is PlayToggleState,
-      listener: (context, state) {
-        if (state is PlayToggleState) {
-          if (state.isPlaying) {
-            _videoController?.play();
-          } else {
-            _videoController?.pause();
-          }
-        }
-      },
-      child: SizedBox.expand(
-        child: Stack(
-          children: [
-            // ── Video / black bg ──────────────────
-            _controllerReady && _videoController != null
-                ? SizedBox.expand(
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: _videoController!.value.size.width,
-                        height: _videoController!.value.size.height,
-                        child: VideoPlayer(_videoController!),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<PlayBloc, PlayState>(
+            listenWhen: (_, state) => state is FetchEpisodeState,
+            listener: (context, state) {
+              if (state is FetchEpisodeState &&
+                  state.state == BaseState.loaded) {
+                final episode = context.read<PlayBloc>().episode;
+                if (episode?[0].videoUrl != null) {
+                  _initVideo(episode![0].videoUrl!);
+                }
+              }
+            },
+          ),
+          BlocListener<PlayBloc, PlayState>(
+            listenWhen: (_, state) => state is PlayToggleState,
+            listener: (context, state) {
+              if (state is PlayToggleState) {
+                _onPlayToggle(state.isPlaying);
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<PlayBloc, PlayState>(
+          buildWhen: (_, state) => state is FetchEpisodeState,
+          builder: (context, state) {
+            if (state is FetchEpisodeState &&
+                state.state == BaseState.loading) {
+              return const Center(
+                child: CircularProgressIndicator(color: ColorName.accent),
+              );
+            }
+
+            if (state is FetchEpisodeState &&
+                state.state == BaseState.error) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline_rounded,
+                        color: ColorName.contentSecondary, size: 48),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Failed to load episode',
+                      style: TextStyle(
+                          color: ColorName.contentSecondary, fontSize: 14),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return GestureDetector(
+              onTap: _togglePlayPause,
+              child: SizedBox.expand(
+                child: Stack(
+                  children: [
+                    // ── Video / black bg ──────────────────
+                    _controllerReady && _videoController != null
+                        ? SizedBox.expand(
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: SizedBox(
+                                width: _videoController!.value.size.width,
+                                height: _videoController!.value.size.height,
+                                child: VideoPlayer(_videoController!),
+                              ),
+                            ),
+                          )
+                        : const ColoredBox(
+                            color: Colors.black, child: SizedBox.expand()),
+
+                    // ── Top bar ───────────────────────────
+                    const _TopBar(),
+
+                    // ── Center play/pause icon ───────────
+                    _buildCenterIcon(),
+
+                    // ── Right actions ─────────────────────
+                    const Positioned(
+                      right: 12,
+                      bottom: 120,
+                      child: _ActionColumn(),
+                    ),
+
+                    // ── Bottom info ───────────────────────
+                    const Positioned(
+                      left: 16,
+                      right: 80,
+                      bottom: 0,
+                      child: SafeArea(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 24),
+                          child: _BottomInfo(),
+                        ),
                       ),
                     ),
-                  )
-                : const ColoredBox(color: Colors.black, child: SizedBox.expand()),
 
-            // ── Top bar ───────────────────────────
-            const _TopBar(),
-
-            // ── Center play/pause ─────────────────
-            _CenterPlayPause(controller: _videoController),
-
-            // ── Right actions ─────────────────────
-            const Positioned(
-              right: 12,
-              bottom: 120,
-              child: _ActionColumn(),
-            ),
-
-            // ── Bottom info ───────────────────────
-            const Positioned(
-              left: 16,
-              right: 80,
-              bottom: 0,
-              child: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 24),
-                  child: _BottomInfo(),
+                    // ── Progress bar ──────────────────────
+                    _controllerReady && _videoController != null
+                        ? Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: VideoProgressIndicator(
+                              _videoController!,
+                              allowScrubbing: true,
+                              colors: VideoProgressColors(
+                                playedColor: ColorName.accent,
+                                bufferedColor: Colors.white24,
+                                backgroundColor: Colors.white12,
+                              ),
+                            ),
+                          )
+                        : const Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: _ProgressBar(),
+                          ),
+                  ],
                 ),
               ),
-            ),
-
-            // ── Progress bar ──────────────────────
-            _controllerReady && _videoController != null
-                ? Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: VideoProgressIndicator(
-                      _videoController!,
-                      allowScrubbing: true,
-                      colors: VideoProgressColors(
-                        playedColor: ColorName.accent,
-                        bufferedColor: Colors.white24,
-                        backgroundColor: Colors.white12,
-                      ),
-                    ),
-                  )
-                : const Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: _ProgressBar(),
-                  ),
-          ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildCenterIcon() {
+    return BlocBuilder<PlayBloc, PlayState>(
+      buildWhen: (_, state) =>
+          state is PlayToggleState || state is FetchEpisodeState,
+      builder: (context, state) {
+        final isPlaying = context.read<PlayBloc>().isPlaying;
+
+        return Center(
+          child: AnimatedOpacity(
+            opacity: _showPlayIcon || !isPlaying ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: .5),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white24, width: 1.5),
+              ),
+              child: Icon(
+                isPlaying
+                    ? Icons.pause_rounded
+                    : Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -249,50 +307,6 @@ class _TopBar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────
-//  CENTER PLAY / PAUSE
-// ─────────────────────────────────────────
-class _CenterPlayPause extends StatelessWidget {
-  final VideoPlayerController? controller;
-  const _CenterPlayPause({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<PlayBloc, PlayState>(
-      buildWhen: (_, state) => state is PlayToggleState || state is FetchEpisodeState,
-      builder: (context, state) {
-        final isPlaying = context.read<PlayBloc>().isPlaying;
-
-        return GestureDetector(
-          onTap: () => context
-              .read<PlayBloc>()
-              .add(PlayTogglePlayPauseEvent()),
-          child: Center(
-            child: AnimatedOpacity(
-              opacity: isPlaying ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: .5),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white24, width: 1.5),
-                ),
-                child: const Icon(
-                  Icons.play_arrow_rounded,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-// ─────────────────────────────────────────
 //  ACTION COLUMN
 // ─────────────────────────────────────────
 class _ActionColumn extends StatelessWidget {
@@ -300,17 +314,48 @@ class _ActionColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<PlayBloc>();
+    final episodeId = bloc.episode?[0].id ?? '';
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const _ActionButton(icon: Icons.favorite_border_rounded, label: '0'),
+        // ── Like ─────────────────────────────
+        BlocBuilder<PlayBloc, PlayState>(
+          buildWhen: (_, state) => state is PlayLikeState,
+          builder: (context, state) {
+            final isLiked = bloc.isLiked;
+            return GestureDetector(
+              onTap: () => bloc.add(PlayLikeMovieEvent(movieId: episodeId)),
+              child: Column(
+                children: [
+                  Icon(
+                    isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    color: isLiked ? ColorName.accent : Colors.white,
+                    size: 30,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isLiked ? 'Liked' : 'Like',
+                    style: TextStyle(
+                      color: isLiked ? ColorName.accent : Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
         const SizedBox(height: 20),
-        // Comments — opens bottom sheet
+        // ── Comments ─────────────────────────
         GestureDetector(
           onTap: () => _showCommentsSheet(context),
           child: const Column(
             children: [
-              Icon(Icons.chat_bubble_outline_rounded, color: Colors.white, size: 30),
+              Icon(Icons.chat_bubble_outline_rounded,
+                  color: Colors.white, size: 30),
               SizedBox(height: 4),
               Text(
                 '0',
@@ -324,9 +369,38 @@ class _ActionColumn extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const _ActionButton(icon: Icons.reply_rounded, label: 'Share', flipX: true),
+        // ── Share ────────────────────────────
+        const _ActionButton(
+            icon: Icons.reply_rounded, label: 'Share', flipX: true),
         const SizedBox(height: 20),
-        const _ActionButton(icon: Icons.more_horiz_rounded, label: 'More'),
+        // ── Save ─────────────────────────────
+        BlocBuilder<PlayBloc, PlayState>(
+          buildWhen: (_, state) => state is PlaySaveState,
+          builder: (context, state) {
+            final isSaved = bloc.isSaved;
+            return GestureDetector(
+              onTap: () => bloc.add(PlaySaveMovieEvent(movieId: episodeId)),
+              child: Column(
+                children: [
+                  Icon(
+                    isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                    color: isSaved ? ColorName.accent : Colors.white,
+                    size: 30,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isSaved ? 'Saved' : 'Save',
+                    style: TextStyle(
+                      color: isSaved ? ColorName.accent : Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -362,7 +436,7 @@ class _ActionButton extends StatelessWidget {
         Transform(
           alignment: Alignment.center,
           transform: flipX
-              ? (Matrix4.identity()..scale(-1.0, 1.0))
+              ? (Matrix4.identity()..scale(-1.0, 1.0, 1.0))
               : Matrix4.identity(),
           child: Icon(icon, color: Colors.white, size: 30),
         ),
@@ -393,7 +467,6 @@ class _CommentsSheet extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 12),
-          // Drag handle
           Container(
             width: 36,
             height: 4,
@@ -403,7 +476,6 @@ class _CommentsSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Header
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -419,16 +491,12 @@ class _CommentsSheet extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   '0',
-                  style: TextStyle(
-                    color: ColorName.accent,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: ColorName.accent, fontSize: 13),
                 ),
               ],
             ),
           ),
           const Divider(color: Colors.white12, height: 24),
-          // Empty state
           Expanded(
             child: Center(
               child: Column(
@@ -451,10 +519,7 @@ class _CommentsSheet extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     'Be the first to comment',
-                    style: TextStyle(
-                      color: Colors.white24,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: Colors.white24, fontSize: 12),
                   ),
                 ],
               ),
@@ -479,8 +544,8 @@ class _BottomInfo extends StatelessWidget {
       buildWhen: (_, state) => state is FetchEpisodeState,
       builder: (context, state) {
         final episode = context.read<PlayBloc>().episode;
-        final isLoading = state is FetchEpisodeState &&
-            state.state == BaseState.loading;
+        final isLoading =
+            state is FetchEpisodeState && state.state == BaseState.loading;
 
         if (isLoading || episode == null) {
           return Column(
@@ -512,28 +577,9 @@ class _BottomInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Category chip
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: ColorName.accent.withValues(alpha: .15),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: ColorName.accent.withValues(alpha: .4)),
-              ),
-              child: Text(
-                "CATEGORY NAME",
-                style: TextStyle(
-                  color: ColorName.accent,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
             // Title
             Text(
-              episode.title ?? "",
+              episode[0].title ?? "",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 22,
@@ -546,10 +592,11 @@ class _BottomInfo extends StatelessWidget {
             // Season · Episode
             Row(
               children: [
-                const Icon(Icons.video_library_outlined, color: Colors.white54, size: 13),
+                const Icon(Icons.video_library_outlined,
+                    color: Colors.white54, size: 13),
                 const SizedBox(width: 5),
                 Text(
-                  'Season ${episode.season}  ·  Episode ${episode.episodeNumber}',
+                  'Season ${episode[0].season}  ·  Episode ${episode[0].episodeNumber}',
                   style: const TextStyle(
                     color: Colors.white54,
                     fontSize: 12,
@@ -561,7 +608,7 @@ class _BottomInfo extends StatelessWidget {
             const SizedBox(height: 8),
             // Description
             Text(
-              episode.description ?? "",
+              episode[0].description ?? "",
               style: const TextStyle(
                 color: Colors.white60,
                 fontSize: 13,

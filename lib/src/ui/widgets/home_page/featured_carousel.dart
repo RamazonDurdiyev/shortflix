@@ -45,8 +45,35 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: Stack(
                   children: [
+                    // Background image
+                    if (item.imageUrl != null && item.imageUrl!.isNotEmpty)
+                      Positioned.fill(
+                        child: Image.network(
+                          item.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => Container(
+                            color: ColorName.backgroundSecondary,
+                          ),
+                        ),
+                      ),
+                    // Gradient overlay for text readability
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: .7),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     // Content
                     Padding(
                       padding: const EdgeInsets.all(20),

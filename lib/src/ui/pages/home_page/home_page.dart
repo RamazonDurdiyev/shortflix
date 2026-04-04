@@ -10,7 +10,7 @@ import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_page.dart';
-import 'package:shortflix/src/ui/post_page/post_page.dart';
+import 'package:shortflix/src/ui/pages/post_page/post_page.dart';
 import 'package:shortflix/src/ui/widgets/global/movies_grid.dart';
 import 'package:shortflix/src/ui/widgets/home_page/featured_carousel.dart';
 

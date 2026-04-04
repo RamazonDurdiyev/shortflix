@@ -14,7 +14,7 @@ MovieModel _$MovieModelFromJson(Map<String, dynamic> json) => MovieModel(
       : CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
   releaseYear: (json['releaseYear'] as num?)?.toInt(),
   rating: (json['rating'] as num?)?.toDouble(),
-  media: json['media'] as String?,
+  media: json['imageUrl'] as String?,
 );
 
 Map<String, dynamic> _$MovieModelToJson(MovieModel instance) =>
@@ -24,7 +24,7 @@ Map<String, dynamic> _$MovieModelToJson(MovieModel instance) =>
       'category': instance.category,
       'releaseYear': instance.releaseYear,
       'rating': instance.rating,
-      'media': instance.media,
+      'imageUrl': instance.media,
     };
 
 MovieDetailsModel _$MovieDetailsModelFromJson(Map<String, dynamic> json) =>
@@ -37,7 +37,7 @@ MovieDetailsModel _$MovieDetailsModelFromJson(Map<String, dynamic> json) =>
           : CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
       releaseYear: (json['releaseYear'] as num?)?.toInt(),
       rating: (json['rating'] as num?)?.toDouble(),
-      media: json['media'] as String?,
+      media: json['imageUrl'] as String?,
       ageLimit: json['ageLimit'] as String?,
       isLiked: json['isLiked'] as bool?,
       isSaved: json['isSaved'] as bool?,
@@ -54,7 +54,7 @@ Map<String, dynamic> _$MovieDetailsModelToJson(MovieDetailsModel instance) =>
       'category': instance.category,
       'releaseYear': instance.releaseYear,
       'rating': instance.rating,
-      'media': instance.media,
+      'imageUrl': instance.media,
       'ageLimit': instance.ageLimit,
       'isLiked': instance.isLiked,
       'isSaved': instance.isSaved,
@@ -72,6 +72,7 @@ EpisodeModel _$EpisodeModelFromJson(Map<String, dynamic> json) => EpisodeModel(
   watched: json['watched'] as bool?,
   createdAt: json['createdAt'] as String?,
   videoUrl: json['videoUrl'] as String?,
+  imageUrl: json['imageUrl'] as String?,
   duration: (json['duration'] as num?)?.toInt(),
   movieId: json['movieId'] as String?,
 );
@@ -85,6 +86,7 @@ Map<String, dynamic> _$EpisodeModelToJson(EpisodeModel instance) =>
       'title': instance.title,
       'description': instance.description,
       'videoUrl': instance.videoUrl,
+      'imageUrl': instance.imageUrl,
       'duration': instance.duration,
       'movieId': instance.movieId,
       'watched': instance.watched,
@@ -102,6 +104,8 @@ EpisodeDetailsModel _$EpisodeDetailsModelFromJson(Map<String, dynamic> json) =>
       videoUrl: json['videoUrl'] as String?,
       duration: (json['duration'] as num?)?.toInt(),
       movieId: json['movieId'] as String?,
+      isLiked: json['isLiked'] as bool?,
+      isSaved: json['isSaved'] as bool?,
     );
 
 Map<String, dynamic> _$EpisodeDetailsModelToJson(
@@ -117,4 +121,6 @@ Map<String, dynamic> _$EpisodeDetailsModelToJson(
   'duration': instance.duration,
   'movieId': instance.movieId,
   'watched': instance.watched,
+  'isLiked': instance.isLiked,
+  'isSaved': instance.isSaved,
 };

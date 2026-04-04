@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/app/app_constants.dart';
@@ -34,7 +36,7 @@ class MovieRepo {
     }
   }
 
-   // **************************************************************************
+  // **************************************************************************
   // fetch movies
   // **************************************************************************
 
@@ -105,21 +107,25 @@ class MovieRepo {
     }
   }
 
-    // **************************************************************************
+  // **************************************************************************
   // fetch movie details
   // **************************************************************************
 
-  Future<EpisodeDetailsModel> fetchEpisode(String movieId) async {
+  Future<List<EpisodeDetailsModel>> fetchEpisode(String movieId, episodeNumber) async {
     // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
 
     if (await networkInfo.isConnected) {
-      
-      final res = await client.get(GET_EPISODE, queryParameters: {
-        "movieId": movieId,
-        "episodeNumber": 1,
-        "seasonNumber": 1
-      });
-      return EpisodeDetailsModel.fromJson(res.data);
+      final res = await client.get(
+        GET_EPISODE,
+        queryParameters: {
+          "movieId": movieId,
+          "episodeNumber": episodeNumber,
+          "seasonNumber": 1,
+        },
+      );
+     return res.data["data"].map<EpisodeDetailsModel>((episode) {
+          return EpisodeDetailsModel.fromJson(episode);
+        }).toList();
     } else {
       throw NetworkException();
     }
@@ -133,7 +139,7 @@ class MovieRepo {
     // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
 
     if (await networkInfo.isConnected) {
-      await client.post(LIKE_MOVIE + episodeId);
+      await client.post(LIKE_EPISODE + episodeId);
     } else {
       throw NetworkException();
     }
@@ -147,7 +153,7 @@ class MovieRepo {
     // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
 
     if (await networkInfo.isConnected) {
-      await client.post(SAVE_MOVIE + episodeId);
+      await client.post(SAVE_EPISODE + episodeId);
     } else {
       throw NetworkException();
     }
@@ -170,18 +176,21 @@ class MovieRepo {
     required String imageUrl,
   }) async {
     if (await networkInfo.isConnected) {
-      await client.post(CREATE_MOVIE, data: {
-        "titleUz": titleUz,
-        "titleRu": titleRu,
-        "titleEn": titleEn,
-        "descriptionUz": descriptionUz,
-        "descriptionRu": descriptionRu,
-        "descriptionEn": descriptionEn,
-        "ageLimit": ageLimit,
-        "releaseYear": releaseYear,
-        "categoryId": categoryId,
-        "imageUrl": imageUrl,
-      });
+      await client.post(
+        CREATE_MOVIE,
+        data: {
+          "titleUz": titleUz,
+          "titleRu": titleRu,
+          "titleEn": titleEn,
+          "descriptionUz": descriptionUz,
+          "descriptionRu": descriptionRu,
+          "descriptionEn": descriptionEn,
+          "ageLimit": ageLimit,
+          "releaseYear": releaseYear,
+          "categoryId": categoryId,
+          "imageUrl": imageUrl,
+        },
+      );
     } else {
       throw NetworkException();
     }
@@ -202,25 +211,95 @@ class MovieRepo {
     String? descriptionRu,
     String? descriptionEn,
     String? videoUrl,
+    String? imageUrl,
     int? duration,
   }) async {
     if (await networkInfo.isConnected) {
-      await client.post(CREATE_EPISODE, data: {
-        "season": season,
-        "episodeNumber": episodeNumber,
-        "movieId": movieId,
-        "titleUz": titleUz,
-        "titleRu": titleRu,
-        "titleEn": titleEn,
-        if (descriptionUz != null) "descriptionUz": descriptionUz,
-        if (descriptionRu != null) "descriptionRu": descriptionRu,
-        if (descriptionEn != null) "descriptionEn": descriptionEn,
-        if (videoUrl != null) "videoUrl": videoUrl,
-        if (duration != null) "duration": duration,
-      });
+      await client.post(
+        CREATE_EPISODE,
+        data: {
+          "season": season,
+          "episodeNumber": episodeNumber,
+          "movieId": movieId,
+          "titleUz": titleUz,
+          "titleRu": titleRu,
+          "titleEn": titleEn,
+          if (descriptionUz != null) "descriptionUz": descriptionUz,
+          if (descriptionRu != null) "descriptionRu": descriptionRu,
+          if (descriptionEn != null) "descriptionEn": descriptionEn,
+          if (videoUrl != null) "videoUrl": videoUrl,
+          if (imageUrl != null) "imageUrl": imageUrl,
+          if (duration != null) "duration": duration,
+        },
+      );
     } else {
       throw NetworkException();
     }
   }
 
+  // **************************************************************************
+  // upload image
+  // **************************************************************************
+
+  Future<String> uploadImage(String filePath) async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    final fileName = filePath.split('/').last;
+
+    final res = await client.post(
+      MEDIA_UPLOAD,
+      data: {
+        "fileName": fileName,
+        "contentType": "image/jpeg",
+        "folder": "images",
+      },
+    );
+
+    final String uploadUrl = res.data['uploadUrl'];
+    final String fileUrl = res.data['fileUrl'];
+
+    final bytes = await File(filePath).readAsBytes();
+    await Dio().put(
+      uploadUrl,
+      data: bytes,
+      options: Options(
+        headers: {'Content-Type': 'image/jpeg', 'Content-Length': bytes.length},
+      ),
+    );
+
+    return fileUrl;
+  }
+
+  // **************************************************************************
+  // upload video
+  // **************************************************************************
+
+ Future<String> uploadVideo(String filePath) async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    final fileName = filePath.split('/').last;
+
+    final res = await client.post(
+      MEDIA_UPLOAD,
+      data: {
+        "fileName": fileName,
+        "contentType": "video/mp4",
+        "folder": "videos",
+      },
+    );
+
+    final String uploadUrl = res.data['uploadUrl'];
+    final String fileUrl = res.data['fileUrl'];
+
+    final bytes = await File(filePath).readAsBytes();
+    await Dio().put(
+      uploadUrl,
+      data: bytes,
+      options: Options(
+        headers: {'Content-Type': 'video/mp4', 'Content-Length': bytes.length},
+      ),
+    );
+
+    return fileUrl;
+  }
 }

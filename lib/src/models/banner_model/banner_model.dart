@@ -8,8 +8,9 @@ class BannerModel {
   final String id;
   final String title;
   final CategoryModel category;
+  final String? imageUrl;
 
-  BannerModel({required this.id, required this.title, required this.category});
+  BannerModel({required this.id, required this.title, required this.category, this.imageUrl});
 
    factory BannerModel.fromJson(Map<String, dynamic> data) =>
       _$BannerModelFromJson(data);

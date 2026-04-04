@@ -10,9 +10,9 @@ class PlayPageChangedEvent extends PlayEvent {
 }
 
 class FetchEpisodeEvent extends PlayEvent {
-  final String episodeId;
+  final int episodeNumber;
   final String movieId;
-  FetchEpisodeEvent({required this.movieId, required this.episodeId});
+  FetchEpisodeEvent({required this.movieId, required this.episodeNumber});
   @override
   List<Object?> get props => [movieId];
 }

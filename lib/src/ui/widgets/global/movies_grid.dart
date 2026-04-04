@@ -63,9 +63,22 @@ class _MovieCard extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               child: movie.media != null && movie.media!.isNotEmpty
                   ? Image.network(
-                      movie.media ?? "",
+                      movie.media!,
                       fit: BoxFit.cover,
                       width: double.infinity,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: ColorName.accent,
+                            strokeWidth: 2,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
                       errorBuilder: (_, _, _) => movieImagePlaceholder(),
                     )
                   : movieImagePlaceholder(),

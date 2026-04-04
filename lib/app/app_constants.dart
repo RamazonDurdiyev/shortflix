@@ -23,12 +23,19 @@ const GET_ALL_MOVIES_OF_USER = "/api/movies";
 const GET_MOVIE_DETAILS = "/api/movies/";
 const GET_BANNERS = "/api/movies/banner";
 const CREATE_MOVIE = "/api/movies";
+
+// Episodes
+
 const CREATE_EPISODE = "/api/episodes";
-const LIKE_MOVIE = "/api/movies/like/";
-const SAVE_MOVIE = "/api/movies/save/";
+const LIKE_EPISODE = "/api/episodes/like/";
+const SAVE_EPISODE = "/api/episodes/save/";
 const GET_EPISODES = "/api/movies/episodes/";
 const GET_EPISODE = "/api/episodes/filter";
 
 // Local data
 
 const USER_TOKEN = "auth";
+
+// API Keys
+
+const MEDIA_UPLOAD = "http://72.62.0.138:5001/api/upload/presigned-url";

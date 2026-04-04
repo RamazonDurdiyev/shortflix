@@ -29,7 +29,7 @@ import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_page.dart';
 import 'package:shortflix/src/ui/pages/splash_page/splash_cubit.dart';
 import 'package:shortflix/src/ui/pages/splash_page/splash_page.dart';
-import 'package:shortflix/src/ui/post_page/post_page.dart';
+import 'package:shortflix/src/ui/pages/post_page/post_page.dart';
 
 Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
   final args = settings.arguments;

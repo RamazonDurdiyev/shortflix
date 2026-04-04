@@ -7,6 +7,7 @@ import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_event.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_state.dart';
+import 'package:video_compress/video_compress.dart';
 
 class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
   final MovieRepo movieRepo;
@@ -107,6 +108,24 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
     try {
       emit(CreateEpisodeState(state: BaseState.loading));
 
+      // 1. Compress video (fixes moov atom for trimmed videos) & upload
+      String? videoUrl;
+      if (videoPath != null) {
+        final compressed = await VideoCompress.compressVideo(
+          videoPath!,
+          quality: VideoQuality.MediumQuality,
+        );
+        final uploadPath = compressed?.file?.path ?? videoPath!;
+        videoUrl = await movieRepo.uploadVideo(uploadPath);
+      }
+
+      // 2. Upload image, get real URL
+      String? imageUrl;
+      if (imagePath != null) {
+        imageUrl = await movieRepo.uploadImage(imagePath!);
+      }
+
+      // 3. Create episode with uploaded URLs
       await movieRepo.postEpisode(
         season: event.season,
         episodeNumber: event.episodeNumber,
@@ -117,6 +136,8 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
         descriptionUz: event.descriptionUz,
         descriptionRu: event.descriptionRu,
         descriptionEn: event.descriptionEn,
+        videoUrl: videoUrl,
+        imageUrl: imageUrl,
         duration: event.duration,
       );
 
