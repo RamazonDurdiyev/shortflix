@@ -15,3 +15,10 @@ class EpisodesSelectSeasonEvent extends EpisodesEvent {
   @override
   List<Object?> get props => [season];
 }
+
+class EpisodesSaveMovieEvent extends EpisodesEvent {
+  final String movieId;
+  EpisodesSaveMovieEvent({required this.movieId});
+  @override
+  List<Object?> get props => [movieId];
+}

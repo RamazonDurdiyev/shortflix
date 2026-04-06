@@ -112,6 +112,14 @@ class _PlayViewState extends State<_PlayView> {
               }
             },
           ),
+          BlocListener<PlayBloc, PlayState>(
+            listenWhen: (_, state) => state is PlayMuteState,
+            listener: (context, state) {
+              if (state is PlayMuteState) {
+                _videoController?.setVolume(state.isMuted ? 0.0 : 1.0);
+              }
+            },
+          ),
         ],
         child: BlocBuilder<PlayBloc, PlayState>(
           buildWhen: (_, state) => state is FetchEpisodeState,
@@ -184,6 +192,36 @@ class _PlayViewState extends State<_PlayView> {
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 24),
                           child: _BottomInfo(),
+                        ),
+                      ),
+                    ),
+
+                    // ── Mute button ──────────────────────
+                    Positioned(
+                      right: 16,
+                      bottom: 28,
+                      child: SafeArea(
+                        child: BlocBuilder<PlayBloc, PlayState>(
+                          buildWhen: (_, state) => state is PlayMuteState,
+                          builder: (context, state) {
+                            final isMuted = context.read<PlayBloc>().isMuted;
+                            return GestureDetector(
+                              onTap: () => context.read<PlayBloc>().add(PlayToggleMuteEvent()),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: .5),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -350,23 +388,29 @@ class _ActionColumn extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         // ── Comments ─────────────────────────
-        GestureDetector(
-          onTap: () => _showCommentsSheet(context),
-          child: const Column(
-            children: [
-              Icon(Icons.chat_bubble_outline_rounded,
-                  color: Colors.white, size: 30),
-              SizedBox(height: 4),
-              Text(
-                '0',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
+        BlocBuilder<PlayBloc, PlayState>(
+          buildWhen: (_, state) => state is FetchCommentsState,
+          builder: (context, state) {
+            final count = bloc.comments.length;
+            return GestureDetector(
+              onTap: () => _showCommentsSheet(context),
+              child: Column(
+                children: [
+                  const Icon(Icons.chat_bubble_outline_rounded,
+                      color: Colors.white, size: 30),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$count',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
         const SizedBox(height: 20),
         // ── Share ────────────────────────────
@@ -406,6 +450,8 @@ class _ActionColumn extends StatelessWidget {
   }
 
   void _showCommentsSheet(BuildContext context) {
+    final bloc = context.read<PlayBloc>();
+    bloc.add(FetchCommentsEvent());
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF121212),
@@ -413,7 +459,10 @@ class _ActionColumn extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => const _CommentsSheet(),
+      builder: (_) => BlocProvider.value(
+        value: bloc,
+        child: const _CommentsSheet(),
+      ),
     );
   }
 }
@@ -457,11 +506,48 @@ class _ActionButton extends StatelessWidget {
 // ─────────────────────────────────────────
 //  COMMENTS BOTTOM SHEET
 // ─────────────────────────────────────────
-class _CommentsSheet extends StatelessWidget {
+class _CommentsSheet extends StatefulWidget {
   const _CommentsSheet();
 
   @override
+  State<_CommentsSheet> createState() => _CommentsSheetState();
+}
+
+class _CommentsSheetState extends State<_CommentsSheet> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _formatTime(String isoString) {
+    try {
+      final date = DateTime.parse(isoString);
+      final now = DateTime.now();
+      final diff = now.difference(date);
+      if (diff.inMinutes < 1) return 'just now';
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      if (diff.inDays < 7) return '${diff.inDays}d ago';
+      return '${date.day}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    } catch (_) {
+      return isoString;
+    }
+  }
+
+  void _submitComment() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    context.read<PlayBloc>().add(AddCommentEvent(comment: text));
+    _controller.clear();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bloc = context.read<PlayBloc>();
+
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.6,
       child: Column(
@@ -476,56 +562,193 @@ class _CommentsSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          // ── Header ──────────────────────────
+          BlocBuilder<PlayBloc, PlayState>(
+            buildWhen: (_, state) => state is FetchCommentsState,
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Comments',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${bloc.comments.length}',
+                      style: TextStyle(color: ColorName.accent, fontSize: 13),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const Divider(color: Colors.white12, height: 24),
+          // ── Comments list ───────────────────
+          Expanded(
+            child: BlocBuilder<PlayBloc, PlayState>(
+              buildWhen: (_, state) =>
+                  state is FetchCommentsState || state is AddCommentState,
+              builder: (context, state) {
+                final isLoading = state is FetchCommentsState &&
+                    state.state == BaseState.loading;
+                final comments = bloc.comments;
+
+                if (isLoading && comments.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: ColorName.accent),
+                  );
+                }
+
+                if (comments.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          color: Colors.white24,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'No comments yet',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Be the first to comment',
+                          style:
+                              TextStyle(color: Colors.white24, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: comments.length,
+                  separatorBuilder: (_, __) =>
+                      const Divider(color: Colors.white12, height: 24),
+                  itemBuilder: (_, i) {
+                    final c = comments[i];
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Colors.white12,
+                          child: Icon(
+                            Icons.person_rounded,
+                            color: Colors.white54,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    c.userName ?? 'User',
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  if (c.createdTime != null) ...[
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      _formatTime(c.createdTime!),
+                                      style: const TextStyle(
+                                        color: Colors.white30,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                c.comment ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          // ── Input ───────────────────────────
+          Container(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 8,
+              top: 8,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            decoration: const BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.white12)),
+            ),
             child: Row(
               children: [
-                const Text(
-                  'Comments',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    decoration: InputDecoration(
+                      hintText: 'Add a comment...',
+                      hintStyle:
+                          TextStyle(color: Colors.white38, fontSize: 14),
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: (_) => _submitComment(),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  '0',
-                  style: TextStyle(color: ColorName.accent, fontSize: 13),
+                BlocBuilder<PlayBloc, PlayState>(
+                  buildWhen: (_, state) => state is AddCommentState,
+                  builder: (context, state) {
+                    final isSending = state is AddCommentState &&
+                        state.state == BaseState.loading;
+                    return IconButton(
+                      onPressed: isSending ? null : _submitComment,
+                      icon: isSending
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: ColorName.accent,
+                              ),
+                            )
+                          : Icon(Icons.send_rounded, color: ColorName.accent),
+                    );
+                  },
                 ),
               ],
             ),
           ),
-          const Divider(color: Colors.white12, height: 24),
-          Expanded(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.chat_bubble_outline_rounded,
-                    color: Colors.white24,
-                    size: 48,
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'No comments yet',
-                    style: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Be the first to comment',
-                    style: TextStyle(color: Colors.white24, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
         ],
       ),
     );

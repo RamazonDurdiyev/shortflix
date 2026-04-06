@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 
 abstract class PlayState extends Equatable {}
@@ -30,6 +31,13 @@ class PlayToggleState extends PlayState {
   List<Object?> get props => [isPlaying];
 }
 
+class PlayMuteState extends PlayState {
+  final bool isMuted;
+  PlayMuteState({required this.isMuted});
+  @override
+  List<Object?> get props => [isMuted];
+}
+
 class PlayLikeState extends PlayState {
   final BaseState state;
   final bool isLiked;
@@ -44,4 +52,18 @@ class PlaySaveState extends PlayState {
   PlaySaveState({required this.state, required this.isSaved});
   @override
   List<Object?> get props => [state, isSaved];
+}
+
+class FetchCommentsState extends PlayState {
+  final BaseState state;
+  FetchCommentsState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
+}
+
+class AddCommentState extends PlayState {
+  final BaseState state;
+  AddCommentState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
 }

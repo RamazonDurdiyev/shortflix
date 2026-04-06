@@ -6,6 +6,7 @@ import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/core/error/exceptions.dart';
 import 'package:shortflix/core/network/network_info.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
+import 'package:shortflix/src/models/comment_model/comment_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 
 class MovieRepo {
@@ -24,10 +25,26 @@ class MovieRepo {
   // **************************************************************************
 
   Future<List<MovieModel>> fetchMovies() async {
-    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
-
     if (await networkInfo.isConnected) {
       final res = await client.get(GET_ALL_MOVIES);
+      return res.data["data"].map<MovieModel>((movie) {
+        return MovieModel.fromJson(movie);
+      }).toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // search movies
+  // **************************************************************************
+
+  Future<List<MovieModel>> searchMovies(String query) async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(
+        SEARCH_MOVIES,
+        queryParameters: {"q": query},
+      );
       return res.data["data"].map<MovieModel>((movie) {
         return MovieModel.fromJson(movie);
       }).toList();
@@ -135,7 +152,7 @@ class MovieRepo {
   // Like movie
   // **************************************************************************
 
-  Future<void> likeMovie(String episodeId) async {
+  Future<void> likeEpisode(String episodeId) async {
     // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
 
     if (await networkInfo.isConnected) {
@@ -146,14 +163,39 @@ class MovieRepo {
   }
 
   // **************************************************************************
+  // Save episode
+  // **************************************************************************
+
+  Future<void> saveEpisode(String episodeId) async {
+    if (await networkInfo.isConnected) {
+      await client.post(SAVE_EPISODE + episodeId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
   // Save movie
   // **************************************************************************
 
-  Future<void> saveMovie(String episodeId) async {
-    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
-
+  Future<void> saveMovie(String movieId) async {
     if (await networkInfo.isConnected) {
-      await client.post(SAVE_EPISODE + episodeId);
+      await client.post(SAVE_MOVIE + movieId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // Fetch saved movies
+  // **************************************************************************
+
+  Future<List<MovieModel>> fetchSavedMovies() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(SAVED_MOVIES);
+      return res.data.map<MovieModel>((movie) {
+        return MovieModel.fromJson(movie);
+      }).toList();
     } else {
       throw NetworkException();
     }
@@ -301,5 +343,48 @@ class MovieRepo {
     );
 
     return fileUrl;
+  }
+
+  // **************************************************************************
+  // fetch comments
+  // **************************************************************************
+
+  Future<List<CommentModel>> fetchComments({
+    required String movieId,
+    required String episodeId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(
+        episodeComments(filmId: movieId, episodeId: episodeId),
+      );
+      return (res.data["data"] as List)
+          .map<CommentModel>((c) => CommentModel.fromJson(c))
+          .toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // add comment
+  // **************************************************************************
+
+  Future<void> addComment({
+    required String comment,
+    required String movieId,
+    required String episodeId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.post(
+        ADD_COMMENT,
+        data: {
+          "comment": comment,
+          "movieId": movieId,
+          "episodeId": episodeId,
+        },
+      );
+    } else {
+      throw NetworkException();
+    }
   }
 }

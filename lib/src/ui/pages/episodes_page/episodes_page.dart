@@ -315,6 +315,56 @@ class _EpisodesContent extends StatelessWidget {
               height: 1.5,
             ),
           ),
+          const SizedBox(height: 16),
+
+          // ── Save button ──────────────────────
+          BlocBuilder<EpisodesBloc, EpisodesState>(
+            buildWhen: (_, state) =>
+                state is EpisodesSaveMovieState || state is EpisodesFetchState,
+            builder: (context, state) {
+              final isSaved = bloc.isSaved;
+              return GestureDetector(
+                onTap: () => bloc.add(
+                    EpisodesSaveMovieEvent(movieId: movie.id ?? '')),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSaved
+                        ? ColorName.accent.withValues(alpha: .15)
+                        : ColorName.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSaved
+                          ? ColorName.accent.withValues(alpha: .4)
+                          : ColorName.surfaceSecondary,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isSaved
+                            ? Icons.bookmark_rounded
+                            : Icons.bookmark_border_rounded,
+                        color: isSaved ? ColorName.accent : Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        isSaved ? 'Saved' : 'Save',
+                        style: TextStyle(
+                          color: isSaved ? ColorName.accent : Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

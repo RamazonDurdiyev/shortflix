@@ -21,3 +21,11 @@ class EpisodesSelectSeasonState extends EpisodesState {
   @override
   List<Object?> get props => [season];
 }
+
+class EpisodesSaveMovieState extends EpisodesState {
+  final BaseState state;
+  final bool isSaved;
+  EpisodesSaveMovieState({required this.state, required this.isSaved});
+  @override
+  List<Object?> get props => [state, isSaved];
+}

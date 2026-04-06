@@ -18,11 +18,16 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
       selectedSeason = event.season;
       emit(EpisodesSelectSeasonState(season: event.season));
     });
+
+    on<EpisodesSaveMovieEvent>((event, emit) async {
+      await _saveMovie(emit, event.movieId);
+    });
   }
 
   MovieDetailsModel? movie;
   List<EpisodeModel> episodes = [];
   int selectedSeason = 1;
+  bool isSaved = false;
 
   // ─────────────────────────────────────────
   //  Unique seasons derived from episodes
@@ -47,11 +52,27 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
       emit(EpisodesFetchState(state: BaseState.loading));
       movie = await movieRepo.fetchMovieDetails(movieId);
       episodes = await movieRepo.fetchEpisodes(movieId);
+      isSaved = movie?.isSaved ?? false;
       if (seasons.isNotEmpty) selectedSeason = seasons.first ?? 0;
       emit(EpisodesFetchState(state: BaseState.loaded));
     } catch (e) {
       emit(EpisodesFetchState(state: BaseState.error));
       printDebug('EpisodesBloc _fetchEpisodes error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  SAVE MOVIE
+  // ─────────────────────────────────────────
+  Future<void> _saveMovie(Emitter<EpisodesState> emit, String movieId) async {
+    try {
+      isSaved = !isSaved;
+      emit(EpisodesSaveMovieState(state: BaseState.loaded, isSaved: isSaved));
+      await movieRepo.saveMovie(movieId);
+    } catch (e) {
+      isSaved = !isSaved;
+      emit(EpisodesSaveMovieState(state: BaseState.error, isSaved: isSaved));
+      printDebug('EpisodesBloc _saveMovie error => $e');
     }
   }
 }

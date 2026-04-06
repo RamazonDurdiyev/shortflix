@@ -24,15 +24,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     on<FetchBannersEvent>((event, emit) async{
       await _fetchBanners(emit);
     },);
+    on<SearchMoviesEvent>((event, emit) async {
+      await _searchMovies(emit, event.query);
+    });
+    on<ClearSearchEvent>((event, emit) {
+      searchResults = [];
+      isSearching = false;
+      emit(ClearSearchState());
+    });
     on<ChangeNavBarIndexEvent>((event, emit) {
        _changeNavBarIndex(emit, event.navBarIndex);
     },);
   }
 
- 
+
   List<CategoryModel> categories = [];
   List<MovieModel> movies = [];
   List<BannerModel> banners = [];
+  List<MovieModel> searchResults = [];
+  bool isSearching = false;
   int currentNavBarIndex = 0;
   
   Future<void> _fetchCategories(Emitter<HomeState> emit) async {
@@ -68,10 +78,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     }
   }
   
+ Future<void> _searchMovies(Emitter<HomeState> emit, String query) async {
+    try {
+      isSearching = true;
+      emit(SearchMoviesState(state: BaseState.loading));
+      searchResults = await movieRepo.searchMovies(query);
+      emit(SearchMoviesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(SearchMoviesState(state: BaseState.error));
+      printDebug("HomeBloc _searchMovies error => $e");
+    }
+  }
+
  void _changeNavBarIndex(Emitter<HomeState> emit, int index) {
   currentNavBarIndex = index;
   emit(ChangeNavBarIndexState(state: BaseState.loaded));
 }
 
-  
 }

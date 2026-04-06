@@ -103,76 +103,173 @@ class HomePage extends StatelessWidget {
 // ─────────────────────────────────────────
 //  HOME CONTENT  (tab 0)
 // ─────────────────────────────────────────
-class _HomeContent extends StatelessWidget {
+class _HomeContent extends StatefulWidget {
   const _HomeContent();
 
   @override
-  Widget build(BuildContext context) {
+  State<_HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<_HomeContent> {
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
     final homeBloc = context.read<HomeBloc>();
     homeBloc.add(FetchCategoriesEvent());
     homeBloc.add(FetchMoviesEvent());
     homeBloc.add(FetchBannersEvent());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearch(String query) {
+    final bloc = context.read<HomeBloc>();
+    if (query.trim().isEmpty) {
+      bloc.add(ClearSearchEvent());
+    } else {
+      bloc.add(SearchMoviesEvent(query: query.trim()));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final homeBloc = context.read<HomeBloc>();
 
     return SafeArea(
-      child: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // ── Header ──────────────────────────────
-          const SliverToBoxAdapter(child: _Header()),
+      child: BlocBuilder<HomeBloc, HomeState>(
+        buildWhen: (_, state) =>
+            state is SearchMoviesState || state is ClearSearchState,
+        builder: (context, state) {
+          final isSearching = homeBloc.isSearching;
 
-          // ── Search ──────────────────────────────
-          const SliverToBoxAdapter(child: _SearchBar()),
+          return CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // ── Header ──────────────────────────────
+              const SliverToBoxAdapter(child: _Header()),
 
-          // ── Section: Featured ───────────────────
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Featured Today'),
-          ),
+              // ── Search ──────────────────────────────
+              SliverToBoxAdapter(
+                child: _SearchBar(
+                  controller: _searchController,
+                  onSearch: _onSearch,
+                  onClear: () {
+                    _searchController.clear();
+                    homeBloc.add(ClearSearchEvent());
+                  },
+                  isSearching: isSearching,
+                ),
+              ),
 
-          // ── Carousel ────────────────────────────
-          SliverToBoxAdapter(
-            child: BlocBuilder<HomeBloc, HomeState>(
-              bloc: homeBloc,
-              buildWhen: (_, state) => state is FetchBannersState,
-              builder: (context, state) {
-                return FeaturedCarousel(banners: homeBloc.banners);
-              },
-            ),
-          ),
+              // ── Search results OR normal content ────
+              if (isSearching) ...[
+                // Search results
+                SliverToBoxAdapter(
+                  child: _buildSearchResults(homeBloc, state),
+                ),
+              ] else ...[
+                // ── Section: Featured ───────────────────
+                const SliverToBoxAdapter(
+                  child: _SectionTitle(title: 'Featured Today'),
+                ),
 
-          // ── Section: Popular ─────────────────────
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Popular on Shortflix'),
-          ),
+                // ── Carousel ────────────────────────────
+                SliverToBoxAdapter(
+                  child: BlocBuilder<HomeBloc, HomeState>(
+                    bloc: homeBloc,
+                    buildWhen: (_, state) => state is FetchBannersState,
+                    builder: (context, state) {
+                      return FeaturedCarousel(banners: homeBloc.banners);
+                    },
+                  ),
+                ),
 
-          // ── Movies Grid ──────────────────────────
-          SliverToBoxAdapter(
-            child: BlocBuilder<HomeBloc, HomeState>(
-              bloc: homeBloc,
-              buildWhen: (_, state) => state is FetchMoviesState,
-              builder: (context, state) {
-                if (state is FetchMoviesState &&
-                    state.state == BaseState.loading) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: ColorName.accent),
-                  );
-                }
-                return MoviesGrid(movies: homeBloc.movies);
-              },
-            ),
-          ),
+                // ── Section: Popular ─────────────────────
+                const SliverToBoxAdapter(
+                  child: _SectionTitle(title: 'Popular on Shortflix'),
+                ),
 
-          // ── Section: Categories ──────────────────
-          const SliverToBoxAdapter(
-            child: _SectionTitle(title: 'Browse by Genre'),
-          ),
+                // ── Movies Grid ──────────────────────────
+                SliverToBoxAdapter(
+                  child: BlocBuilder<HomeBloc, HomeState>(
+                    bloc: homeBloc,
+                    buildWhen: (_, state) => state is FetchMoviesState,
+                    builder: (context, state) {
+                      if (state is FetchMoviesState &&
+                          state.state == BaseState.loading) {
+                        return const Center(
+                          child:
+                              CircularProgressIndicator(color: ColorName.accent),
+                        );
+                      }
+                      return MoviesGrid(movies: homeBloc.movies);
+                    },
+                  ),
+                ),
 
-          // ── Categories Wrap ───────────────────────
-          SliverToBoxAdapter(child: _buildCategoriesWrap(homeBloc)),
+                // ── Section: Categories ──────────────────
+                const SliverToBoxAdapter(
+                  child: _SectionTitle(title: 'Browse by Genre'),
+                ),
 
-          // ── Bottom padding ────────────────────────
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
-        ],
+                // ── Categories Wrap ───────────────────────
+                SliverToBoxAdapter(child: _buildCategoriesWrap(homeBloc)),
+              ],
+
+              // ── Bottom padding ────────────────────────
+              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            ],
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildSearchResults(HomeBloc bloc, HomeState state) {
+    if (state is SearchMoviesState && state.state == BaseState.loading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 40),
+        child: Center(
+          child: CircularProgressIndicator(color: ColorName.accent),
+        ),
+      );
+    }
+
+    if (bloc.searchResults.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Center(
+          child: Text(
+            'No movies found',
+            style: TextStyle(color: ColorName.contentSecondary, fontSize: 14),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+          child: Text(
+            'Search Results (${bloc.searchResults.length})',
+            style: const TextStyle(
+              color: ColorName.contentPrimary,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.2,
+            ),
+          ),
+        ),
+        MoviesGrid(movies: bloc.searchResults),
+      ],
     );
   }
 
@@ -349,7 +446,17 @@ class _Header extends StatelessWidget {
 //  SEARCH BAR
 // ─────────────────────────────────────────
 class _SearchBar extends StatelessWidget {
-  const _SearchBar();
+  final TextEditingController controller;
+  final ValueChanged<String> onSearch;
+  final VoidCallback onClear;
+  final bool isSearching;
+
+  const _SearchBar({
+    required this.controller,
+    required this.onSearch,
+    required this.onClear,
+    required this.isSearching,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -369,6 +476,8 @@ class _SearchBar extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: TextField(
+                controller: controller,
+                onSubmitted: onSearch,
                 style: const TextStyle(
                   color: ColorName.contentPrimary,
                   fontSize: 15,
@@ -384,22 +493,39 @@ class _SearchBar extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.all(6),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: ColorName.accent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text(
-                'Go',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+            if (isSearching)
+              GestureDetector(
+                onTap: onClear,
+                child: Container(
+                  margin: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: ColorName.surfaceSecondary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.close_rounded, color: Colors.white, size: 18),
+                ),
+              )
+            else
+              GestureDetector(
+                onTap: () => onSearch(controller.text),
+                child: Container(
+                  margin: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: ColorName.accent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'Go',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

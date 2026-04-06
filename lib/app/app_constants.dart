@@ -19,10 +19,13 @@ const SEND_CODE = "/api/auth/login";
 // Movies
 
 const GET_ALL_MOVIES = "/api/movies";
+const SEARCH_MOVIES = "/api/movies/search";
 const GET_ALL_MOVIES_OF_USER = "/api/movies";
 const GET_MOVIE_DETAILS = "/api/movies/";
 const GET_BANNERS = "/api/movies/banner";
 const CREATE_MOVIE = "/api/movies";
+const SAVE_MOVIE = "/api/movies/save/";
+const SAVED_MOVIES = "/api/users/me/saved";
 
 // Episodes
 
@@ -31,6 +34,16 @@ const LIKE_EPISODE = "/api/episodes/like/";
 const SAVE_EPISODE = "/api/episodes/save/";
 const GET_EPISODES = "/api/movies/episodes/";
 const GET_EPISODE = "/api/episodes/filter";
+
+// Comments
+
+const ADD_COMMENT = "/api/comments";
+ String episodeComments({
+    required String filmId,
+    required String episodeId,
+  }) {
+    return '/api/movies/$filmId/episodes/$episodeId/comments';
+  }
 
 // Local data
 

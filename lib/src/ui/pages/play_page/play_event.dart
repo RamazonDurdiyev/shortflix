@@ -35,3 +35,20 @@ class PlaySaveMovieEvent extends PlayEvent {
   @override
   List<Object?> get props => [movieId];
 }
+
+class FetchCommentsEvent extends PlayEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class PlayToggleMuteEvent extends PlayEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class AddCommentEvent extends PlayEvent {
+  final String comment;
+  AddCommentEvent({required this.comment});
+  @override
+  List<Object?> get props => [comment];
+}

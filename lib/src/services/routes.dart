@@ -15,6 +15,7 @@ import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_bloc.dart';
 import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
+import 'package:shortflix/src/ui/pages/saved_movies_page/saved_movies_page.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_page.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
@@ -97,7 +98,7 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<PlaylistsBloc>(
-          create: (_) => PlaylistsBloc(),
+          create: (_) => PlaylistsBloc(movieRepo: GetIt.instance.get()),
           child: const PlaylistsPage(),
         ),
       );
@@ -166,6 +167,15 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
             movieRepo: GetIt.instance.get(),
           ),
           child: const PostEpisodePage(),
+        ),
+      );
+
+    case Navigation.savedMoviesPage:
+      return buildRoute(
+        settings,
+        BlocProvider<PlaylistsBloc>(
+          create: (_) => PlaylistsBloc(movieRepo: GetIt.instance.get()),
+          child: const SavedMoviesPage(),
         ),
       );
 

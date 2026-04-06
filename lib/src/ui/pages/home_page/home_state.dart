@@ -34,6 +34,19 @@ class FetchBannersState extends HomeState{
   List<Object?> get props => [state];
 }
 
+class SearchMoviesState extends HomeState{
+  final BaseState state;
+
+  SearchMoviesState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
+}
+
+class ClearSearchState extends HomeState{
+  @override
+  List<Object?> get props => [UniqueKey()];
+}
+
 class ChangeNavBarIndexState extends HomeState{
   final BaseState state;
 
