@@ -266,12 +266,12 @@ class MovieRepo {
           "titleUz": titleUz,
           "titleRu": titleRu,
           "titleEn": titleEn,
-          if (descriptionUz != null) "descriptionUz": descriptionUz,
-          if (descriptionRu != null) "descriptionRu": descriptionRu,
-          if (descriptionEn != null) "descriptionEn": descriptionEn,
-          if (videoUrl != null) "videoUrl": videoUrl,
-          if (imageUrl != null) "imageUrl": imageUrl,
-          if (duration != null) "duration": duration,
+          "descriptionUz": ?descriptionUz,
+          "descriptionRu": ?descriptionRu,
+          "descriptionEn": ?descriptionEn,
+          "videoUrl": ?videoUrl,
+          "imageUrl": ?imageUrl,
+          "duration": ?duration,
         },
       );
     } else {

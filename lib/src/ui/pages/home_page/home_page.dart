@@ -7,7 +7,7 @@ import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_event.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
-import 'package:shortflix/src/ui/pages/playlists_page/playlists_page.dart';
+import 'package:shortflix/src/ui/pages/library_page/library_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_page.dart';
 import 'package:shortflix/src/ui/pages/post_page/post_page.dart';
@@ -64,7 +64,7 @@ const List<Widget> _pages = [
   _HomeContent(),
   RecPage(),
   PostPage(),
-  PlaylistsPage(),
+  LibraryPage(),
   ProfilePage(),
 ];
 

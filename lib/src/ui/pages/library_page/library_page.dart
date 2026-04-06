@@ -6,8 +6,8 @@ import 'package:shortflix/src/services/routes.dart';
 // ─────────────────────────────────────────
 //  PLAYLISTS PAGE
 // ─────────────────────────────────────────
-class PlaylistsPage extends StatelessWidget {
-  const PlaylistsPage({super.key});
+class LibraryPage extends StatelessWidget {
+  const LibraryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +54,6 @@ Widget _buildTopBar() {
               fontWeight: FontWeight.bold,
               letterSpacing: -0.3,
             ),
-          ),
-        ),
-        Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: ColorName.backgroundSecondary,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: ColorName.surfaceSecondary),
-          ),
-          child: const Icon(
-            Icons.search_rounded,
-            color: Colors.white,
-            size: 18,
           ),
         ),
       ],

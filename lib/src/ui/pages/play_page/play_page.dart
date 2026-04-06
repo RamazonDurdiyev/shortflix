@@ -43,7 +43,6 @@ class _PlayViewState extends State<_PlayView> {
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
       final episodeNumber = (args?['episodeNumber'] as int?) ?? 0;
       final movieId = (args?['movieId'] as String?) ?? '';
-      print("movieId => $movieId");
       if (movieId.isNotEmpty) {
         context.read<PlayBloc>().add(
               FetchEpisodeEvent(movieId: movieId, episodeNumber: episodeNumber),
@@ -638,7 +637,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                 return ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: comments.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const Divider(color: Colors.white12, height: 24),
                   itemBuilder: (_, i) {
                     final c = comments[i];

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
-import 'package:shortflix/src/ui/pages/playlists_page/playlists_bloc.dart';
-import 'package:shortflix/src/ui/pages/playlists_page/playlists_event.dart';
-import 'package:shortflix/src/ui/pages/playlists_page/playlists_state.dart';
+import 'package:shortflix/src/ui/pages/library_page/library_bloc.dart';
+import 'package:shortflix/src/ui/pages/library_page/library_event.dart';
+import 'package:shortflix/src/ui/pages/library_page/library_state.dart';
 import 'package:shortflix/src/ui/widgets/global/movies_grid.dart';
 
 class SavedMoviesPage extends StatefulWidget {
@@ -18,7 +18,7 @@ class _SavedMoviesPageState extends State<SavedMoviesPage> {
   @override
   void initState() {
     super.initState();
-    context.read<PlaylistsBloc>().add(FetchSavedMoviesEvent());
+    context.read<LibraryBloc>().add(FetchSavedMoviesEvent());
   }
 
   @override
@@ -53,10 +53,10 @@ class _SavedMoviesPageState extends State<SavedMoviesPage> {
           ),
         ),
       ),
-      body: BlocBuilder<PlaylistsBloc, PlaylistsState>(
+      body: BlocBuilder<LibraryBloc, LibraryState>(
         buildWhen: (_, state) => state is FetchSavedMoviesState,
         builder: (context, state) {
-          final bloc = context.read<PlaylistsBloc>();
+          final bloc = context.read<LibraryBloc>();
 
           if (state is FetchSavedMoviesState &&
               state.state == BaseState.loading) {
