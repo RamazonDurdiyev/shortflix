@@ -21,6 +21,9 @@ class Navigation {
 
   // library pages
   static const String savedMoviesPage = "/saved_movies_page";
+  static const String savedEpisodesPage = "/saved_episodes_page";
+  static const String likedEpisodesPage = "/liked_episodes_page";
+  static const String myMoviesPage = "/my_movies_page";
 
   // post pages
   static const String postPage = "/post_page";

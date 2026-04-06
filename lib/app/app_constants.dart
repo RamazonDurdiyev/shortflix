@@ -20,7 +20,7 @@ const SEND_CODE = "/api/auth/login";
 
 const GET_ALL_MOVIES = "/api/movies";
 const SEARCH_MOVIES = "/api/movies/search";
-const GET_ALL_MOVIES_OF_USER = "/api/movies";
+const GET_ALL_MOVIES_OF_USER = "/api/movies/my";
 const GET_MOVIE_DETAILS = "/api/movies/";
 const GET_BANNERS = "/api/movies/banner";
 const CREATE_MOVIE = "/api/movies";
@@ -34,6 +34,8 @@ const LIKE_EPISODE = "/api/episodes/like/";
 const SAVE_EPISODE = "/api/episodes/save/";
 const GET_EPISODES = "/api/movies/episodes/";
 const GET_EPISODE = "/api/episodes/filter";
+const SAVED_EPISODES = "/api/users/me/saved-episodes";
+const LIKED_EPISODES = "/api/users/me/liked-episodes";
 
 // Comments
 
@@ -44,6 +46,11 @@ const ADD_COMMENT = "/api/comments";
   }) {
     return '/api/movies/$filmId/episodes/$episodeId/comments';
   }
+
+
+// Shorts
+
+const SHORTS = "/api/shorts";
 
 // Local data
 

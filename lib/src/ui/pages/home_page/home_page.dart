@@ -48,7 +48,7 @@ const List<_NavItem> _navItems = [
   _NavItem(
     icon: Icons.playlist_play_outlined,
     activeIcon: Icons.playlist_play_rounded,
-    label: 'Playlists',
+    label: 'Library',
   ),
   _NavItem(
     icon: Icons.person_outline_rounded,

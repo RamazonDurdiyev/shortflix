@@ -54,6 +54,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   bool isSaved         = false;
   String movieId       = '';
   List<EpisodeDetailsModel>? episode;
+  int commentCount = 0;
   List<CommentModel> comments = [];
 
   // ─────────────────────────────────────────
@@ -67,6 +68,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       printDebug("episode data => ${episode?[0].toJson().toString()}");
       isLiked = episode?[0].isLiked ?? false;
       isSaved = episode?[0].isSaved ?? false;
+      commentCount = episode?[0].commentCount ?? 0;
       isPlaying = true;
       emit(FetchEpisodeState(state: BaseState.loaded));
     } catch (e) {

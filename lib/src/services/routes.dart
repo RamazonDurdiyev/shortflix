@@ -16,6 +16,9 @@ import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_bloc.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_page.dart';
 import 'package:shortflix/src/ui/pages/saved_movies_page/saved_movies_page.dart';
+import 'package:shortflix/src/ui/pages/saved_episodes_page/saved_episodes_page.dart';
+import 'package:shortflix/src/ui/pages/liked_episodes_page/liked_episodes_page.dart';
+import 'package:shortflix/src/ui/pages/my_movies_page/my_movies_page.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_page.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
@@ -106,7 +109,9 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
     case Navigation.recPage:
       return buildRoute(
         settings,
-        BlocProvider<RecBloc>(create: (_) => RecBloc(), child: const RecPage()),
+        BlocProvider<RecBloc>(create: (_) => RecBloc(
+          movieRepo: GetIt.instance.get()
+        ), child: const RecPage()),
       );
 
     case Navigation.playPage:
@@ -176,6 +181,33 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
         BlocProvider<LibraryBloc>(
           create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
           child: const SavedMoviesPage(),
+        ),
+      );
+
+    case Navigation.savedEpisodesPage:
+      return buildRoute(
+        settings,
+        BlocProvider<LibraryBloc>(
+          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          child: const SavedEpisodesPage(),
+        ),
+      );
+
+    case Navigation.likedEpisodesPage:
+      return buildRoute(
+        settings,
+        BlocProvider<LibraryBloc>(
+          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          child: const LikedEpisodesPage(),
+        ),
+      );
+
+    case Navigation.myMoviesPage:
+      return buildRoute(
+        settings,
+        BlocProvider<LibraryBloc>(
+          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          child: const MyMoviesPage(),
         ),
       );
 

@@ -202,6 +202,56 @@ class MovieRepo {
   }
 
   // **************************************************************************
+  // Fetch shorts
+  // **************************************************************************
+
+  Future<Map<String, dynamic>> fetchShort() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(
+        SHORTS,
+      );
+      final data = res.data as Map<String, dynamic>;
+      return {
+        "episode": EpisodeDetailsModel.fromJson(data),
+        "index": data["index"] ?? 0,
+        "total": data["total"] ?? 0,
+      };
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // Fetch saved episodes
+  // **************************************************************************
+
+  Future<List<EpisodeModel>> fetchSavedEpisodes() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(SAVED_EPISODES);
+      return (res.data as List)
+          .map<EpisodeModel>((e) => EpisodeModel.fromJson(e))
+          .toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // Fetch liked episodes
+  // **************************************************************************
+
+  Future<List<EpisodeModel>> fetchLikedEpisodes() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(LIKED_EPISODES);
+      return (res.data as List)
+          .map<EpisodeModel>((e) => EpisodeModel.fromJson(e))
+          .toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
   // post movie
   // **************************************************************************
 

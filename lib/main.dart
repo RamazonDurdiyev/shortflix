@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/src/models/auth_model/auth_model_adapter.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
+import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 
@@ -36,6 +37,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<PostEpisodeBloc>(
           create: (context) => PostEpisodeBloc(
+            movieRepo: GetIt.instance.get(),
+          ),
+        ),
+        BlocProvider<RecBloc>(
+          create: (context) => RecBloc(
             movieRepo: GetIt.instance.get(),
           ),
         ),

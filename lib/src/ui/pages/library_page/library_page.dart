@@ -98,6 +98,19 @@ Widget _buildSectionTitle(String title) {
 Widget _buildMenuGroup(BuildContext context) {
   final items = [
     _MenuItem(
+      icon: Icons.movie_creation_rounded,
+      label: 'My Movies',
+      subtitle: 'Movies you created',
+      onTap: () {
+        Navigator.push(
+          context,
+          generateRoutes(
+            RouteSettings(name: Navigation.myMoviesPage),
+          )!,
+        );
+      },
+    ),
+    _MenuItem(
       icon: Icons.bookmark_rounded,
       label: 'Saved Movies',
       subtitle: 'Movies you bookmarked',
@@ -113,13 +126,29 @@ Widget _buildMenuGroup(BuildContext context) {
     _MenuItem(
       icon: Icons.video_library_rounded,
       label: 'Saved Episodes',
-      subtitle: 'Coming soon',
+      subtitle: 'Episodes you bookmarked',
+      onTap: () {
+        Navigator.push(
+          context,
+          generateRoutes(
+            RouteSettings(name: Navigation.savedEpisodesPage),
+          )!,
+        );
+      },
     ),
     _MenuItem(
       icon: Icons.favorite_rounded,
       label: 'Liked Episodes',
-      subtitle: 'Coming soon',
+      subtitle: 'Episodes you liked',
       color: ColorName.accent,
+      onTap: () {
+        Navigator.push(
+          context,
+          generateRoutes(
+            RouteSettings(name: Navigation.likedEpisodesPage),
+          )!,
+        );
+      },
     ),
   ];
 

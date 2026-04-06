@@ -13,9 +13,21 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     on<FetchSavedMoviesEvent>((event, emit) async {
       await _fetchSavedMovies(emit);
     });
+    on<FetchSavedEpisodesEvent>((event, emit) async {
+      await _fetchSavedEpisodes(emit);
+    });
+    on<FetchLikedEpisodesEvent>((event, emit) async {
+      await _fetchLikedEpisodes(emit);
+    });
+    on<FetchMyMoviesEvent>((event, emit) async {
+      await _fetchMyMovies(emit);
+    });
   }
 
   List<MovieModel> savedMovies = [];
+  List<EpisodeModel> savedEpisodes = [];
+  List<EpisodeModel> likedEpisodes = [];
+  List<MovieModel> myMovies = [];
 
   Future<void> _fetchSavedMovies(Emitter<LibraryState> emit) async {
     try {
@@ -24,7 +36,40 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       emit(FetchSavedMoviesState(state: BaseState.loaded));
     } catch (e) {
       emit(FetchSavedMoviesState(state: BaseState.error));
-      printDebug('PlaylistsBloc _fetchSavedMovies error => $e');
+      printDebug('LibraryBloc _fetchSavedMovies error => $e');
+    }
+  }
+
+  Future<void> _fetchSavedEpisodes(Emitter<LibraryState> emit) async {
+    try {
+      emit(FetchSavedEpisodesState(state: BaseState.loading));
+      savedEpisodes = await movieRepo.fetchSavedEpisodes();
+      emit(FetchSavedEpisodesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchSavedEpisodesState(state: BaseState.error));
+      printDebug('LibraryBloc _fetchSavedEpisodes error => $e');
+    }
+  }
+
+  Future<void> _fetchLikedEpisodes(Emitter<LibraryState> emit) async {
+    try {
+      emit(FetchLikedEpisodesState(state: BaseState.loading));
+      likedEpisodes = await movieRepo.fetchLikedEpisodes();
+      emit(FetchLikedEpisodesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchLikedEpisodesState(state: BaseState.error));
+      printDebug('LibraryBloc _fetchLikedEpisodes error => $e');
+    }
+  }
+
+  Future<void> _fetchMyMovies(Emitter<LibraryState> emit) async {
+    try {
+      emit(FetchMyMoviesState(state: BaseState.loading));
+      myMovies = await movieRepo.fetchMoviesOfUser();
+      emit(FetchMyMoviesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchMyMoviesState(state: BaseState.error));
+      printDebug('LibraryBloc _fetchMyMovies error => $e');
     }
   }
 }

@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
+import 'package:shortflix/src/ui/widgets/global/episode_bottom_info.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_event.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_state.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
 // ─────────────────────────────────────────
@@ -190,7 +192,7 @@ class _PlayViewState extends State<_PlayView> {
                       child: SafeArea(
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 24),
-                          child: _BottomInfo(),
+                          child: _PlayBottomInfo(),
                         ),
                       ),
                     ),
@@ -388,9 +390,12 @@ class _ActionColumn extends StatelessWidget {
         const SizedBox(height: 20),
         // ── Comments ─────────────────────────
         BlocBuilder<PlayBloc, PlayState>(
-          buildWhen: (_, state) => state is FetchCommentsState,
+          buildWhen: (_, state) =>
+              state is FetchCommentsState || state is FetchEpisodeState,
           builder: (context, state) {
-            final count = bloc.comments.length;
+            final count = bloc.comments.isNotEmpty
+                ? bloc.comments.length
+                : bloc.commentCount;
             return GestureDetector(
               onTap: () => _showCommentsSheet(context),
               child: Column(
@@ -413,38 +418,107 @@ class _ActionColumn extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         // ── Share ────────────────────────────
-        const _ActionButton(
-            icon: Icons.reply_rounded, label: 'Share', flipX: true),
-        const SizedBox(height: 20),
-        // ── Save ─────────────────────────────
-        BlocBuilder<PlayBloc, PlayState>(
-          buildWhen: (_, state) => state is PlaySaveState,
-          builder: (context, state) {
-            final isSaved = bloc.isSaved;
-            return GestureDetector(
-              onTap: () => bloc.add(PlaySaveMovieEvent(movieId: episodeId)),
-              child: Column(
-                children: [
-                  Icon(
-                    isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                    color: isSaved ? ColorName.accent : Colors.white,
-                    size: 30,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isSaved ? 'Saved' : 'Save',
-                    style: TextStyle(
-                      color: isSaved ? ColorName.accent : Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            );
+        GestureDetector(
+          onTap: () {
+            final episode = bloc.episode?[0];
+            if (episode == null) return;
+            final text = '${episode.title ?? ''}\n${episode.description ?? ''}\n${episode.videoUrl ?? ''}';
+            SharePlus.instance.share(ShareParams(text: text));
           },
+          child: Column(
+            children: [
+              Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+                child: const Icon(Icons.reply_rounded, color: Colors.white, size: 30),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Share',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        // ── More ──────────────────────────────
+        GestureDetector(
+          onTap: () => _showMoreSheet(context),
+          child: const Column(
+            children: [
+              Icon(Icons.more_horiz_rounded, color: Colors.white, size: 30),
+              SizedBox(height: 4),
+              Text(
+                'More',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
+    );
+  }
+
+  void _showMoreSheet(BuildContext context) {
+    final bloc = context.read<PlayBloc>();
+    final episodeId = bloc.episode?[0].id ?? '';
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => BlocProvider.value(
+        value: bloc,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              BlocBuilder<PlayBloc, PlayState>(
+                buildWhen: (_, state) => state is PlaySaveState,
+                builder: (context, state) {
+                  final isSaved = context.read<PlayBloc>().isSaved;
+                  return ListTile(
+                    leading: Icon(
+                      isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                      color: isSaved ? ColorName.accent : Colors.white,
+                    ),
+                    title: Text(
+                      isSaved ? 'Saved' : 'Save',
+                      style: TextStyle(
+                        color: isSaved ? ColorName.accent : Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onTap: () {
+                      bloc.add(PlaySaveMovieEvent(movieId: episodeId));
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -462,42 +536,6 @@ class _ActionColumn extends StatelessWidget {
         value: bloc,
         child: const _CommentsSheet(),
       ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool flipX;
-
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    this.flipX = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Transform(
-          alignment: Alignment.center,
-          transform: flipX
-              ? (Matrix4.identity()..scale(-1.0, 1.0, 1.0))
-              : Matrix4.identity(),
-          child: Icon(icon, color: Colors.white, size: 30),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -757,8 +795,8 @@ class _CommentsSheetState extends State<_CommentsSheet> {
 // ─────────────────────────────────────────
 //  BOTTOM INFO
 // ─────────────────────────────────────────
-class _BottomInfo extends StatelessWidget {
-  const _BottomInfo();
+class _PlayBottomInfo extends StatelessWidget {
+  const _PlayBottomInfo();
 
   @override
   Widget build(BuildContext context) {
@@ -795,52 +833,7 @@ class _BottomInfo extends StatelessWidget {
           );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Title
-            Text(
-              episode[0].title ?? "",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.4,
-                height: 1.1,
-              ),
-            ),
-            const SizedBox(height: 6),
-            // Season · Episode
-            Row(
-              children: [
-                const Icon(Icons.video_library_outlined,
-                    color: Colors.white54, size: 13),
-                const SizedBox(width: 5),
-                Text(
-                  'Season ${episode[0].season}  ·  Episode ${episode[0].episodeNumber}',
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // Description
-            Text(
-              episode[0].description ?? "",
-              style: const TextStyle(
-                color: Colors.white60,
-                fontSize: 13,
-                height: 1.4,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        );
+        return EpisodeBottomInfo(episode: episode[0]);
       },
     );
   }

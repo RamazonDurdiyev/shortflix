@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
-import 'package:shortflix/src/models/movie_model/movie_model.dart';
-import 'package:shortflix/src/services/navigation.dart';
-import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_bloc.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_event.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_state.dart';
+import 'package:shortflix/src/ui/widgets/global/episodes_grid.dart';
 
 // ─────────────────────────────────────────
 //  EPISODES PAGE
@@ -154,10 +152,10 @@ class _EpisodesContent extends StatelessWidget {
               );
             }
 
-            return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _EpisodeItem(episode: filtered[index], movieId: bloc.movie?.id ?? "",),
-                childCount: filtered.length,
+            return SliverToBoxAdapter(
+              child: EpisodesGrid(
+                episodes: filtered,
+                movieId: bloc.movie?.id ?? '',
               ),
             );
           },
@@ -466,177 +464,3 @@ class _EpisodesContent extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────
-//  EPISODE ITEM
-// ─────────────────────────────────────────
-class _EpisodeItem extends StatelessWidget {
-  final EpisodeModel episode;
-  final String movieId;
-  const _EpisodeItem({required this.episode, required this.movieId});
-
-  String _formatDuration(int seconds) {
-    final m = seconds ~/ 60;
-    final s = seconds % 60;
-    return '${m}m ${s.toString().padLeft(2, '0')}s';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          generateRoutes(RouteSettings(name: Navigation.playPage, arguments: {"movieId": movieId, "episodeNumber": episode.episodeNumber}))!,
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: ColorName.backgroundSecondary,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: (episode.watched ?? false)
-                  ? ColorName.accent.withValues(alpha: .3)
-                  : ColorName.surfaceSecondary,
-            ),
-          ),
-          child: Row(
-            children: [
-              // ── Thumbnail ──────────────────────
-              Container(
-                width: 100,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: ColorName.surfaceSecondary,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(13),
-                    bottomLeft: Radius.circular(13),
-                  ),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    if (episode.imageUrl != null &&
-                        episode.imageUrl!.isNotEmpty)
-                      Image.network(
-                        episode.imageUrl!,
-                        width: 100,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) => Icon(
-                          Icons.play_circle_outline_rounded,
-                          color: Colors.white38,
-                          size: 32,
-                        ),
-                      )
-                    else
-                      Icon(
-                        Icons.play_circle_outline_rounded,
-                        color: Colors.white38,
-                        size: 32,
-                      ),
-                    // Watched badge
-                    if (episode.watched ?? false)
-                      Positioned(
-                        top: 6,
-                        right: 6,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorName.accent,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            '✓',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-              // ── Info ───────────────────────────
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Episode number
-                      Text(
-                        'Episode ${episode.episodeNumber}',
-                        style: TextStyle(
-                          color: ColorName.contentSecondary,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      // Title
-                      Text(
-                        episode.title ?? "",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
-                      // Duration
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_rounded,
-                            color: ColorName.contentSecondary,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            _formatDuration(episode.duration ?? 0),
-                            style: TextStyle(
-                              color: ColorName.contentSecondary,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ── Play arrow ─────────────────────
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Icon(
-                  Icons.play_arrow_rounded,
-                  color: (episode.watched ?? false)
-                      ? ColorName.accent
-                      : ColorName.contentSecondary,
-
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
