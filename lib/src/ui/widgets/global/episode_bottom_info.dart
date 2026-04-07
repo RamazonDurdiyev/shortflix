@@ -5,6 +5,12 @@ class EpisodeBottomInfo extends StatelessWidget {
   final EpisodeDetailsModel episode;
   const EpisodeBottomInfo({super.key, required this.episode});
 
+  String _formatCount(int count) {
+    if (count >= 1000000) return '${(count / 1000000).toStringAsFixed(1)}M';
+    if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}K';
+    return count.toString();
+  }
+
   String _formatDate(String isoString) {
     try {
       final date = DateTime.parse(isoString);
@@ -63,6 +69,25 @@ class EpisodeBottomInfo extends StatelessWidget {
             ],
           ],
         ),
+        if ((episode.viewCount ?? 0) > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Row(
+              children: [
+                const Icon(Icons.visibility_outlined,
+                    color: Colors.white54, size: 13),
+                const SizedBox(width: 4),
+                Text(
+                  _formatCount(episode.viewCount!),
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
         if (episode.description != null &&
             episode.description!.isNotEmpty) ...[
           const SizedBox(height: 8),

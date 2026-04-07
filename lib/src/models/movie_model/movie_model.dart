@@ -9,7 +9,8 @@ class MovieModel {
   final String? title;
   final CategoryModel? category;
   final int? releaseYear;
-  final double? rating;
+  final double? averageRating;
+  final int? currentUserRating;
   @JsonKey(name: 'imageUrl')
   final String? media;
 
@@ -18,7 +19,8 @@ class MovieModel {
     required this.title,
     required this.category,
     required this.releaseYear,
-    required this.rating,
+    required this.averageRating,
+    this.currentUserRating,
     required this.media,
   });
 
@@ -35,7 +37,8 @@ class MovieDetailsModel {
   final String? description;
   final CategoryModel? category;
   final int? releaseYear;
-  final double? rating;
+  final double? averageRating;
+  final int? currentUserRating;
   @JsonKey(name: 'imageUrl')
   final String? media;
   final String? ageLimit;
@@ -51,7 +54,8 @@ class MovieDetailsModel {
     required this.description,
     required this.category,
     required this.releaseYear,
-    required this.rating,
+    required this.averageRating,
+    this.currentUserRating,
     required this.media,
     required this.ageLimit,
     required this.isLiked,
@@ -126,6 +130,8 @@ class EpisodeDetailsModel {
   final bool? isSaved;
   final int? commentCount;
   final bool? canEdit;
+  final int? likeCount;
+  final int? viewCount;
 
   const EpisodeDetailsModel({
     required this.id,
@@ -142,6 +148,8 @@ class EpisodeDetailsModel {
     this.isSaved,
     this.commentCount,
     this.canEdit,
+    this.likeCount,
+    this.viewCount,
   });
 
   static Object? _readMovieId(Map json, String key) {

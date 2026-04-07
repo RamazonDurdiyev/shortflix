@@ -22,3 +22,11 @@ class EpisodesSaveMovieEvent extends EpisodesEvent {
   @override
   List<Object?> get props => [movieId];
 }
+
+class EpisodesRateMovieEvent extends EpisodesEvent {
+  final String movieId;
+  final int rating;
+  EpisodesRateMovieEvent({required this.movieId, required this.rating});
+  @override
+  List<Object?> get props => [movieId, rating];
+}

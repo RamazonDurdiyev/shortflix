@@ -36,6 +36,7 @@ class _PlayViewState extends State<_PlayView> {
   VideoPlayerController? _videoController;
   bool _controllerReady = false;
   bool _showPlayIcon = false;
+  final _progressKey = GlobalKey();
 
   @override
   void didChangeDependencies() {
@@ -151,25 +152,26 @@ class _PlayViewState extends State<_PlayView> {
               );
             }
 
-            return GestureDetector(
-              onTap: _togglePlayPause,
-              child: SizedBox.expand(
+            return SizedBox.expand(
                 child: Stack(
                   children: [
                     // ── Video / black bg ──────────────────
-                    _controllerReady && _videoController != null
-                        ? SizedBox.expand(
-                            child: FittedBox(
-                              fit: BoxFit.cover,
-                              child: SizedBox(
-                                width: _videoController!.value.size.width,
-                                height: _videoController!.value.size.height,
-                                child: VideoPlayer(_videoController!),
+                    GestureDetector(
+                      onTap: _togglePlayPause,
+                      child: _controllerReady && _videoController != null
+                          ? SizedBox.expand(
+                              child: FittedBox(
+                                fit: BoxFit.cover,
+                                child: SizedBox(
+                                  width: _videoController!.value.size.width,
+                                  height: _videoController!.value.size.height,
+                                  child: VideoPlayer(_videoController!),
+                                ),
                               ),
-                            ),
-                          )
-                        : const ColoredBox(
-                            color: Colors.black, child: SizedBox.expand()),
+                            )
+                          : const ColoredBox(
+                              color: Colors.black, child: SizedBox.expand()),
+                    ),
 
                     // ── Top bar ───────────────────────────
                     const _TopBar(),
@@ -185,16 +187,11 @@ class _PlayViewState extends State<_PlayView> {
                     ),
 
                     // ── Bottom info ───────────────────────
-                    const Positioned(
+                    Positioned(
                       left: 16,
                       right: 80,
-                      bottom: 0,
-                      child: SafeArea(
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 24),
-                          child: _PlayBottomInfo(),
-                        ),
-                      ),
+                      bottom: MediaQuery.of(context).padding.bottom + 24,
+                      child: const _PlayBottomInfo(),
                     ),
 
                     // ── Mute button ──────────────────────
@@ -230,16 +227,47 @@ class _PlayViewState extends State<_PlayView> {
                     // ── Progress bar ──────────────────────
                     _controllerReady && _videoController != null
                         ? Positioned(
-                            bottom: 0,
+                            bottom: MediaQuery.of(context).padding.bottom / 2,
                             left: 0,
                             right: 0,
-                            child: VideoProgressIndicator(
-                              _videoController!,
-                              allowScrubbing: true,
-                              colors: VideoProgressColors(
-                                playedColor: ColorName.accent,
-                                bufferedColor: Colors.white24,
-                                backgroundColor: Colors.white12,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onHorizontalDragStart: (details) {
+                                final box = _progressKey.currentContext!.findRenderObject() as RenderBox;
+                                final local = box.globalToLocal(details.globalPosition);
+                                final position = (local.dx / box.size.width).clamp(0.0, 1.0);
+                                final duration = _videoController!.value.duration;
+                                _videoController!.seekTo(duration * position);
+                              },
+                              onHorizontalDragUpdate: (details) {
+                                final box = _progressKey.currentContext!.findRenderObject() as RenderBox;
+                                final local = box.globalToLocal(details.globalPosition);
+                                final position = (local.dx / box.size.width).clamp(0.0, 1.0);
+                                final duration = _videoController!.value.duration;
+                                _videoController!.seekTo(duration * position);
+                              },
+                              onTapDown: (details) {
+                                final box = _progressKey.currentContext!.findRenderObject() as RenderBox;
+                                final local = box.globalToLocal(details.globalPosition);
+                                final position = (local.dx / box.size.width).clamp(0.0, 1.0);
+                                final duration = _videoController!.value.duration;
+                                _videoController!.seekTo(duration * position);
+                              },
+                              child: SizedBox(
+                                key: _progressKey,
+                                height: 24,
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: VideoProgressIndicator(
+                                    _videoController!,
+                                    allowScrubbing: false,
+                                    colors: VideoProgressColors(
+                                      playedColor: ColorName.accent,
+                                      bufferedColor: Colors.white24,
+                                      backgroundColor: Colors.white12,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           )
@@ -251,7 +279,6 @@ class _PlayViewState extends State<_PlayView> {
                           ),
                   ],
                 ),
-              ),
             );
           },
         ),
@@ -351,6 +378,12 @@ class _TopBar extends StatelessWidget {
 class _ActionColumn extends StatelessWidget {
   const _ActionColumn();
 
+  String _formatCount(int count) {
+    if (count >= 1000000) return '${(count / 1000000).toStringAsFixed(1)}M';
+    if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}K';
+    return count.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PlayBloc>();
@@ -375,7 +408,7 @@ class _ActionColumn extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isLiked ? 'Liked' : 'Like',
+                    bloc.likeCount > 0 ? _formatCount(bloc.likeCount) : '0',
                     style: TextStyle(
                       color: isLiked ? ColorName.accent : Colors.white,
                       fontSize: 11,

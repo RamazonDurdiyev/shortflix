@@ -175,6 +175,32 @@ class MovieRepo {
   }
 
   // **************************************************************************
+  // Rate movie
+  // **************************************************************************
+
+  Future<void> rateMovie({
+    required String movieId,
+    required int rating,
+    required bool isUpdate,
+  }) async {
+    if (await networkInfo.isConnected) {
+      if (isUpdate) {
+        await client.patch(
+          UPDATE_RATE_MOVIE + movieId,
+          data: {"rating": rating},
+        );
+      } else {
+        await client.post(
+          RATE_MOVIE,
+          data: {"movieId": movieId, "rating": rating},
+        );
+      }
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
   // Save movie
   // **************************************************************************
 

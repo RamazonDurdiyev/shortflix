@@ -260,15 +260,25 @@ class _EpisodesContent extends StatelessWidget {
           // ── Meta row ──────────────────────────
           Row(
             children: [
-              Icon(Icons.star_rounded, color: ColorName.accent, size: 14),
-              const SizedBox(width: 4),
-              Text(
-                movie.rating?.toStringAsFixed(1) ?? "",
-                style: TextStyle(
-                  color: ColorName.accent,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+              BlocBuilder<EpisodesBloc, EpisodesState>(
+                buildWhen: (_, state) =>
+                    state is EpisodesRateMovieState || state is EpisodesFetchState,
+                builder: (context, state) {
+                  return Row(
+                    children: [
+                      Icon(Icons.star_rounded, color: ColorName.accent, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        bloc.avgRating.toStringAsFixed(1),
+                        style: TextStyle(
+                          color: ColorName.accent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(width: 12),
               Icon(
@@ -360,6 +370,53 @@ class _EpisodesContent extends StatelessWidget {
                     ],
                   ),
                 ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // ── Rate movie ──────────────────────
+          BlocBuilder<EpisodesBloc, EpisodesState>(
+            buildWhen: (_, state) =>
+                state is EpisodesRateMovieState || state is EpisodesFetchState,
+            builder: (context, state) {
+              final userRating = bloc.userRating;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userRating > 0 ? 'Your rating' : 'Rate this movie',
+                    style: TextStyle(
+                      color: ColorName.contentSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: List.generate(5, (index) {
+                      final starIndex = index + 1;
+                      return GestureDetector(
+                        onTap: () => bloc.add(EpisodesRateMovieEvent(
+                          movieId: movie.id ?? '',
+                          rating: starIndex,
+                        )),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Icon(
+                            starIndex <= userRating
+                                ? Icons.star_rounded
+                                : Icons.star_border_rounded,
+                            color: starIndex <= userRating
+                                ? ColorName.accent
+                                : ColorName.contentSecondary,
+                            size: 32,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ],
               );
             },
           ),

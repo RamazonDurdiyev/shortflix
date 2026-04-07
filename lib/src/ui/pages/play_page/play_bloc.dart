@@ -55,6 +55,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   String movieId       = '';
   List<EpisodeDetailsModel>? episode;
   int commentCount = 0;
+  int likeCount = 0;
   List<CommentModel> comments = [];
 
   // ─────────────────────────────────────────
@@ -69,6 +70,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       isLiked = episode?[0].isLiked ?? false;
       isSaved = episode?[0].isSaved ?? false;
       commentCount = episode?[0].commentCount ?? 0;
+      likeCount = episode?[0].likeCount ?? 0;
       isPlaying = true;
       emit(FetchEpisodeState(state: BaseState.loaded));
     } catch (e) {
@@ -83,10 +85,12 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   Future<void> _likeEpisode(Emitter<PlayState> emit, String episodeId) async {
     try {
       isLiked = !isLiked;
+      likeCount += isLiked ? 1 : -1;
       emit(PlayLikeState(state: BaseState.loaded, isLiked: isLiked));
       await movieRepo.likeEpisode(episodeId);
     } catch (e) {
       isLiked = !isLiked;
+      likeCount += isLiked ? 1 : -1;
       emit(PlayLikeState(state: BaseState.error, isLiked: isLiked));
       printDebug('PlayBloc _likeEpisode error => $e');
     }

@@ -13,7 +13,8 @@ MovieModel _$MovieModelFromJson(Map<String, dynamic> json) => MovieModel(
       ? null
       : CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
   releaseYear: (json['releaseYear'] as num?)?.toInt(),
-  rating: (json['rating'] as num?)?.toDouble(),
+  averageRating: (json['averageRating'] as num?)?.toDouble(),
+  currentUserRating: (json['currentUserRating'] as num?)?.toInt(),
   media: json['imageUrl'] as String?,
 );
 
@@ -23,7 +24,8 @@ Map<String, dynamic> _$MovieModelToJson(MovieModel instance) =>
       'title': instance.title,
       'category': instance.category,
       'releaseYear': instance.releaseYear,
-      'rating': instance.rating,
+      'averageRating': instance.averageRating,
+      'currentUserRating': instance.currentUserRating,
       'imageUrl': instance.media,
     };
 
@@ -36,7 +38,8 @@ MovieDetailsModel _$MovieDetailsModelFromJson(Map<String, dynamic> json) =>
           ? null
           : CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
       releaseYear: (json['releaseYear'] as num?)?.toInt(),
-      rating: (json['rating'] as num?)?.toDouble(),
+      averageRating: (json['averageRating'] as num?)?.toDouble(),
+      currentUserRating: (json['currentUserRating'] as num?)?.toInt(),
       media: json['imageUrl'] as String?,
       ageLimit: json['ageLimit'] as String?,
       isLiked: json['isLiked'] as bool?,
@@ -53,7 +56,8 @@ Map<String, dynamic> _$MovieDetailsModelToJson(MovieDetailsModel instance) =>
       'description': instance.description,
       'category': instance.category,
       'releaseYear': instance.releaseYear,
-      'rating': instance.rating,
+      'averageRating': instance.averageRating,
+      'currentUserRating': instance.currentUserRating,
       'imageUrl': instance.media,
       'ageLimit': instance.ageLimit,
       'isLiked': instance.isLiked,
@@ -108,6 +112,8 @@ EpisodeDetailsModel _$EpisodeDetailsModelFromJson(Map<String, dynamic> json) =>
       isSaved: json['isSaved'] as bool?,
       commentCount: (json['commentCount'] as num?)?.toInt(),
       canEdit: json['canEdit'] as bool?,
+      likeCount: (json['likeCount'] as num?)?.toInt(),
+      viewCount: (json['viewCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$EpisodeDetailsModelToJson(
@@ -127,4 +133,6 @@ Map<String, dynamic> _$EpisodeDetailsModelToJson(
   'isSaved': instance.isSaved,
   'commentCount': instance.commentCount,
   'canEdit': instance.canEdit,
+  'likeCount': instance.likeCount,
+  'viewCount': instance.viewCount,
 };

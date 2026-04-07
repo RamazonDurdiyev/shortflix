@@ -109,7 +109,7 @@ class _MovieCard extends StatelessWidget {
               const Icon(Icons.star_rounded, color: ColorName.accent, size: 11),
               const SizedBox(width: 2),
               Text(
-                movie.rating.toString(),
+                movie.averageRating.toString(),
                 style: const TextStyle(color: ColorName.accent, fontSize: 10, fontWeight: FontWeight.bold),
               ),
             ],

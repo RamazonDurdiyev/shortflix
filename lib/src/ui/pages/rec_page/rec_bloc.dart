@@ -53,6 +53,7 @@ class RecBloc extends Bloc<RecEvent, RecState> {
   bool isMuted = false;
   bool isLiked = false;
   bool isSaved = false;
+  int likeCount = 0;
   List<CommentModel> comments = [];
 
   EpisodeDetailsModel? get currentShort =>
@@ -63,6 +64,7 @@ class RecBloc extends Bloc<RecEvent, RecState> {
   void _syncLikeSave() {
     isLiked = currentShort?.isLiked ?? false;
     isSaved = currentShort?.isSaved ?? false;
+    likeCount = currentShort?.likeCount ?? 0;
   }
 
   Future<void> _fetchShort(Emitter<RecState> emit) async {
@@ -88,10 +90,12 @@ class RecBloc extends Bloc<RecEvent, RecState> {
   Future<void> _likeEpisode(Emitter<RecState> emit, String episodeId) async {
     try {
       isLiked = !isLiked;
+      likeCount += isLiked ? 1 : -1;
       emit(RecLikeState());
       await movieRepo.likeEpisode(episodeId);
     } catch (e) {
       isLiked = !isLiked;
+      likeCount += isLiked ? 1 : -1;
       emit(RecLikeState());
       printDebug('RecBloc _likeEpisode error => $e');
     }

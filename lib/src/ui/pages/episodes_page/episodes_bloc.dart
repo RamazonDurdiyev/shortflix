@@ -22,12 +22,18 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
     on<EpisodesSaveMovieEvent>((event, emit) async {
       await _saveMovie(emit, event.movieId);
     });
+
+    on<EpisodesRateMovieEvent>((event, emit) async {
+      await _rateMovie(emit, event.movieId, event.rating);
+    });
   }
 
   MovieDetailsModel? movie;
   List<EpisodeModel> episodes = [];
   int selectedSeason = 1;
   bool isSaved = false;
+  int userRating = 0;
+  double avgRating = 0;
 
   // ─────────────────────────────────────────
   //  Unique seasons derived from episodes
@@ -53,6 +59,8 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
       movie = await movieRepo.fetchMovieDetails(movieId);
       episodes = await movieRepo.fetchEpisodes(movieId);
       isSaved = movie?.isSaved ?? false;
+      userRating = movie?.currentUserRating ?? 0;
+      avgRating = movie?.averageRating ?? 0;
       if (seasons.isNotEmpty) selectedSeason = seasons.first ?? 0;
       emit(EpisodesFetchState(state: BaseState.loaded));
     } catch (e) {
@@ -73,6 +81,22 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
       isSaved = !isSaved;
       emit(EpisodesSaveMovieState(state: BaseState.error, isSaved: isSaved));
       printDebug('EpisodesBloc _saveMovie error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  RATE MOVIE
+  // ─────────────────────────────────────────
+  Future<void> _rateMovie(Emitter<EpisodesState> emit, String movieId, int rating) async {
+    final oldRating = userRating;
+    try {
+      userRating = rating;
+      emit(EpisodesRateMovieState(state: BaseState.loaded, rating: rating));
+      await movieRepo.rateMovie(movieId: movieId, rating: rating, isUpdate: oldRating > 0);
+    } catch (e) {
+      userRating = oldRating;
+      emit(EpisodesRateMovieState(state: BaseState.error, rating: oldRating));
+      printDebug('EpisodesBloc _rateMovie error => $e');
     }
   }
 }

@@ -5,6 +5,10 @@ const int CONNECT_TIME_OUT = 30000;
 const int SEND_TIME_OUT = 30000;
 const int RECEIVE_TIME_OUT = 30000;
 
+// User
+
+const GET_USER = "/api/users/me";
+
 // Categories
 
 const CATEGORIES = "/api/categories";
@@ -25,6 +29,8 @@ const GET_MOVIE_DETAILS = "/api/movies/";
 const GET_BANNERS = "/api/movies/banner";
 const CREATE_MOVIE = "/api/movies";
 const SAVE_MOVIE = "/api/movies/save/";
+const RATE_MOVIE = "/api/ratings";
+const UPDATE_RATE_MOVIE = "/api/ratings/movies/";
 const SAVED_MOVIES = "/api/users/me/saved";
 
 // Episodes

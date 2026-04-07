@@ -9,8 +9,10 @@ class BannerModel {
   final String title;
   final CategoryModel category;
   final String? imageUrl;
+  final double? averageRating;
+  final int? currentUserRating;
 
-  BannerModel({required this.id, required this.title, required this.category, this.imageUrl});
+  BannerModel({required this.id, required this.title, required this.category, this.imageUrl, this.averageRating, this.currentUserRating});
 
    factory BannerModel.fromJson(Map<String, dynamic> data) =>
       _$BannerModelFromJson(data);

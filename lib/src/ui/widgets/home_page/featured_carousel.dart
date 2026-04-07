@@ -35,7 +35,19 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
             itemBuilder: (context, index) {
               final item = widget.banners[index];
               final isActive = index == _currentPage;
-              return AnimatedContainer(
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    generateRoutes(
+                      RouteSettings(
+                        name: Navigation.episodesPage,
+                        arguments: item.id,
+                      ),
+                    )!,
+                  );
+                },
+                child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOutCubic,
                 margin: EdgeInsets.symmetric(
@@ -113,36 +125,41 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              _CarouselButton(
-                                icon: Icons.play_arrow_rounded,
-                                label: 'Play',
-                                filled: true,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    generateRoutes(
-                                      RouteSettings(name: Navigation.playPage),
-                                    )!,
-                                  );
-                                },
+                          if (item.averageRating != null && item.averageRating! > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Row(
+                                children: [
+                                  ...List.generate(5, (i) {
+                                    final rating = item.averageRating!;
+                                    return Icon(
+                                      i < rating.floor()
+                                          ? Icons.star_rounded
+                                          : (i < rating
+                                              ? Icons.star_half_rounded
+                                              : Icons.star_border_rounded),
+                                      color: Colors.amber,
+                                      size: 16,
+                                    );
+                                  }),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item.averageRating!.toStringAsFixed(1),
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: .8),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              _CarouselButton(
-                                icon: Icons.add_rounded,
-                                label: 'Watchlist',
-                                filled: false,
-                                onTap: () {},
-                              ),
-                            ],
-                          ),
+                            ),
                         ],
                       ),
                     ),
                   ],
                 ),
+              ),
               );
             },
           ),
@@ -166,51 +183,6 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
           }),
         ),
       ],
-    );
-  }
-}
-
-class _CarouselButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool filled;
-  final Function()? onTap;
-  const _CarouselButton({
-    required this.icon,
-    required this.label,
-    required this.filled,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: filled ? Colors.white : Colors.white.withValues(alpha: .15),
-          borderRadius: BorderRadius.circular(8),
-          border: filled
-              ? null
-              : Border.all(color: Colors.white.withValues(alpha: .3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: filled ? Colors.black : Colors.white, size: 16),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: filled ? Colors.black : Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

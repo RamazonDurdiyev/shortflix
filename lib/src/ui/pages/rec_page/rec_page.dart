@@ -399,6 +399,12 @@ class _ActionColumn extends StatelessWidget {
   final EpisodeDetailsModel short;
   const _ActionColumn({required this.short});
 
+  String _formatCount(int count) {
+    if (count >= 1000000) return '${(count / 1000000).toStringAsFixed(1)}M';
+    if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}K';
+    return count.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<RecBloc>();
@@ -426,7 +432,7 @@ class _ActionColumn extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isLiked ? 'Liked' : 'Like',
+                    bloc.likeCount > 0 ? _formatCount(bloc.likeCount) : '0',
                     style: TextStyle(
                       color: isLiked ? ColorName.accent : Colors.white,
                       fontSize: 11,

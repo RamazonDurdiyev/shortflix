@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
@@ -112,6 +114,8 @@ class _HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<_HomeContent> {
   final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -124,8 +128,17 @@ class _HomeContentState extends State<_HomeContent> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      _onSearch(query);
+    });
   }
 
   void _onSearch(String query) {
@@ -159,8 +172,11 @@ class _HomeContentState extends State<_HomeContent> {
                 child: _SearchBar(
                   controller: _searchController,
                   onSearch: _onSearch,
+                  onChanged: _onSearchChanged,
+                  focusNode: _searchFocusNode,
                   onClear: () {
                     _searchController.clear();
+                    _searchFocusNode.unfocus();
                     homeBloc.add(ClearSearchEvent());
                   },
                   isSearching: isSearching,
@@ -447,13 +463,17 @@ class _Header extends StatelessWidget {
 // ─────────────────────────────────────────
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode focusNode;
   final ValueChanged<String> onSearch;
+  final ValueChanged<String> onChanged;
   final VoidCallback onClear;
   final bool isSearching;
 
   const _SearchBar({
     required this.controller,
+    required this.focusNode,
     required this.onSearch,
+    required this.onChanged,
     required this.onClear,
     required this.isSearching,
   });
@@ -477,6 +497,8 @@ class _SearchBar extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: controller,
+                focusNode: focusNode,
+                onChanged: onChanged,
                 onSubmitted: onSearch,
                 style: const TextStyle(
                   color: ColorName.contentPrimary,
@@ -504,26 +526,6 @@ class _SearchBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.close_rounded, color: Colors.white, size: 18),
-                ),
-              )
-            else
-              GestureDetector(
-                onTap: () => onSearch(controller.text),
-                child: Container(
-                  margin: const EdgeInsets.all(6),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: ColorName.accent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'Go',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
                 ),
               ),
           ],
