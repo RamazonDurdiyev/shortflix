@@ -36,6 +36,8 @@ class _PlayViewState extends State<_PlayView> {
   VideoPlayerController? _videoController;
   bool _controllerReady = false;
   bool _showPlayIcon = false;
+  bool _showHeart = false;
+  Offset? _heartPosition;
   final _progressKey = GlobalKey();
 
   @override
@@ -72,6 +74,24 @@ class _PlayViewState extends State<_PlayView> {
 
   void _togglePlayPause() {
     context.read<PlayBloc>().add(PlayTogglePlayPauseEvent());
+  }
+
+  void _onDoubleTapDown(TapDownDetails details) {
+    _heartPosition = details.localPosition;
+  }
+
+  void _onDoubleTap() {
+    final bloc = context.read<PlayBloc>();
+    final episodeId = bloc.episode?[0].id ?? '';
+    if (episodeId.isEmpty) return;
+    // Only fire like if not already liked — double tap never unlikes.
+    if (!bloc.isLiked) {
+      bloc.add(PlayLikeMovieEvent(movieId: episodeId));
+    }
+    setState(() => _showHeart = true);
+    Future.delayed(const Duration(milliseconds: 700), () {
+      if (mounted) setState(() => _showHeart = false);
+    });
   }
 
   void _onPlayToggle(bool isPlaying) {
@@ -158,6 +178,8 @@ class _PlayViewState extends State<_PlayView> {
                     // ── Video / black bg ──────────────────
                     GestureDetector(
                       onTap: _togglePlayPause,
+                      onDoubleTapDown: _onDoubleTapDown,
+                      onDoubleTap: _onDoubleTap,
                       child: _controllerReady && _videoController != null
                           ? SizedBox.expand(
                               child: FittedBox(
@@ -172,6 +194,9 @@ class _PlayViewState extends State<_PlayView> {
                           : const ColoredBox(
                               color: Colors.black, child: SizedBox.expand()),
                     ),
+
+                    // ── Double-tap heart animation ───────
+                    _buildDoubleTapHeart(),
 
                     // ── Top bar ───────────────────────────
                     const _TopBar(),
@@ -281,6 +306,33 @@ class _PlayViewState extends State<_PlayView> {
                 ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoubleTapHeart() {
+    if (_heartPosition == null) return const SizedBox.shrink();
+    return Positioned(
+      left: _heartPosition!.dx - 60,
+      top: _heartPosition!.dy - 60,
+      child: IgnorePointer(
+        child: AnimatedScale(
+          scale: _showHeart ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.elasticOut,
+          child: AnimatedOpacity(
+            opacity: _showHeart ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 250),
+            child: Icon(
+              Icons.favorite_rounded,
+              color: ColorName.accent,
+              size: 120,
+              shadows: const [
+                Shadow(color: Colors.black54, blurRadius: 12),
+              ],
+            ),
+          ),
         ),
       ),
     );

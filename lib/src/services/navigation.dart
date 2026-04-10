@@ -15,6 +15,7 @@ class Navigation {
   static const String episodesPage = "/episodes";
   static const String notificationsPage = "/notifications_page";
   static const String profilePage = "/profile_page";
+  static const String editProfilePage = "/edit_profile_page";
   static const String playPage = "/play_page";
   static const String libraryPage = "/playlists_page";
   static const String recPage = "/rec_page";

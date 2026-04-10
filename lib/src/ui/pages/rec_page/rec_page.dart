@@ -99,6 +99,8 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
   final Map<int, VideoPlayerController> _controllers = {};
   int _currentPage = 0;
   bool _showPlayIcon = false;
+  bool _showHeart = false;
+  Offset? _heartPosition;
 
   @override
   void initState() {
@@ -162,6 +164,23 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
 
   void _togglePlayPause() {
     context.read<RecBloc>().add(RecTogglePlayPauseEvent());
+  }
+
+  void _onDoubleTapDown(TapDownDetails details) {
+    _heartPosition = details.localPosition;
+  }
+
+  void _onDoubleTap(String episodeId) {
+    if (episodeId.isEmpty) return;
+    final bloc = context.read<RecBloc>();
+    // Only fire like if not already liked — double tap never unlikes.
+    if (!bloc.isLiked) {
+      bloc.add(RecLikeEvent(episodeId: episodeId));
+    }
+    setState(() => _showHeart = true);
+    Future.delayed(const Duration(milliseconds: 700), () {
+      if (mounted) setState(() => _showHeart = false);
+    });
   }
 
   @override
@@ -241,6 +260,8 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
 
           return GestureDetector(
             onTap: _togglePlayPause,
+            onDoubleTapDown: _onDoubleTapDown,
+            onDoubleTap: () => _onDoubleTap(short.id ?? ''),
             child: SizedBox.expand(
               child: Stack(
                 children: [
@@ -258,6 +279,9 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
                         )
                       : const ColoredBox(
                           color: Colors.black, child: SizedBox.expand()),
+
+                  // ── Double-tap heart animation ─
+                  _buildDoubleTapHeart(),
 
                   // ── Top bar ────────────────────
                   SafeArea(
@@ -356,6 +380,33 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildDoubleTapHeart() {
+    if (_heartPosition == null) return const SizedBox.shrink();
+    return Positioned(
+      left: _heartPosition!.dx - 60,
+      top: _heartPosition!.dy - 60,
+      child: IgnorePointer(
+        child: AnimatedScale(
+          scale: _showHeart ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.elasticOut,
+          child: AnimatedOpacity(
+            opacity: _showHeart ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 250),
+            child: Icon(
+              Icons.favorite_rounded,
+              color: ColorName.accent,
+              size: 120,
+              shadows: const [
+                Shadow(color: Colors.black54, blurRadius: 12),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

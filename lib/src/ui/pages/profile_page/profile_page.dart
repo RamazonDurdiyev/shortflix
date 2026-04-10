@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/src/models/user_model/user_model.dart';
+import 'package:shortflix/src/services/navigation.dart';
+import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
+import 'package:shortflix/src/ui/pages/profile_page/profile_event.dart';
+import 'package:shortflix/src/ui/pages/profile_page/profile_state.dart';
 
 // ─────────────────────────────────────────
 //  PROFILE PAGE
@@ -9,56 +17,98 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider<ProfileBloc>(
+      create: (_) =>
+          ProfileBloc(userRepo: GetIt.instance.get())..add(FetchUserEvent()),
+      child: const _ProfileView(),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+//  PROFILE VIEW
+// ─────────────────────────────────────────
+class _ProfileView extends StatelessWidget {
+  const _ProfileView();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildTopBar(context),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  _buildProfileHeader(),
-                  _buildStatsRow(),
-                  const SizedBox(height: 8),
-                  _buildSectionTitle('Account'),
-                  _buildMenuGroup([
-                    _MenuItem(
-                      icon: Icons.person_outline_rounded,
-                      label: 'Edit Profile',
-                    ),
-                    _MenuItem(
-                      icon: Icons.lock_outline_rounded,
-                      label: 'Privacy & Security',
-                    ),
-                    _MenuItem(
-                      icon: Icons.language_rounded,
-                      label: 'Language',
-                      trailing: _buildValueLabel('English'),
-                    ),
-                  ]),
-                  _buildSectionTitle('Support'),
-                  _buildMenuGroup([
-                    _MenuItem(
-                      icon: Icons.help_outline_rounded,
-                      label: 'Help Center',
-                    ),
-                    _MenuItem(
-                      icon: Icons.info_outline_rounded,
-                      label: 'About',
-                    ),
-                  ]),
-                  const SizedBox(height: 16),
-                  _buildLogoutButton(),
-                  const SizedBox(height: 8),
-                  _buildVersionLabel(),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
-          ],
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          buildWhen: (_, state) => state is FetchUserState,
+          builder: (context, state) {
+            final profileBloc = context.read<ProfileBloc>();
+            final isLoading =
+                state is FetchUserState && state.state == BaseState.loading;
+            final user = profileBloc.user;
+
+            Future<void> openEditProfile() async {
+              final result = await Navigator.pushNamed(
+                context,
+                Navigation.editProfilePage,
+                arguments: profileBloc.user,
+              );
+              if (result == true) {
+                profileBloc.add(FetchUserEvent());
+              }
+            }
+
+            return Column(
+              children: [
+                _buildTopBar(context),
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _buildProfileHeader(
+                        user: user,
+                        isLoading: isLoading,
+                        onEditTap: openEditProfile,
+                      ),
+                      _buildStatsRow(),
+                      const SizedBox(height: 8),
+                      _buildSectionTitle('Account'),
+                      _buildMenuGroup([
+                        _MenuItem(
+                          icon: Icons.person_outline_rounded,
+                          label: 'Edit Profile',
+                          onTap: openEditProfile,
+                        ),
+                        _MenuItem(
+                          icon: Icons.lock_outline_rounded,
+                          label: 'Privacy & Security',
+                        ),
+                        _MenuItem(
+                          icon: Icons.language_rounded,
+                          label: 'Language',
+                          trailing: _buildValueLabel('English'),
+                        ),
+                      ]),
+                      _buildSectionTitle('Support'),
+                      _buildMenuGroup([
+                        _MenuItem(
+                          icon: Icons.help_outline_rounded,
+                          label: 'Help Center',
+                        ),
+                        _MenuItem(
+                          icon: Icons.info_outline_rounded,
+                          label: 'About',
+                        ),
+                      ]),
+                      const SizedBox(height: 16),
+                      _buildLogoutButton(),
+                      const SizedBox(height: 8),
+                      _buildVersionLabel(),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -72,11 +122,13 @@ class _MenuItem {
   final IconData icon;
   final String label;
   final Widget? trailing;
+  final VoidCallback? onTap;
 
   const _MenuItem({
     required this.icon,
     required this.label,
     this.trailing,
+    this.onTap,
   });
 }
 
@@ -125,7 +177,17 @@ Widget _buildTopBar(BuildContext context) {
 // ─────────────────────────────────────────
 //  PROFILE HEADER
 // ─────────────────────────────────────────
-Widget _buildProfileHeader() {
+Widget _buildProfileHeader({
+  required UserModel? user,
+  required bool isLoading,
+  required VoidCallback onEditTap,
+}) {
+  final fullName = user?.fullName ?? (isLoading ? '...' : 'Someone');
+  final email = user?.email ?? (isLoading ? '...' : 'someone@email.com');
+  final initial =
+      (fullName.isNotEmpty ? fullName.trim()[0] : 'S').toUpperCase();
+  final avatarUrl = user?.avatar;
+
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     child: Row(
@@ -140,26 +202,34 @@ Widget _buildProfileHeader() {
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(20),
+            image: (avatarUrl != null && avatarUrl.isNotEmpty)
+                ? DecorationImage(
+                    image: NetworkImage(avatarUrl),
+                    fit: BoxFit.cover,
+                  )
+                : null,
           ),
-          child: const Center(
-            child: Text(
-              'S',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          child: (avatarUrl == null || avatarUrl.isEmpty)
+              ? Center(
+                  child: Text(
+                    initial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              : null,
         ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Someone',
-                style: TextStyle(
+              Text(
+                fullName,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -168,7 +238,7 @@ Widget _buildProfileHeader() {
               ),
               const SizedBox(height: 4),
               Text(
-                'someone@email.com',
+                email,
                 style: TextStyle(
                   color: ColorName.contentSecondary,
                   fontSize: 13,
@@ -203,7 +273,7 @@ Widget _buildProfileHeader() {
           ),
         ),
         GestureDetector(
-          onTap: () {},
+          onTap: onEditTap,
           child: Container(
             width: 36,
             height: 36,
@@ -337,9 +407,8 @@ Widget _buildMenuGroup(List<_MenuItem> items) {
 }
 
 Widget _buildMenuItem(_MenuItem item) {
-  Colors.white;
   return GestureDetector(
-    onTap: () {},
+    onTap: item.onTap ?? () {},
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(

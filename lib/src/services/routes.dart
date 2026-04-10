@@ -23,8 +23,10 @@ import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart'
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_page.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_page.dart';
-import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
+import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_bloc.dart';
+import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_page.dart';
+import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_page.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_bloc.dart';
@@ -89,11 +91,17 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       );
 
     case Navigation.profilePage:
+      return buildRoute(settings, const ProfilePage());
+
+    case Navigation.editProfilePage:
       return buildRoute(
         settings,
-        BlocProvider<ProfileBloc>(
-          create: (_) => ProfileBloc(),
-          child: const ProfilePage(),
+        BlocProvider<EditProfileBloc>(
+          create: (_) => EditProfileBloc(
+            userRepo: GetIt.instance.get(),
+            movieRepo: GetIt.instance.get(),
+          ),
+          child: EditProfilePage(user: args as UserModel?),
         ),
       );
 

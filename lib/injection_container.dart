@@ -9,6 +9,7 @@ import 'package:shortflix/core/network/network_interceptor.dart';
 import 'package:shortflix/src/repository/category_repo/category_repo.dart';
 import 'package:shortflix/src/repository/auth_repo/auth_repo.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
+import 'package:shortflix/src/repository/user_repo/user_repo.dart';
 
 // Dependency injection file
 
@@ -62,6 +63,13 @@ Future<void> init() async {
   );
     sl.registerLazySingleton(
     () => MovieRepo(
+      networkInfo: sl.get(),
+      client: sl.get(),
+      localStorage: hiveBox,
+    ),
+  );
+    sl.registerLazySingleton(
+    () => UserRepo(
       networkInfo: sl.get(),
       client: sl.get(),
       localStorage: hiveBox,
