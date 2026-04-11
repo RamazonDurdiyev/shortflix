@@ -17,3 +17,10 @@ class SignUpSubmitState extends SignUpState {
   @override
   List<Object?> get props => [state, email];
 }
+
+class SignUpGoogleState extends SignUpState {
+  final BaseState state;
+  SignUpGoogleState({required this.state});
+  @override
+  List<Object?> get props => [state];
+}

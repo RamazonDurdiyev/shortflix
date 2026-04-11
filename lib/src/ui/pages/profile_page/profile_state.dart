@@ -15,3 +15,11 @@ class FetchUserState extends ProfileState{
   @override
   List<Object?> get props => [state];
 }
+
+class LogoutState extends ProfileState{
+  final BaseState state;
+
+  LogoutState({required this.state});
+  @override
+  List<Object?> get props => [state];
+}

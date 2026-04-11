@@ -5,6 +5,7 @@ import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
+import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_event.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_state.dart';
@@ -18,8 +19,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProfileBloc>(
-      create: (_) =>
-          ProfileBloc(userRepo: GetIt.instance.get())..add(FetchUserEvent()),
+      create: (_) => ProfileBloc(
+        userRepo: GetIt.instance.get(),
+        authRepo: GetIt.instance.get(),
+      )..add(FetchUserEvent()),
       child: const _ProfileView(),
     );
   }
@@ -33,7 +36,30 @@ class _ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<ProfileBloc, ProfileState>(
+      listenWhen: (_, state) => state is LogoutState,
+      listener: (context, state) {
+        if (state is LogoutState && state.state == BaseState.loaded) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            generateRoutes(RouteSettings(name: Navigation.signInPage))!,
+            (_) => false,
+          );
+        }
+        if (state is LogoutState && state.state == BaseState.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Logout failed. Please try again.'),
+              backgroundColor: Colors.redAccent,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+      },
+      child: Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       body: SafeArea(
         child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -99,7 +125,7 @@ class _ProfileView extends StatelessWidget {
                         ),
                       ]),
                       const SizedBox(height: 16),
-                      _buildLogoutButton(),
+                      _buildLogoutButton(context, profileBloc),
                       const SizedBox(height: 8),
                       _buildVersionLabel(),
                       const SizedBox(height: 32),
@@ -111,6 +137,7 @@ class _ProfileView extends StatelessWidget {
           },
         ),
       ),
+    ),
     );
   }
 }
@@ -458,34 +485,103 @@ Widget _buildValueLabel(String value) {
 // ─────────────────────────────────────────
 //  LOGOUT BUTTON
 // ─────────────────────────────────────────
-Widget _buildLogoutButton() {
+Widget _buildLogoutButton(BuildContext context, ProfileBloc profileBloc) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: GestureDetector(
-      onTap: () {},
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          color: ColorName.accent.withValues(alpha: .08),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: ColorName.accent.withValues(alpha: .3)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.logout_rounded, color: ColorName.accent, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              'Log Out',
-              style: TextStyle(
-                color: ColorName.accent,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+    child: BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (_, state) => state is LogoutState,
+      builder: (context, state) {
+        final isLoading =
+            state is LogoutState && state.state == BaseState.loading;
+
+        return GestureDetector(
+          onTap: isLoading
+              ? null
+              : () async {
+                  final confirmed = await _confirmLogout(context);
+                  if (confirmed == true) {
+                    profileBloc.add(LogoutEvent());
+                  }
+                },
+          child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: ColorName.accent.withValues(alpha: .08),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ColorName.accent.withValues(alpha: .3)),
             ),
-          ],
-        ),
+            child: isLoading
+                ? Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: ColorName.accent,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.logout_rounded,
+                        color: ColorName.accent,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Log Out',
+                        style: TextStyle(
+                          color: ColorName.accent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Future<bool?> _confirmLogout(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: ColorName.backgroundSecondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
+      title: const Text(
+        'Log out?',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        'You will need to sign in again to continue watching.',
+        style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: ColorName.contentSecondary),
+          ),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: Text(
+            'Log Out',
+            style: TextStyle(
+              color: ColorName.accent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

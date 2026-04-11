@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.shortflix"
+    namespace = "com.mpmg.shortflix"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

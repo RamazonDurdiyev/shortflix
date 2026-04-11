@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -11,9 +14,27 @@ import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await _init();
-  runApp(const MyApp());
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    FlutterError.onError = (FlutterErrorDetails details) {
+      debugPrint('[FlutterError] ${details.exception}');
+      debugPrint('${details.stack}');
+      FlutterError.presentError(details);
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      debugPrint('[PlatformDispatcher] $error');
+      debugPrint('$stack');
+      return true;
+    };
+
+    await _init();
+    runApp(const MyApp());
+  }, (error, stack) {
+    debugPrint('[runZonedGuarded] $error');
+    debugPrint('$stack');
+  });
 }
 
 Future<void> _init() async {

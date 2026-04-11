@@ -322,7 +322,15 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
                     child: SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 24),
-                        child: EpisodeBottomInfo(episode: short),
+                        child: EpisodeBottomInfo(
+                          episode: short,
+                          onMoviePressed: () {
+                            final bloc = context.read<RecBloc>();
+                            if (bloc.isPlaying) {
+                              bloc.add(RecTogglePlayPauseEvent());
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),

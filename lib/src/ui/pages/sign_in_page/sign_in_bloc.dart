@@ -12,6 +12,23 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     on<SignInSubmitEvent>((event, emit) async {
       await _signIn(emit, event);
     });
+    on<SignInGoogleEvent>((event, emit) async {
+      await _signInWithGoogle(emit);
+    });
+  }
+
+  Future<void> _signInWithGoogle(Emitter<SignInState> emit) async {
+    try {
+      emit(SignInGoogleState(state: BaseState.loading));
+      await authRepo.signInWithGoogle();
+      emit(SignInGoogleState(state: BaseState.loaded));
+    } on GoogleSignInCancelledException {
+      emit(SignInGoogleState(state: BaseState.initial));
+    } catch (e, st) {
+      emit(SignInGoogleState(state: BaseState.error));
+      printDebug('SignInBloc _signInWithGoogle error => $e');
+      printDebug(st);
+    }
   }
 
   Future<void> _signIn(Emitter<SignInState> emit, SignInSubmitEvent event) async {

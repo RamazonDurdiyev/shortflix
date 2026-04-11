@@ -6,3 +6,8 @@ class FetchUserEvent extends ProfileEvent{
   @override
   List<Object?> get props => [];
 }
+
+class LogoutEvent extends ProfileEvent{
+  @override
+  List<Object?> get props => [];
+}

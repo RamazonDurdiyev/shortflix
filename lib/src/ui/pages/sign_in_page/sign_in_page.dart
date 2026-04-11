@@ -59,6 +59,16 @@ class _SignInPageState extends State<SignInPage> {
             arguments: {'email': state.email},
           );
         }
+        if (state is SignInGoogleState && state.state == BaseState.loaded) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            generateRoutes(RouteSettings(name: Navigation.homePage))!,
+            (_) => false,
+          );
+        }
+        if (state is SignInGoogleState && state.state == BaseState.error) {
+          _showSnackbar(context, 'Google sign-in failed. Please try again.');
+        }
       },
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
@@ -126,6 +136,10 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 const SizedBox(height: 28),
                 _buildSignInButton(bloc),
+                const SizedBox(height: 20),
+                _buildDivider(),
+                const SizedBox(height: 20),
+                _buildGoogleButton(bloc),
                 const SizedBox(height: 32),
                 _buildSignUpRow(context),
                 const SizedBox(height: 24),
@@ -245,6 +259,103 @@ class _SignInPageState extends State<SignInPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ─────────────────────────────────────────
+  //  DIVIDER (OR)
+  // ─────────────────────────────────────────
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(height: 1, color: ColorName.surfaceSecondary),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'OR',
+            style: TextStyle(
+              color: ColorName.contentSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(height: 1, color: ColorName.surfaceSecondary),
+        ),
+      ],
+    );
+  }
+
+  // ─────────────────────────────────────────
+  //  GOOGLE BUTTON
+  // ─────────────────────────────────────────
+  Widget _buildGoogleButton(SignInBloc bloc) {
+    return BlocBuilder<SignInBloc, SignInState>(
+      buildWhen: (_, state) => state is SignInGoogleState,
+      builder: (context, state) {
+        final isLoading =
+            state is SignInGoogleState && state.state == BaseState.loading;
+
+        return GestureDetector(
+          onTap: isLoading ? null : () => bloc.add(SignInGoogleEvent()),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 52,
+            decoration: BoxDecoration(
+              color: ColorName.backgroundSecondary,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ColorName.surfaceSecondary),
+            ),
+            child: isLoading
+                ? const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'G',
+                          style: TextStyle(
+                            color: Color(0xFF4285F4),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Continue with Google',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
           ),
         );

@@ -125,6 +125,12 @@ class EpisodeDetailsModel {
   final int? duration;
   @JsonKey(readValue: _readMovieId)
   final String? movieId;
+  @JsonKey(readValue: _readMovieTitle)
+  final String? movieTitle;
+  @JsonKey(readValue: _readMovieImage)
+  final String? movieImageUrl;
+  @JsonKey(readValue: _readMovieCategory)
+  final String? movieCategoryName;
   final bool? watched;
   final bool? isLiked;
   final bool? isSaved;
@@ -144,6 +150,9 @@ class EpisodeDetailsModel {
     required this.videoUrl,
     required this.duration,
     required this.movieId,
+    this.movieTitle,
+    this.movieImageUrl,
+    this.movieCategoryName,
     this.isLiked,
     this.isSaved,
     this.commentCount,
@@ -155,6 +164,28 @@ class EpisodeDetailsModel {
   static Object? _readMovieId(Map json, String key) {
     if (json['movieId'] != null) return json['movieId'];
     if (json['movie'] is Map) return (json['movie'] as Map)['id'];
+    return null;
+  }
+
+  static Object? _readMovieTitle(Map json, String key) {
+    if (json['movie'] is Map) return (json['movie'] as Map)['title'];
+    return json['movieTitle'];
+  }
+
+  static Object? _readMovieImage(Map json, String key) {
+    if (json['movie'] is Map) {
+      final m = json['movie'] as Map;
+      return m['imageUrl'] ?? m['media'];
+    }
+    return json['movieImageUrl'];
+  }
+
+  static Object? _readMovieCategory(Map json, String key) {
+    if (json['movie'] is Map) {
+      final m = json['movie'] as Map;
+      if (m['category'] is Map) return (m['category'] as Map)['name'];
+      return m['categoryName'];
+    }
     return null;
   }
 

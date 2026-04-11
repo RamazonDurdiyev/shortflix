@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/services/navigation.dart';
+import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_event.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_state.dart';
@@ -100,6 +101,16 @@ class _SignUpPageState extends State<SignUpPage> {
         if (state is SignUpSubmitState && state.state == BaseState.error) {
           _showSnackbar(context, 'Sign up failed. Please try again.');
         }
+        if (state is SignUpGoogleState && state.state == BaseState.loaded) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            generateRoutes(RouteSettings(name: Navigation.homePage))!,
+            (_) => false,
+          );
+        }
+        if (state is SignUpGoogleState && state.state == BaseState.error) {
+          _showSnackbar(context, 'Google sign-in failed. Please try again.');
+        }
       },
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
@@ -172,6 +183,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 28),
 
                 _buildSubmitButton(bloc),
+                const SizedBox(height: 20),
+                _buildDivider(),
+                const SizedBox(height: 20),
+                _buildGoogleButton(bloc),
                 const SizedBox(height: 32),
                 _buildSignInRow(context),
                 const SizedBox(height: 24),
@@ -382,6 +397,103 @@ class _SignUpPageState extends State<SignUpPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ─────────────────────────────────────────
+  //  DIVIDER (OR)
+  // ─────────────────────────────────────────
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(height: 1, color: ColorName.surfaceSecondary),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'OR',
+            style: TextStyle(
+              color: ColorName.contentSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(height: 1, color: ColorName.surfaceSecondary),
+        ),
+      ],
+    );
+  }
+
+  // ─────────────────────────────────────────
+  //  GOOGLE BUTTON
+  // ─────────────────────────────────────────
+  Widget _buildGoogleButton(SignUpBloc bloc) {
+    return BlocBuilder<SignUpBloc, SignUpState>(
+      buildWhen: (_, state) => state is SignUpGoogleState,
+      builder: (context, state) {
+        final isLoading =
+            state is SignUpGoogleState && state.state == BaseState.loading;
+
+        return GestureDetector(
+          onTap: isLoading ? null : () => bloc.add(SignUpGoogleEvent()),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 52,
+            decoration: BoxDecoration(
+              color: ColorName.backgroundSecondary,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ColorName.surfaceSecondary),
+            ),
+            child: isLoading
+                ? const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'G',
+                          style: TextStyle(
+                            color: Color(0xFF4285F4),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Continue with Google',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
           ),
         );

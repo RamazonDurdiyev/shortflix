@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/core/error/exceptions.dart';
@@ -45,6 +48,95 @@ class AuthRepo {
           message.contains('user not found')) {
         throw NotSignedUpException();
       }
+      rethrow;
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  GOOGLE SIGN IN
+  //  1) get idToken from Google on-device
+  //  2) POST /api/auth/google { idToken }
+  //  3) store AuthModel in Hive
+  // ─────────────────────────────────────────
+  Future<void> signInWithGoogle() async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    final googleSignIn = GoogleSignIn(
+      serverClientId: GOOGLE_SERVER_CLIENT_ID,
+      scopes: const ['email', 'profile'],
+    );
+
+    GoogleSignInAccount? account;
+    try {
+      // force a fresh chooser — avoids sticky stale account
+      try {
+        await googleSignIn.signOut();
+      } catch (e) {
+        debugPrint('[GoogleSignIn] signOut pre-clean failed (ignored): $e');
+      }
+
+      debugPrint('[GoogleSignIn] calling signIn()');
+      account = await googleSignIn.signIn();
+      debugPrint('[GoogleSignIn] signIn() returned: ${account?.email}');
+    } on PlatformException catch (e, st) {
+      debugPrint(
+        '[GoogleSignIn] PlatformException code=${e.code} '
+        'message=${e.message} details=${e.details}',
+      );
+      debugPrint(st.toString());
+      throw GoogleSignInFailedException(
+        'Google sign-in failed: ${e.code} ${e.message ?? ''}',
+      );
+    } catch (e, st) {
+      debugPrint('[GoogleSignIn] unexpected error: $e');
+      debugPrint(st.toString());
+      rethrow;
+    }
+
+    if (account == null) throw GoogleSignInCancelledException();
+
+    final GoogleSignInAuthentication googleAuth;
+    try {
+      googleAuth = await account.authentication;
+    } on PlatformException catch (e, st) {
+      debugPrint(
+        '[GoogleSignIn] authentication PlatformException '
+        'code=${e.code} message=${e.message}',
+      );
+      debugPrint(st.toString());
+      throw GoogleSignInFailedException(
+        'Google auth failed: ${e.code} ${e.message ?? ''}',
+      );
+    }
+
+    final idToken = googleAuth.idToken;
+    debugPrint(
+      '[GoogleSignIn] idToken present=${idToken != null} '
+      'length=${idToken?.length ?? 0}',
+    );
+    if (idToken == null || idToken.isEmpty) {
+      throw GoogleSignInFailedException(
+        'Google idToken is null — check that serverClientId matches the '
+        'backend Web OAuth client.',
+      );
+    }
+
+    try {
+      final res = await client.post(
+        GOOGLE_AUTH,
+        data: {'idToken': idToken},
+      );
+
+      final auth = AuthModel.fromJson(
+        Map<String, dynamic>.from(res.data as Map),
+      );
+      await localStorage.put(USER_TOKEN, auth);
+    } on DioException catch (e, st) {
+      debugPrint(
+        '[GoogleSignIn] backend /auth/google failed '
+        'status=${e.response?.statusCode} body=${e.response?.data}',
+      );
+      debugPrint(st.toString());
       rethrow;
     }
   }
@@ -139,4 +231,15 @@ class AuthRepo {
 // ─────────────────────────────────────────
 class NotSignedUpException implements Exception {
   final String message = 'User not signed up';
+}
+
+class GoogleSignInCancelledException implements Exception {
+  final String message = 'Google sign-in cancelled';
+}
+
+class GoogleSignInFailedException implements Exception {
+  final String message;
+  GoogleSignInFailedException(this.message);
+  @override
+  String toString() => 'GoogleSignInFailedException: $message';
 }

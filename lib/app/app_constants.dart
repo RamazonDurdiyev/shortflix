@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-const String BASE_URL = "http://72.62.0.138:5001";
+const String BASE_URL = "https://shortflix.yaxshihayot.uz";
 const int CONNECT_TIME_OUT = 30000;
 const int SEND_TIME_OUT = 30000;
 const int RECEIVE_TIME_OUT = 30000;
@@ -19,6 +19,11 @@ const SIGN_UP = "/api/auth/register";
 const VERIFY_CODE = "/api/auth/verify-otp";
 const REFRESH = "/api/auth/refresh";
 const SEND_CODE = "/api/auth/login";
+const GOOGLE_AUTH = "/api/auth/google";
+
+// Google OAuth Web Client ID (backend GOOGLE_CLIENT_ID — used as serverClientId in Flutter)
+const GOOGLE_SERVER_CLIENT_ID =
+    "702398577621-dc0scstp50fdjihvp72bpusu1u5mmpl1.apps.googleusercontent.com";
 
 // Movies
 

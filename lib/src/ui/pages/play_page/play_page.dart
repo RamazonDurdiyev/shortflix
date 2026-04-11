@@ -216,7 +216,9 @@ class _PlayViewState extends State<_PlayView> {
                       left: 16,
                       right: 80,
                       bottom: MediaQuery.of(context).padding.bottom + 24,
-                      child: const _PlayBottomInfo(),
+                      child: _PlayBottomInfo(
+                        onMoviePressed: () => _videoController?.pause(),
+                      ),
                     ),
 
                     // ── Mute button ──────────────────────
@@ -881,7 +883,8 @@ class _CommentsSheetState extends State<_CommentsSheet> {
 //  BOTTOM INFO
 // ─────────────────────────────────────────
 class _PlayBottomInfo extends StatelessWidget {
-  const _PlayBottomInfo();
+  final VoidCallback? onMoviePressed;
+  const _PlayBottomInfo({this.onMoviePressed});
 
   @override
   Widget build(BuildContext context) {
@@ -918,7 +921,10 @@ class _PlayBottomInfo extends StatelessWidget {
           );
         }
 
-        return EpisodeBottomInfo(episode: episode[0]);
+        return EpisodeBottomInfo(
+          episode: episode[0],
+          onMoviePressed: onMoviePressed,
+        );
       },
     );
   }

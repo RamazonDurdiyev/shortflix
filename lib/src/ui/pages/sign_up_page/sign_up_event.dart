@@ -18,3 +18,8 @@ class SignUpSubmitEvent extends SignUpEvent {
   @override
   List<Object?> get props => [fullName, email, password, birthDateIso];
 }
+
+class SignUpGoogleEvent extends SignUpEvent {
+  @override
+  List<Object?> get props => [];
+}

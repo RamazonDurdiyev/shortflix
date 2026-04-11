@@ -108,6 +108,13 @@ EpisodeDetailsModel _$EpisodeDetailsModelFromJson(Map<String, dynamic> json) =>
       videoUrl: json['videoUrl'] as String?,
       duration: (json['duration'] as num?)?.toInt(),
       movieId: EpisodeDetailsModel._readMovieId(json, 'movieId') as String?,
+      movieTitle:
+          EpisodeDetailsModel._readMovieTitle(json, 'movieTitle') as String?,
+      movieImageUrl:
+          EpisodeDetailsModel._readMovieImage(json, 'movieImageUrl') as String?,
+      movieCategoryName:
+          EpisodeDetailsModel._readMovieCategory(json, 'movieCategoryName')
+              as String?,
       isLiked: json['isLiked'] as bool?,
       isSaved: json['isSaved'] as bool?,
       commentCount: (json['commentCount'] as num?)?.toInt(),
@@ -128,6 +135,9 @@ Map<String, dynamic> _$EpisodeDetailsModelToJson(
   'videoUrl': instance.videoUrl,
   'duration': instance.duration,
   'movieId': instance.movieId,
+  'movieTitle': instance.movieTitle,
+  'movieImageUrl': instance.movieImageUrl,
+  'movieCategoryName': instance.movieCategoryName,
   'watched': instance.watched,
   'isLiked': instance.isLiked,
   'isSaved': instance.isSaved,
