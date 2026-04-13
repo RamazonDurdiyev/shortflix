@@ -33,7 +33,6 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   final _descEnCtrl = TextEditingController();
   final _seasonCtrl = TextEditingController();
   final _episodeCtrl = TextEditingController();
-  final _durationCtrl = TextEditingController();
   bool _isDialogOpen = false;
 
   @override
@@ -52,29 +51,60 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     _descEnCtrl.dispose();
     _seasonCtrl.dispose();
     _episodeCtrl.dispose();
-    _durationCtrl.dispose();
     super.dispose();
   }
 
   void _showLoadingDialog(BuildContext context) {
     if (_isDialogOpen) return;
     _isDialogOpen = true;
+    final bloc = context.read<PostEpisodeBloc>();
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => PopScope(
         canPop: false,
         child: Center(
-          child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: ColorName.backgroundSecondary,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(color: ColorName.accent),
-            ),
+          child: BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
+            bloc: bloc,
+            buildWhen: (_, s) =>
+                s is UploadVideoProgressState || s is CreateEpisodeState,
+            builder: (_, state) {
+              final isUploading = state is UploadVideoProgressState ||
+                  bloc.uploadProgress > 0 && bloc.uploadProgress < 1;
+              final progress = bloc.uploadProgress;
+              return Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ColorName.backgroundSecondary,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: CircularProgressIndicator(
+                        color: ColorName.accent,
+                        value: isUploading ? progress.clamp(0.0, 1.0) : null,
+                        strokeWidth: 4,
+                      ),
+                    ),
+                    if (isUploading) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        'Uploading ${(progress * 100).toStringAsFixed(0)}%',
+                        style: const TextStyle(
+                          color: ColorName.contentPrimary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -133,6 +163,11 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
               );
             }
           }
+        }
+
+        // ── Upload progress ───────────────────
+        if (state is UploadVideoProgressState) {
+          _showLoadingDialog(context);
         }
 
         // ── Create episode ────────────────────
@@ -232,14 +267,6 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                       'ex: The hero arrives in a new city and faces an unexpected enemy'),
 
               const SizedBox(height: 20),
-
-              // ── Duration ────────────────────────────
-              _buildTextField(
-                _durationCtrl,
-                'Duration (minutes)',
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
 
               // ── Video ───────────────────────────────
               _buildVideoPicker(bloc),
@@ -557,7 +584,6 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           descriptionUz: _descUzCtrl.text,
           descriptionRu: _descRuCtrl.text,
           descriptionEn: _descEnCtrl.text,
-          duration: int.tryParse(_durationCtrl.text) ?? 0,
         ));
       },
       style: ElevatedButton.styleFrom(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/widgets/global/episode_bottom_info.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_event.dart';
@@ -38,7 +39,8 @@ class _PlayViewState extends State<_PlayView> {
   bool _showPlayIcon = false;
   bool _showHeart = false;
   Offset? _heartPosition;
-  final _progressKey = GlobalKey();
+  final Map<int, GlobalKey> _progressKeys = {};
+  final PageController _pageController = PageController();
 
   @override
   void didChangeDependencies() {
@@ -59,7 +61,34 @@ class _PlayViewState extends State<_PlayView> {
   @override
   void dispose() {
     _videoController?.dispose();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    final bloc = context.read<PlayBloc>();
+    bloc.comments = [];
+    if (index < bloc.episodes.length) {
+      final ep = bloc.episodes[index];
+      bloc.episode = [ep];
+      bloc.isLiked = ep.isLiked ?? false;
+      bloc.isSaved = ep.isSaved ?? false;
+      bloc.likeCount = ep.likeCount ?? 0;
+      bloc.commentCount = ep.commentCount ?? 0;
+      if (ep.videoUrl != null && ep.videoUrl!.isNotEmpty) {
+        _initVideo(ep.videoUrl!);
+      }
+    } else {
+      // Swiped onto a not-yet-loaded page — show black until fetch completes.
+      _videoController?.dispose();
+      _videoController = null;
+      _controllerReady = false;
+    }
+    if (index >= bloc.episodes.length - 1 &&
+        (bloc.totalEpisodes == 0 || bloc.episodes.length < bloc.totalEpisodes)) {
+      bloc.add(FetchNextEpisodeEvent());
+    }
+    setState(() {});
   }
 
   Future<void> _initVideo(String url) async {
@@ -115,15 +144,25 @@ class _PlayViewState extends State<_PlayView> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<PlayBloc, PlayState>(
-            listenWhen: (_, state) => state is FetchEpisodeState,
+            listenWhen: (_, state) =>
+                state is FetchEpisodeState && state.state == BaseState.loaded,
             listener: (context, state) {
-              if (state is FetchEpisodeState &&
-                  state.state == BaseState.loaded) {
-                final episode = context.read<PlayBloc>().episode;
-                if (episode?[0].videoUrl != null) {
-                  _initVideo(episode![0].videoUrl!);
+              final bloc = context.read<PlayBloc>();
+              final pageIdx = _pageController.hasClients
+                  ? (_pageController.page?.round() ?? 0)
+                  : 0;
+              if (pageIdx < bloc.episodes.length) {
+                final ep = bloc.episodes[pageIdx];
+                bloc.episode = [ep];
+                bloc.isLiked = ep.isLiked ?? false;
+                bloc.isSaved = ep.isSaved ?? false;
+                bloc.likeCount = ep.likeCount ?? 0;
+                bloc.commentCount = ep.commentCount ?? 0;
+                if (ep.videoUrl != null && ep.videoUrl!.isNotEmpty) {
+                  _initVideo(ep.videoUrl!);
                 }
               }
+              if (mounted) setState(() {});
             },
           ),
           BlocListener<PlayBloc, PlayState>(
@@ -172,7 +211,25 @@ class _PlayViewState extends State<_PlayView> {
               );
             }
 
-            return SizedBox.expand(
+            final bloc = context.read<PlayBloc>();
+            final pageCount = bloc.totalEpisodes > 0
+                ? bloc.totalEpisodes
+                : (bloc.episodes.isEmpty ? 1 : bloc.episodes.length);
+            return PageView.builder(
+              controller: _pageController,
+              scrollDirection: Axis.vertical,
+              physics: pageCount <= 1
+                  ? const NeverScrollableScrollPhysics()
+                  : const ClampingScrollPhysics(),
+              itemCount: pageCount,
+              onPageChanged: _onPageChanged,
+              itemBuilder: (context, index) {
+                final progressKey =
+                    _progressKeys.putIfAbsent(index, () => GlobalKey());
+                final pageEpisode = index < bloc.episodes.length
+                    ? bloc.episodes[index]
+                    : null;
+                return SizedBox.expand(
                 child: Stack(
                   children: [
                     // ── Video / black bg ──────────────────
@@ -205,10 +262,10 @@ class _PlayViewState extends State<_PlayView> {
                     _buildCenterIcon(),
 
                     // ── Right actions ─────────────────────
-                    const Positioned(
+                    Positioned(
                       right: 12,
                       bottom: 120,
-                      child: _ActionColumn(),
+                      child: _ActionColumn(pageEpisode: pageEpisode),
                     ),
 
                     // ── Bottom info ───────────────────────
@@ -217,6 +274,7 @@ class _PlayViewState extends State<_PlayView> {
                       right: 80,
                       bottom: MediaQuery.of(context).padding.bottom + 24,
                       child: _PlayBottomInfo(
+                        pageEpisode: pageEpisode,
                         onMoviePressed: () => _videoController?.pause(),
                       ),
                     ),
@@ -257,31 +315,32 @@ class _PlayViewState extends State<_PlayView> {
                             bottom: MediaQuery.of(context).padding.bottom / 2,
                             left: 0,
                             right: 0,
+                            height: 24,
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onHorizontalDragStart: (details) {
-                                final box = _progressKey.currentContext!.findRenderObject() as RenderBox;
+                                final box = progressKey.currentContext!.findRenderObject() as RenderBox;
                                 final local = box.globalToLocal(details.globalPosition);
                                 final position = (local.dx / box.size.width).clamp(0.0, 1.0);
                                 final duration = _videoController!.value.duration;
                                 _videoController!.seekTo(duration * position);
                               },
                               onHorizontalDragUpdate: (details) {
-                                final box = _progressKey.currentContext!.findRenderObject() as RenderBox;
+                                final box = progressKey.currentContext!.findRenderObject() as RenderBox;
                                 final local = box.globalToLocal(details.globalPosition);
                                 final position = (local.dx / box.size.width).clamp(0.0, 1.0);
                                 final duration = _videoController!.value.duration;
                                 _videoController!.seekTo(duration * position);
                               },
                               onTapDown: (details) {
-                                final box = _progressKey.currentContext!.findRenderObject() as RenderBox;
+                                final box = progressKey.currentContext!.findRenderObject() as RenderBox;
                                 final local = box.globalToLocal(details.globalPosition);
                                 final position = (local.dx / box.size.width).clamp(0.0, 1.0);
                                 final duration = _videoController!.value.duration;
                                 _videoController!.seekTo(duration * position);
                               },
                               child: SizedBox(
-                                key: _progressKey,
+                                key: progressKey,
                                 height: 24,
                                 child: Align(
                                   alignment: Alignment.bottomCenter,
@@ -302,10 +361,13 @@ class _PlayViewState extends State<_PlayView> {
                             bottom: 0,
                             left: 0,
                             right: 0,
+                            height: 2,
                             child: _ProgressBar(),
                           ),
                   ],
                 ),
+              );
+              },
             );
           },
         ),
@@ -347,7 +409,8 @@ class _PlayViewState extends State<_PlayView> {
       builder: (context, state) {
         final isPlaying = context.read<PlayBloc>().isPlaying;
 
-        return Center(
+        return IgnorePointer(
+          child: Center(
           child: AnimatedOpacity(
             opacity: _showPlayIcon || !isPlaying ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 200),
@@ -368,6 +431,7 @@ class _PlayViewState extends State<_PlayView> {
               ),
             ),
           ),
+        ),
         );
       },
     );
@@ -430,7 +494,8 @@ class _TopBar extends StatelessWidget {
 //  ACTION COLUMN
 // ─────────────────────────────────────────
 class _ActionColumn extends StatelessWidget {
-  const _ActionColumn();
+  final EpisodeDetailsModel? pageEpisode;
+  const _ActionColumn({this.pageEpisode});
 
   String _formatCount(int count) {
     if (count >= 1000000) return '${(count / 1000000).toStringAsFixed(1)}M';
@@ -441,7 +506,7 @@ class _ActionColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PlayBloc>();
-    final episodeId = bloc.episode?[0].id ?? '';
+    final episodeId = pageEpisode?.id ?? bloc.episode?[0].id ?? '';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -507,7 +572,7 @@ class _ActionColumn extends StatelessWidget {
         // ── Share ────────────────────────────
         GestureDetector(
           onTap: () {
-            final episode = bloc.episode?[0];
+            final episode = pageEpisode ?? bloc.episode?[0];
             if (episode == null) return;
             final text = '${episode.title ?? ''}\n${episode.description ?? ''}\n${episode.videoUrl ?? ''}';
             SharePlus.instance.share(ShareParams(text: text));
@@ -883,49 +948,42 @@ class _CommentsSheetState extends State<_CommentsSheet> {
 //  BOTTOM INFO
 // ─────────────────────────────────────────
 class _PlayBottomInfo extends StatelessWidget {
+  final EpisodeDetailsModel? pageEpisode;
   final VoidCallback? onMoviePressed;
-  const _PlayBottomInfo({this.onMoviePressed});
+  const _PlayBottomInfo({this.pageEpisode, this.onMoviePressed});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlayBloc, PlayState>(
-      buildWhen: (_, state) => state is FetchEpisodeState,
-      builder: (context, state) {
-        final episode = context.read<PlayBloc>().episode;
-        final isLoading =
-            state is FetchEpisodeState && state.state == BaseState.loading;
-
-        if (isLoading || episode == null) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.white12,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                width: 160,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: Colors.white12,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ],
-          );
-        }
-
-        return EpisodeBottomInfo(
-          episode: episode[0],
-          onMoviePressed: onMoviePressed,
-        );
-      },
+    final ep = pageEpisode;
+    if (ep == null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.white12,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: 160,
+            height: 24,
+            decoration: BoxDecoration(
+              color: Colors.white12,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ],
+      );
+    }
+    return EpisodeBottomInfo(
+      key: ValueKey('bottom-${ep.id}'),
+      episode: ep,
+      onMoviePressed: onMoviePressed,
     );
   }
 }

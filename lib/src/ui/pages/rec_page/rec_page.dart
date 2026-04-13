@@ -192,12 +192,16 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
           listener: (context, state) {
             final homeBloc = context.read<HomeBloc>();
             final controller = _controllers[_currentPage];
-            if (controller == null || !controller.value.isInitialized) return;
             if (homeBloc.currentNavBarIndex == 1) {
-              controller.play();
               context.read<RecBloc>().isPlaying = true;
+              if (controller != null && controller.value.isInitialized) {
+                controller.play();
+              } else {
+                // Controller not ready yet — kick off init; it will auto-play.
+                _initVideoAt(_currentPage);
+              }
             } else {
-              controller.pause();
+              controller?.pause();
             }
           },
         ),

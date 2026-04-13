@@ -21,7 +21,7 @@ class FetchEpisodeState extends PlayState {
   final BaseState state;
   FetchEpisodeState({required this.state});
   @override
-  List<Object?> get props => [state];
+  List<Object?> get props => [state, UniqueKey()];
 }
 
 class PlayToggleState extends PlayState {

@@ -39,6 +39,7 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
   String? imagePath;
   String selectedMovieId = '';
   List<MovieModel> userMovies = [];
+  double uploadProgress = 0;
 
   // ─────────────────────────────────────────
   //  FETCH USER MOVIES
@@ -106,17 +107,31 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
     CreateEpisodeEvent event,
   ) async {
     try {
+      uploadProgress = 0;
       emit(CreateEpisodeState(state: BaseState.loading));
 
       // 1. Compress video (fixes moov atom for trimmed videos) & upload
       String? videoUrl;
+      int? durationSeconds;
       if (videoPath != null) {
         final compressed = await VideoCompress.compressVideo(
           videoPath!,
           quality: VideoQuality.MediumQuality,
         );
         final uploadPath = compressed?.file?.path ?? videoPath!;
-        videoUrl = await movieRepo.uploadVideo(uploadPath);
+        final durationMs = compressed?.duration ??
+            (await VideoCompress.getMediaInfo(videoPath!)).duration;
+        if (durationMs != null && durationMs > 0) {
+          durationSeconds = (durationMs / 1000).round();
+        }
+        emit(UploadVideoProgressState(progress: 0));
+        videoUrl = await movieRepo.uploadVideo(
+          uploadPath,
+          onProgress: (p) {
+            uploadProgress = p;
+            if (!emit.isDone) emit(UploadVideoProgressState(progress: p));
+          },
+        );
       }
 
       // 2. Upload image, get real URL
@@ -138,7 +153,7 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
         descriptionEn: event.descriptionEn,
         videoUrl: videoUrl,
         imageUrl: imageUrl,
-        duration: event.duration,
+        duration: durationSeconds,
       );
 
       emit(CreateEpisodeState(state: BaseState.loaded));

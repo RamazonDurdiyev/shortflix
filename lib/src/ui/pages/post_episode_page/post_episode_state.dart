@@ -28,3 +28,8 @@ class CreateEpisodeState extends PostEpisodeState {
   final BaseState state;
   CreateEpisodeState({required this.state});
 }
+
+class UploadVideoProgressState extends PostEpisodeState {
+  final double progress; // 0.0 .. 1.0
+  UploadVideoProgressState({required this.progress});
+}

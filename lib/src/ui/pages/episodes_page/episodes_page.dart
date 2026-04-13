@@ -25,8 +25,12 @@ class _EpisodesPageState extends State<EpisodesPage> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      final args = ModalRoute.of(context)?.settings.arguments as Map?;
-      final movieId = (args?['movieId'] as String?) ?? '';
+      final args = ModalRoute.of(context)?.settings.arguments;
+      final movieId = switch (args) {
+        String s => s,
+        Map m => (m['movieId'] as String?) ?? '',
+        _ => '',
+      };
       if (movieId.isNotEmpty) {
         context.read<EpisodesBloc>().add(EpisodesFetchEvent(movieId: movieId));
       }

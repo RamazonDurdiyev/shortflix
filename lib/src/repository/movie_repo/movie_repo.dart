@@ -128,9 +128,7 @@ class MovieRepo {
   // fetch movie details
   // **************************************************************************
 
-  Future<List<EpisodeDetailsModel>> fetchEpisode(String movieId, episodeNumber) async {
-    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
-
+  Future<({List<EpisodeDetailsModel> episodes, int totalEpisodes})> fetchEpisode(String movieId, episodeNumber) async {
     if (await networkInfo.isConnected) {
       final res = await client.get(
         GET_EPISODE,
@@ -140,9 +138,11 @@ class MovieRepo {
           "seasonNumber": 1,
         },
       );
-     return res.data["data"].map<EpisodeDetailsModel>((episode) {
-          return EpisodeDetailsModel.fromJson(episode);
-        }).toList();
+      final list = (res.data["data"] as List)
+          .map<EpisodeDetailsModel>((e) => EpisodeDetailsModel.fromJson(e))
+          .toList();
+      final total = (res.data["numberOfEpisodes"] as int?) ?? list.length;
+      return (episodes: list, totalEpisodes: total);
     } else {
       throw NetworkException();
     }
@@ -392,7 +392,10 @@ class MovieRepo {
   // upload video
   // **************************************************************************
 
- Future<String> uploadVideo(String filePath) async {
+ Future<String> uploadVideo(
+    String filePath, {
+    void Function(double progress)? onProgress,
+  }) async {
     if (!await networkInfo.isConnected) throw NetworkException();
 
     final fileName = filePath.split('/').last;
@@ -416,6 +419,12 @@ class MovieRepo {
       options: Options(
         headers: {'Content-Type': 'video/mp4', 'Content-Length': bytes.length},
       ),
+      onSendProgress: (sent, total) {
+        if (onProgress == null) return;
+        final t = total > 0 ? total : bytes.length;
+        if (t <= 0) return;
+        onProgress((sent / t).clamp(0.0, 1.0));
+      },
     );
 
     return fileUrl;

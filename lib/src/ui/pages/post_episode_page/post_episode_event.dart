@@ -20,7 +20,6 @@ class CreateEpisodeEvent extends PostEpisodeEvent {
   final String descriptionUz;
   final String descriptionRu;
   final String descriptionEn;
-  final int duration;
 
   CreateEpisodeEvent({
     required this.season,
@@ -31,6 +30,5 @@ class CreateEpisodeEvent extends PostEpisodeEvent {
     required this.descriptionUz,
     required this.descriptionRu,
     required this.descriptionEn,
-    required this.duration,
   });
 }

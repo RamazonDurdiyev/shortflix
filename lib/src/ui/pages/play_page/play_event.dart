@@ -17,6 +17,11 @@ class FetchEpisodeEvent extends PlayEvent {
   List<Object?> get props => [movieId];
 }
 
+class FetchNextEpisodeEvent extends PlayEvent {
+  @override
+  List<Object?> get props => [];
+}
+
 class PlayTogglePlayPauseEvent extends PlayEvent {
   @override
   List<Object?> get props => [];

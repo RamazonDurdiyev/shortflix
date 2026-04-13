@@ -20,6 +20,10 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       await _fetchEpisode(emit, event.movieId, event.episodeNumber);
     });
 
+    on<FetchNextEpisodeEvent>((event, emit) async {
+      await _fetchNextEpisode(emit);
+    });
+
     on<PlayTogglePlayPauseEvent>((event, emit) {
       isPlaying = !isPlaying;
       emit(PlayToggleState(isPlaying: isPlaying));
@@ -54,6 +58,9 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   bool isSaved         = false;
   String movieId       = '';
   List<EpisodeDetailsModel>? episode;
+  final List<EpisodeDetailsModel> episodes = [];
+  int totalEpisodes = 0;
+  bool isFetchingNext = false;
   int commentCount = 0;
   int likeCount = 0;
   List<CommentModel> comments = [];
@@ -65,7 +72,12 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     try {
       emit(FetchEpisodeState(state: BaseState.loading));
       this.movieId = movieId;
-      episode = await movieRepo.fetchEpisode(movieId, episodeNumber);
+      final result = await movieRepo.fetchEpisode(movieId, episodeNumber);
+      episode = result.episodes;
+      totalEpisodes = result.totalEpisodes;
+      episodes
+        ..clear()
+        ..addAll(result.episodes);
       printDebug("episode data => ${episode?[0].toJson().toString()}");
       isLiked = episode?[0].isLiked ?? false;
       isSaved = episode?[0].isSaved ?? false;
@@ -76,6 +88,31 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     } catch (e) {
       emit(FetchEpisodeState(state: BaseState.error));
       printDebug('PlayBloc _fetchEpisode error => $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  FETCH NEXT EPISODE (append)
+  // ─────────────────────────────────────────
+  Future<void> _fetchNextEpisode(Emitter<PlayState> emit) async {
+    if (isFetchingNext) return;
+    if (totalEpisodes > 0 && episodes.length >= totalEpisodes) return;
+    if (movieId.isEmpty) return;
+    isFetchingNext = true;
+    try {
+      final nextNumber = episodes.isNotEmpty
+          ? (episodes.last.episodeNumber ?? episodes.length) + 1
+          : 1;
+      final result = await movieRepo.fetchEpisode(movieId, nextNumber);
+      if (result.episodes.isNotEmpty) {
+        episodes.addAll(result.episodes);
+        totalEpisodes = result.totalEpisodes;
+        emit(FetchEpisodeState(state: BaseState.loaded));
+      }
+    } catch (e) {
+      printDebug('PlayBloc _fetchNextEpisode error => $e');
+    } finally {
+      isFetchingNext = false;
     }
   }
 
