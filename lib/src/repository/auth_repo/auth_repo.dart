@@ -158,7 +158,7 @@ class AuthRepo {
         'fullName': fullName,
         'email': email,
         'password': password,
-        'birthDate': birthDateIso,
+        'dateOfBirth': birthDateIso,
       },
     );
   }
