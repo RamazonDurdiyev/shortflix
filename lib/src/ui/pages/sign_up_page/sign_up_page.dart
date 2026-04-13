@@ -109,7 +109,10 @@ class _SignUpPageState extends State<SignUpPage> {
           );
         }
         if (state is SignUpGoogleState && state.state == BaseState.error) {
-          _showSnackbar(context, 'Google sign-in failed. Please try again.');
+          _showSnackbar(
+            context,
+            state.errorMessage ?? 'Google sign-in failed. Please try again.',
+          );
         }
       },
       child: Scaffold(
@@ -614,13 +617,22 @@ class _SignUpPageState extends State<SignUpPage> {
   //  SNACKBAR
   // ─────────────────────────────────────────
   void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.redAccent,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: const TextStyle(fontSize: 12),
+          ),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          showCloseIcon: true,
+        ),
+      );
   }
 }

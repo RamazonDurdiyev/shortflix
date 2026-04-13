@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/core/utils/print_debug.dart';
@@ -25,10 +26,23 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     } on GoogleSignInCancelledException {
       emit(SignUpGoogleState(state: BaseState.initial));
     } catch (e, st) {
-      emit(SignUpGoogleState(state: BaseState.error));
+      emit(SignUpGoogleState(
+        state: BaseState.error,
+        errorMessage: _describeError(e),
+      ));
       printDebug('SignUpBloc _signUpWithGoogle error => $e');
       printDebug(st);
     }
+  }
+
+  String _describeError(Object e) {
+    final s = e.toString();
+    if (e is DioException) {
+      final status = e.response?.statusCode;
+      final body = e.response?.data;
+      return 'Dio ${status ?? ''} ${e.requestOptions.path}\n$body\n$s';
+    }
+    return s;
   }
 
   Future<void> _signUp(
