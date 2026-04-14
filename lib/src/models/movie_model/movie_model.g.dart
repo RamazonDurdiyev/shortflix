@@ -47,6 +47,7 @@ MovieDetailsModel _$MovieDetailsModelFromJson(Map<String, dynamic> json) =>
       season: (json['season'] as num?)?.toInt(),
       episode: (json['episode'] as num?)?.toInt(),
       watched: json['watched'] as bool?,
+      canEdit: json['canEdit'] as bool?,
     );
 
 Map<String, dynamic> _$MovieDetailsModelToJson(MovieDetailsModel instance) =>
@@ -65,6 +66,7 @@ Map<String, dynamic> _$MovieDetailsModelToJson(MovieDetailsModel instance) =>
       'season': instance.season,
       'episode': instance.episode,
       'watched': instance.watched,
+      'canEdit': instance.canEdit,
     };
 
 EpisodeModel _$EpisodeModelFromJson(Map<String, dynamic> json) => EpisodeModel(
@@ -106,6 +108,7 @@ EpisodeDetailsModel _$EpisodeDetailsModelFromJson(Map<String, dynamic> json) =>
       watched: json['watched'] as bool?,
       createdAt: json['createdAt'] as String?,
       videoUrl: json['videoUrl'] as String?,
+      imageUrl: json['imageUrl'] as String?,
       duration: (json['duration'] as num?)?.toInt(),
       movieId: EpisodeDetailsModel._readMovieId(json, 'movieId') as String?,
       movieTitle:
@@ -133,6 +136,7 @@ Map<String, dynamic> _$EpisodeDetailsModelToJson(
   'title': instance.title,
   'description': instance.description,
   'videoUrl': instance.videoUrl,
+  'imageUrl': instance.imageUrl,
   'duration': instance.duration,
   'movieId': instance.movieId,
   'movieTitle': instance.movieTitle,

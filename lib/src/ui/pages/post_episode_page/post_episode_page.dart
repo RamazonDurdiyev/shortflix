@@ -226,15 +226,15 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
               ),
               const SizedBox(height: 12),
 
-              _buildSectionLabel('Title'),
-              const SizedBox(height: 8),
+              // _buildSectionLabel('Title'),
+              // const SizedBox(height: 8),
               _buildTextField(_titleCtrl, 'Title',
                   hint: 'ex: A New Beginning'),
 
               const SizedBox(height: 20),
 
-              _buildSectionLabel('Description'),
-              const SizedBox(height: 8),
+              // _buildSectionLabel('Description'),
+              // const SizedBox(height: 8),
               _buildTextField(_descCtrl, 'Description',
                   maxLines: 4,
                   hint:
@@ -263,16 +263,16 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   // ─────────────────────────────────────────
   //  SECTION LABEL
   // ─────────────────────────────────────────
-  Widget _buildSectionLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
+  // Widget _buildSectionLabel(String label) {
+  //   return Text(
+  //     label,
+  //     style: const TextStyle(
+  //       color: Colors.white,
+  //       fontSize: 15,
+  //       fontWeight: FontWeight.w600,
+  //     ),
+  //   );
+  // }
 
   // ─────────────────────────────────────────
   //  TEXT FIELD

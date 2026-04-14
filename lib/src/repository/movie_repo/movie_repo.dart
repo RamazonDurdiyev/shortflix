@@ -307,6 +307,60 @@ class MovieRepo {
   }
 
   // **************************************************************************
+  // update movie
+  // **************************************************************************
+
+  Future<void> updateMovie({
+    required String movieId,
+    String? title,
+    String? description,
+    String? ageLimit,
+    int? releaseYear,
+    String? categoryId,
+    String? imageUrl,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.patch(
+        UPDATE_MOVIE + movieId,
+        data: {
+          "title": ?title,
+          "description": ?description,
+          "ageLimit": ?ageLimit,
+          "releaseYear": ?releaseYear,
+          "categoryId": ?categoryId,
+          "imageUrl": ?imageUrl,
+        },
+      );
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // delete movie
+  // **************************************************************************
+
+  Future<void> deleteMovie(String movieId) async {
+    if (await networkInfo.isConnected) {
+      await client.delete(DELETE_MOVIE + movieId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // archive movie
+  // **************************************************************************
+
+  Future<void> archiveMovie(String movieId) async {
+    if (await networkInfo.isConnected) {
+      await client.post(ARCHIVE_MOVIE + movieId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
   // post episode
   // **************************************************************************
 
@@ -347,8 +401,12 @@ class MovieRepo {
     required String episodeId,
     int? season,
     int? episodeNumber,
-    String? title,
-    String? description,
+    String? titleUz,
+    String? titleRu,
+    String? titleEn,
+    String? descriptionUz,
+    String? descriptionRu,
+    String? descriptionEn,
     String? videoUrl,
     String? imageUrl,
     int? duration,
@@ -359,8 +417,12 @@ class MovieRepo {
         data: {
           "season": ?season,
           "episodeNumber": ?episodeNumber,
-          "title": ?title,
-          "description": ?description,
+          "titleUz": ?titleUz,
+          "titleRu": ?titleRu,
+          "titleEn": ?titleEn,
+          "descriptionUz": ?descriptionUz,
+          "descriptionRu": ?descriptionRu,
+          "descriptionEn": ?descriptionEn,
           "videoUrl": ?videoUrl,
           "imageUrl": ?imageUrl,
           "duration": ?duration,

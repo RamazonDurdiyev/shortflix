@@ -14,6 +14,10 @@ class PickImageState extends EditEpisodeState {
   PickImageState({required this.state});
 }
 
+class RemoveVideoState extends EditEpisodeState {}
+
+class RemoveImageState extends EditEpisodeState {}
+
 class UpdateEpisodeState extends EditEpisodeState {
   final BaseState state;
   UpdateEpisodeState({required this.state});

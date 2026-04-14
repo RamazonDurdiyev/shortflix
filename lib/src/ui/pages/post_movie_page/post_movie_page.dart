@@ -146,8 +146,8 @@ class _PostMovieViewState extends State<_PostMovieView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildSectionLabel('Title'),
-              const SizedBox(height: 8),
+              // _buildSectionLabel('Title'),
+              // const SizedBox(height: 8),
               _buildTextField(
                 _titleCtrl,
                 'Title',
@@ -156,8 +156,8 @@ class _PostMovieViewState extends State<_PostMovieView> {
 
               const SizedBox(height: 20),
 
-              _buildSectionLabel('Description'),
-              const SizedBox(height: 8),
+              // _buildSectionLabel('Description'),
+              // const SizedBox(height: 8),
               _buildTextField(
                 _descCtrl,
                 'Description',
@@ -206,16 +206,16 @@ class _PostMovieViewState extends State<_PostMovieView> {
   // ─────────────────────────────────────────
   //  SECTION LABEL
   // ─────────────────────────────────────────
-  Widget _buildSectionLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
+  // Widget _buildSectionLabel(String label) {
+  //   return Text(
+  //     label,
+  //     style: const TextStyle(
+  //       color: Colors.white,
+  //       fontSize: 15,
+  //       fontWeight: FontWeight.w600,
+  //     ),
+  //   );
+  // }
 
   // ─────────────────────────────────────────
   //  TEXT FIELD

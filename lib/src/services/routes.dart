@@ -23,6 +23,8 @@ import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart'
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_page.dart';
 import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_page.dart';
+import 'package:shortflix/src/ui/pages/edit_movie_page/edit_movie_bloc.dart';
+import 'package:shortflix/src/ui/pages/edit_movie_page/edit_movie_page.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_page.dart';
@@ -194,8 +196,27 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
           create: (_) => EditEpisodeBloc(
             movieRepo: GetIt.instance.get(),
             episodeId: episode.id ?? '',
+            initialVideoUrl: episode.videoUrl,
+            initialImageUrl: episode.imageUrl ?? episode.movieImageUrl,
           ),
           child: EditEpisodePage(episode: episode),
+        ),
+      );
+
+    case Navigation.editMoviePage:
+      final movie = args as MovieDetailsModel;
+      return buildRoute(
+        settings,
+        BlocProvider<EditMovieBloc>(
+          create: (_) => EditMovieBloc(
+            movieRepo: GetIt.instance.get(),
+            categoryRepo: GetIt.instance.get(),
+            movieId: movie.id ?? '',
+            initialCategoryId: movie.category?.id ?? '',
+            initialAgeLimit: movie.ageLimit ?? '',
+            initialImageUrl: movie.media,
+          ),
+          child: EditMoviePage(movie: movie),
         ),
       );
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_bloc.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_event.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_state.dart';
@@ -124,6 +125,32 @@ class _EpisodesContent extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          actions: [
+            BlocBuilder<EpisodesBloc, EpisodesState>(
+              buildWhen: (_, state) => state is EpisodesFetchState,
+              builder: (context, state) {
+                final movie = bloc.movie;
+                if (movie?.canEdit != true) return const SizedBox.shrink();
+                return GestureDetector(
+                  onTap: () => _showMoreSheet(context, bloc),
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: ColorName.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: ColorName.surfaceSecondary),
+                    ),
+                    child: const Icon(
+                      Icons.more_horiz_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
 
         // ── Movie info ──────────────────────────
@@ -167,6 +194,56 @@ class _EpisodesContent extends StatelessWidget {
 
         const SliverToBoxAdapter(child: SizedBox(height: 32)),
       ],
+    );
+  }
+
+  void _showMoreSheet(BuildContext context, EpisodesBloc bloc) {
+    final movie = bloc.movie;
+    if (movie == null) return;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF121212),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.edit_rounded, color: Colors.white),
+              title: const Text(
+                'Edit',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () async {
+                Navigator.pop(context);
+                final result = await Navigator.of(context).pushNamed(
+                  Navigation.editMoviePage,
+                  arguments: movie,
+                );
+                if (result == true && context.mounted) {
+                  bloc.add(EpisodesFetchEvent(movieId: movie.id ?? ''));
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 

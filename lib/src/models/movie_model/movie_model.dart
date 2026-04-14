@@ -47,6 +47,7 @@ class MovieDetailsModel {
   final int? season;
   final int? episode;
   final bool? watched;
+  final bool? canEdit;
 
   const MovieDetailsModel({
     required this.id,
@@ -63,6 +64,7 @@ class MovieDetailsModel {
     required this.season,
     required this.episode,
     required this.watched,
+    this.canEdit,
   });
 
   factory MovieDetailsModel.fromJson(Map<String, dynamic> data) =>
@@ -122,6 +124,7 @@ class EpisodeDetailsModel {
   final String? title;
   final String? description;
   final String? videoUrl;
+  final String? imageUrl;
   final int? duration;
   @JsonKey(readValue: _readMovieId)
   final String? movieId;
@@ -148,6 +151,7 @@ class EpisodeDetailsModel {
     required this.watched,
     required this.createdAt,
     required this.videoUrl,
+    this.imageUrl,
     required this.duration,
     required this.movieId,
     this.movieTitle,
