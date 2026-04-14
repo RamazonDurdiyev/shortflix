@@ -24,12 +24,8 @@ class _PostMovieView extends StatefulWidget {
 }
 
 class _PostMovieViewState extends State<_PostMovieView> {
-  final _titleUzCtrl = TextEditingController();
-  final _titleRuCtrl = TextEditingController();
-  final _titleEnCtrl = TextEditingController();
-  final _descUzCtrl = TextEditingController();
-  final _descRuCtrl = TextEditingController();
-  final _descEnCtrl = TextEditingController();
+  final _titleCtrl = TextEditingController();
+  final _descCtrl = TextEditingController();
   final _yearCtrl = TextEditingController();
   bool _isDialogOpen = false;
 
@@ -41,12 +37,8 @@ class _PostMovieViewState extends State<_PostMovieView> {
 
   @override
   void dispose() {
-    _titleUzCtrl.dispose();
-    _titleRuCtrl.dispose();
-    _titleEnCtrl.dispose();
-    _descUzCtrl.dispose();
-    _descRuCtrl.dispose();
-    _descEnCtrl.dispose();
+    _titleCtrl.dispose();
+    _descCtrl.dispose();
     _yearCtrl.dispose();
     super.dispose();
   }
@@ -154,51 +146,21 @@ class _PostMovieViewState extends State<_PostMovieView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Titles ──────────────────────────────
               _buildSectionLabel('Title'),
               const SizedBox(height: 8),
               _buildTextField(
-                _titleUzCtrl,
-                'Title (UZ)',
-                hint: 'ex: Qorong\'u ritsar',
-              ),
-              const SizedBox(height: 10),
-              _buildTextField(
-                _titleRuCtrl,
-                'Title (RU)',
-                hint: 'ex: Тёмный рыцарь',
-              ),
-              const SizedBox(height: 10),
-              _buildTextField(
-                _titleEnCtrl,
-                'Title (EN)',
+                _titleCtrl,
+                'Title',
                 hint: 'ex: The Dark Knight',
               ),
 
               const SizedBox(height: 20),
 
-              // ── Descriptions ────────────────────────
               _buildSectionLabel('Description'),
               const SizedBox(height: 8),
               _buildTextField(
-                _descUzCtrl,
-                'Description (UZ)',
-                maxLines: 3,
-                hint:
-                    'ex: Gotham shahrida jinoyat avj olgan. Broys Ueyn tungi qahramonga aylanadi',
-              ),
-              const SizedBox(height: 10),
-              _buildTextField(
-                _descRuCtrl,
-                'Description (RU)',
-                maxLines: 3,
-                hint:
-                    'ex: Преступность в Готэме на пике. Брюс Уэйн становится ночным героем',
-              ),
-              const SizedBox(height: 10),
-              _buildTextField(
-                _descEnCtrl,
-                'Description (EN)',
+                _descCtrl,
+                'Description',
                 maxLines: 3,
                 hint:
                     'ex: Crime in Gotham is at its peak. Bruce Wayne becomes a dark vigilante to protect the city',
@@ -593,12 +555,8 @@ class _PostMovieViewState extends State<_PostMovieView> {
       onPressed: () {
         bloc.add(
           CreateMovieEvent(
-            titleUz: _titleUzCtrl.text,
-            titleRu: _titleRuCtrl.text,
-            titleEn: _titleEnCtrl.text,
-            descriptionUz: _descUzCtrl.text,
-            descriptionRu: _descRuCtrl.text,
-            descriptionEn: _descEnCtrl.text,
+            title: _titleCtrl.text,
+            description: _descCtrl.text,
             releaseYear: int.tryParse(_yearCtrl.text) ?? 0,
           ),
         );

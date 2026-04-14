@@ -282,12 +282,8 @@ class MovieRepo {
   // **************************************************************************
 
   Future<void> postMovie({
-    required String titleUz,
-    required String titleRu,
-    required String titleEn,
-    required String descriptionUz,
-    required String descriptionRu,
-    required String descriptionEn,
+    required String title,
+    required String description,
     required String ageLimit,
     required int releaseYear,
     required String categoryId,
@@ -297,12 +293,8 @@ class MovieRepo {
       await client.post(
         CREATE_MOVIE,
         data: {
-          "titleUz": titleUz,
-          "titleRu": titleRu,
-          "titleEn": titleEn,
-          "descriptionUz": descriptionUz,
-          "descriptionRu": descriptionRu,
-          "descriptionEn": descriptionEn,
+          "title": title,
+          "description": description,
           "ageLimit": ageLimit,
           "releaseYear": releaseYear,
           "categoryId": categoryId,
@@ -322,12 +314,8 @@ class MovieRepo {
     required int season,
     required int episodeNumber,
     required String movieId,
-    required String titleUz,
-    required String titleRu,
-    required String titleEn,
-    String? descriptionUz,
-    String? descriptionRu,
-    String? descriptionEn,
+    required String title,
+    String? description,
     String? videoUrl,
     String? imageUrl,
     int? duration,
@@ -339,17 +327,69 @@ class MovieRepo {
           "season": season,
           "episodeNumber": episodeNumber,
           "movieId": movieId,
-          "titleUz": titleUz,
-          "titleRu": titleRu,
-          "titleEn": titleEn,
-          "descriptionUz": ?descriptionUz,
-          "descriptionRu": ?descriptionRu,
-          "descriptionEn": ?descriptionEn,
+          "title": title,
+          "description": ?description,
           "videoUrl": ?videoUrl,
           "imageUrl": ?imageUrl,
           "duration": ?duration,
         },
       );
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // update episode
+  // **************************************************************************
+
+  Future<void> updateEpisode({
+    required String episodeId,
+    int? season,
+    int? episodeNumber,
+    String? title,
+    String? description,
+    String? videoUrl,
+    String? imageUrl,
+    int? duration,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.patch(
+        UPDATE_EPISODE + episodeId,
+        data: {
+          "season": ?season,
+          "episodeNumber": ?episodeNumber,
+          "title": ?title,
+          "description": ?description,
+          "videoUrl": ?videoUrl,
+          "imageUrl": ?imageUrl,
+          "duration": ?duration,
+        },
+      );
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // delete episode
+  // **************************************************************************
+
+  Future<void> deleteEpisode(String episodeId) async {
+    if (await networkInfo.isConnected) {
+      await client.delete(DELETE_EPISODE + episodeId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // archive episode
+  // **************************************************************************
+
+  Future<void> archiveEpisode(String episodeId) async {
+    if (await networkInfo.isConnected) {
+      await client.post(ARCHIVE_EPISODE + episodeId);
     } else {
       throw NetworkException();
     }

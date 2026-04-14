@@ -21,6 +21,9 @@ import 'package:shortflix/src/ui/pages/liked_episodes_page/liked_episodes_page.d
 import 'package:shortflix/src/ui/pages/my_movies_page/my_movies_page.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_page.dart';
+import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_bloc.dart';
+import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_page.dart';
+import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
@@ -180,6 +183,19 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
             movieRepo: GetIt.instance.get(),
           ),
           child: const PostEpisodePage(),
+        ),
+      );
+
+    case Navigation.editEpisodePage:
+      final episode = args as EpisodeDetailsModel;
+      return buildRoute(
+        settings,
+        BlocProvider<EditEpisodeBloc>(
+          create: (_) => EditEpisodeBloc(
+            movieRepo: GetIt.instance.get(),
+            episodeId: episode.id ?? '',
+          ),
+          child: EditEpisodePage(episode: episode),
         ),
       );
 

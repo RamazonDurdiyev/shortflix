@@ -29,5 +29,6 @@ class Navigation {
   // post pages
   static const String postPage = "/post_page";
   static const String postEpisodePage = "/post_episode_page";
+  static const String editEpisodePage = "/edit_episode_page";
   static const String postMoviePage = "post_movie_page";
 }

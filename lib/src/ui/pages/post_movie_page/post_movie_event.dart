@@ -15,21 +15,13 @@ class SelectAgeLimitEvent extends PostMovieEvent {
 }
 
 class CreateMovieEvent extends PostMovieEvent {
-  final String titleUz;
-  final String titleRu;
-  final String titleEn;
-  final String descriptionUz;
-  final String descriptionRu;
-  final String descriptionEn;
+  final String title;
+  final String description;
   final int releaseYear;
 
   CreateMovieEvent({
-    required this.titleUz,
-    required this.titleRu,
-    required this.titleEn,
-    required this.descriptionUz,
-    required this.descriptionRu,
-    required this.descriptionEn,
+    required this.title,
+    required this.description,
     required this.releaseYear,
   });
 }

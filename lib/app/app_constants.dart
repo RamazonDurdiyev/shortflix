@@ -41,6 +41,9 @@ const SAVED_MOVIES = "/api/users/me/saved";
 // Episodes
 
 const CREATE_EPISODE = "/api/episodes";
+const UPDATE_EPISODE = "/api/episodes/";
+const DELETE_EPISODE = "/api/episodes/";
+const ARCHIVE_EPISODE = "/api/episodes/archive/";
 const LIKE_EPISODE = "/api/episodes/like/";
 const SAVE_EPISODE = "/api/episodes/save/";
 const GET_EPISODES = "/api/movies/episodes/";

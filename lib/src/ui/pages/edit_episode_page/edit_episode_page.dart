@@ -4,37 +4,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
-import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
-import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_event.dart';
-import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_state.dart';
+import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_bloc.dart';
+import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_event.dart';
+import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_state.dart';
 
-class PostEpisodePage extends StatelessWidget {
-  const PostEpisodePage({super.key});
+class EditEpisodePage extends StatelessWidget {
+  final EpisodeDetailsModel episode;
+  const EditEpisodePage({super.key, required this.episode});
 
   @override
   Widget build(BuildContext context) {
-    return const _PostEpisodeView();
+    return _EditEpisodeView(episode: episode);
   }
 }
 
-class _PostEpisodeView extends StatefulWidget {
-  const _PostEpisodeView();
+class _EditEpisodeView extends StatefulWidget {
+  final EpisodeDetailsModel episode;
+  const _EditEpisodeView({required this.episode});
 
   @override
-  State<_PostEpisodeView> createState() => _PostEpisodeViewState();
+  State<_EditEpisodeView> createState() => _EditEpisodeViewState();
 }
 
-class _PostEpisodeViewState extends State<_PostEpisodeView> {
-  final _titleCtrl = TextEditingController();
-  final _descCtrl = TextEditingController();
-  final _seasonCtrl = TextEditingController();
-  final _episodeCtrl = TextEditingController();
+class _EditEpisodeViewState extends State<_EditEpisodeView> {
+  late final TextEditingController _titleCtrl;
+  late final TextEditingController _descCtrl;
+  late final TextEditingController _seasonCtrl;
+  late final TextEditingController _episodeCtrl;
   bool _isDialogOpen = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<PostEpisodeBloc>().add(FetchUserMoviesEvent());
+    final e = widget.episode;
+    _titleCtrl = TextEditingController(text: e.title ?? '');
+    _descCtrl = TextEditingController(text: e.description ?? '');
+    _seasonCtrl = TextEditingController(text: (e.season ?? 1).toString());
+    _episodeCtrl =
+        TextEditingController(text: (e.episodeNumber ?? 1).toString());
   }
 
   @override
@@ -49,17 +57,17 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   void _showLoadingDialog(BuildContext context) {
     if (_isDialogOpen) return;
     _isDialogOpen = true;
-    final bloc = context.read<PostEpisodeBloc>();
+    final bloc = context.read<EditEpisodeBloc>();
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => PopScope(
         canPop: false,
         child: Center(
-          child: BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
+          child: BlocBuilder<EditEpisodeBloc, EditEpisodeState>(
             bloc: bloc,
             buildWhen: (_, s) =>
-                s is UploadVideoProgressState || s is CreateEpisodeState,
+                s is UploadVideoProgressState || s is UpdateEpisodeState,
             builder: (_, state) {
               final isUploading = state is UploadVideoProgressState ||
                   bloc.uploadProgress > 0 && bloc.uploadProgress < 1;
@@ -109,73 +117,101 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     Navigator.of(context).pop();
   }
 
+  Future<bool> _confirm(BuildContext context, String title, String message,
+      {String confirmText = 'Confirm', Color? confirmColor}) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: ColorName.backgroundSecondary,
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        content: Text(message,
+            style: TextStyle(color: ColorName.contentSecondary)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(
+              foregroundColor: confirmColor ?? ColorName.accent,
+            ),
+            child: Text(confirmText),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<PostEpisodeBloc>();
+    final bloc = context.read<EditEpisodeBloc>();
 
-    return BlocListener<PostEpisodeBloc, PostEpisodeState>(
+    return BlocListener<EditEpisodeBloc, EditEpisodeState>(
       listener: (context, state) {
-        // ── Fetch user movies ─────────────────
-        if (state is FetchUserMoviesState) {
-          if (state.state == BaseState.loading) {
-            _showLoadingDialog(context);
-          } else if (state.state == BaseState.loaded) {
-            _dismissLoadingDialog(context);
-          } else if (state.state == BaseState.error) {
-            _dismissLoadingDialog(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to load movies')),
-            );
-          }
-        }
-
-        // ── Pick video ────────────────────────
-        if (state is PickVideoState) {
-          if (state.state == BaseState.loading) {
+        if (state is PickVideoState || state is PickImageState) {
+          final s = state is PickVideoState
+              ? state.state
+              : (state as PickImageState).state;
+          if (s == BaseState.loading) {
             _showLoadingDialog(context);
           } else {
             _dismissLoadingDialog(context);
-            if (state.state == BaseState.error) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Failed to pick video')),
-              );
-            }
           }
         }
 
-        // ── Pick image ────────────────────────
-        if (state is PickImageState) {
-          if (state.state == BaseState.loading) {
-            _showLoadingDialog(context);
-          } else {
-            _dismissLoadingDialog(context);
-            if (state.state == BaseState.error) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Failed to pick image')),
-              );
-            }
-          }
-        }
-
-        // ── Upload progress ───────────────────
         if (state is UploadVideoProgressState) {
           _showLoadingDialog(context);
         }
 
-        // ── Create episode ────────────────────
-        if (state is CreateEpisodeState) {
+        if (state is UpdateEpisodeState) {
           if (state.state == BaseState.loading) {
             _showLoadingDialog(context);
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Episode posted successfully')),
+              const SnackBar(content: Text('Episode updated')),
             );
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Something went wrong')),
+              const SnackBar(content: Text('Failed to update episode')),
+            );
+          }
+        }
+
+        if (state is DeleteEpisodeState) {
+          if (state.state == BaseState.loading) {
+            _showLoadingDialog(context);
+          } else if (state.state == BaseState.loaded) {
+            _dismissLoadingDialog(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Episode deleted')),
+            );
+            Navigator.of(context).pop(true);
+          } else if (state.state == BaseState.error) {
+            _dismissLoadingDialog(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to delete episode')),
+            );
+          }
+        }
+
+        if (state is ArchiveEpisodeState) {
+          if (state.state == BaseState.loading) {
+            _showLoadingDialog(context);
+          } else if (state.state == BaseState.loaded) {
+            _dismissLoadingDialog(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Episode archived')),
+            );
+            Navigator.of(context).pop(true);
+          } else if (state.state == BaseState.error) {
+            _dismissLoadingDialog(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to archive episode')),
             );
           }
         }
@@ -184,7 +220,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
         backgroundColor: ColorName.backgroundPrimary,
         appBar: AppBar(
           title: const Text(
-            'Post Episode',
+            'Edit Episode',
             style: TextStyle(
               color: ColorName.contentPrimary,
               fontWeight: FontWeight.bold,
@@ -200,11 +236,6 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Movie Selector ──────────────────────
-              _buildMovieDropdown(bloc),
-              const SizedBox(height: 12),
-
-              // ── Season & Episode ────────────────────
               Row(
                 children: [
                   Expanded(
@@ -225,33 +256,23 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                 ],
               ),
               const SizedBox(height: 12),
-
               _buildSectionLabel('Title'),
               const SizedBox(height: 8),
-              _buildTextField(_titleCtrl, 'Title',
-                  hint: 'ex: A New Beginning'),
-
+              _buildTextField(_titleCtrl, 'Title'),
               const SizedBox(height: 20),
-
               _buildSectionLabel('Description'),
               const SizedBox(height: 8),
-              _buildTextField(_descCtrl, 'Description',
-                  maxLines: 4,
-                  hint:
-                      'ex: The hero arrives in a new city and faces an unexpected enemy'),
-
+              _buildTextField(_descCtrl, 'Description', maxLines: 4),
               const SizedBox(height: 20),
-
-              // ── Video ───────────────────────────────
               _buildVideoPicker(bloc),
               const SizedBox(height: 16),
-
-              // ── Image ───────────────────────────────
               _buildImagePicker(bloc),
               const SizedBox(height: 24),
-
-              // ── Submit ──────────────────────────────
-              _buildSubmitButton(bloc),
+              _buildUpdateButton(bloc),
+              const SizedBox(height: 12),
+              _buildArchiveButton(bloc),
+              const SizedBox(height: 12),
+              _buildDeleteButton(bloc),
               const SizedBox(height: 16),
             ],
           ),
@@ -260,9 +281,6 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     );
   }
 
-  // ─────────────────────────────────────────
-  //  SECTION LABEL
-  // ─────────────────────────────────────────
   Widget _buildSectionLabel(String label) {
     return Text(
       label,
@@ -274,15 +292,11 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     );
   }
 
-  // ─────────────────────────────────────────
-  //  TEXT FIELD
-  // ─────────────────────────────────────────
   Widget _buildTextField(
     TextEditingController controller,
     String label, {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
-    String? hint,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,9 +317,6 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           cursorColor: ColorName.accent,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-                color: ColorName.contentSecondary.withValues(alpha: 0.5)),
             border:
                 OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
             enabledBorder: OutlineInputBorder(
@@ -324,140 +335,11 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     );
   }
 
-  // ─────────────────────────────────────────
-  //  MOVIE DROPDOWN
-  // ─────────────────────────────────────────
-  Widget _buildMovieDropdown(PostEpisodeBloc bloc) {
-    return BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
-      buildWhen: (_, state) =>
-          state is FetchUserMoviesState || state is SelectMovieState,
-      builder: (context, state) {
-        final selectedName = bloc.userMovies
-            .where((m) => m.id == bloc.selectedMovieId)
-            .firstOrNull
-            ?.title;
-
-        return GestureDetector(
-          onTap: () => _showMoviesSheet(context, bloc),
-          child: Container(
-            height: 52,
-            decoration: BoxDecoration(
-              color: ColorName.backgroundSecondary,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: bloc.selectedMovieId.isNotEmpty
-                    ? ColorName.accent
-                    : ColorName.surfaceSecondary,
-              ),
-            ),
-            child: Row(
-              children: [
-                const SizedBox(width: 16),
-                Icon(Icons.movie_outlined,
-                    color: ColorName.contentSecondary, size: 18),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    selectedName ?? 'Select movie',
-                    style: TextStyle(
-                      color: selectedName != null
-                          ? Colors.white
-                          : ColorName.contentSecondary,
-                    ),
-                  ),
-                ),
-                Icon(Icons.keyboard_arrow_down,
-                    color: ColorName.contentSecondary),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showMoviesSheet(BuildContext context, PostEpisodeBloc bloc) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: ColorName.backgroundSecondary,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Select Movie',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (bloc.userMovies.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(24),
-              child: Text(
-                'No movies found. Create a movie first.',
-                style: TextStyle(color: Colors.grey),
-              ),
-            )
-          else
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: bloc.userMovies.length,
-                itemBuilder: (ctx, i) {
-                  final movie = bloc.userMovies[i];
-                  final isSelected = movie.id == bloc.selectedMovieId;
-                  return ListTile(
-                    title: Text(
-                      movie.title ?? '',
-                      style: TextStyle(
-                        color: isSelected ? ColorName.accent : Colors.white,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.w400,
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? Icon(Icons.check_rounded,
-                            color: ColorName.accent, size: 18)
-                        : null,
-                    onTap: () {
-                      bloc.add(SelectMovieEvent(movieId: movie.id ?? ''));
-                      Navigator.pop(ctx);
-                    },
-                  );
-                },
-              ),
-            ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-
-  // ─────────────────────────────────────────
-  //  VIDEO PICKER
-  // ─────────────────────────────────────────
-  Widget _buildVideoPicker(PostEpisodeBloc bloc) {
-    return BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
+  Widget _buildVideoPicker(EditEpisodeBloc bloc) {
+    return BlocBuilder<EditEpisodeBloc, EditEpisodeState>(
       buildWhen: (_, state) => state is PickVideoState,
       builder: (context, state) {
         final hasVideo = bloc.videoPath != null;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -494,7 +376,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: const Icon(Icons.videocam),
-              label: Text(hasVideo ? 'Change Video' : 'Pick Video'),
+              label: Text(hasVideo ? 'Change Video' : 'Replace Video'),
             ),
           ],
         );
@@ -502,15 +384,11 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     );
   }
 
-  // ─────────────────────────────────────────
-  //  IMAGE PICKER
-  // ─────────────────────────────────────────
-  Widget _buildImagePicker(PostEpisodeBloc bloc) {
-    return BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
+  Widget _buildImagePicker(EditEpisodeBloc bloc) {
+    return BlocBuilder<EditEpisodeBloc, EditEpisodeState>(
       buildWhen: (_, state) => state is PickImageState,
       builder: (context, state) {
         final hasImage = bloc.imagePath != null;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -535,7 +413,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: const Icon(Icons.image),
-              label: Text(hasImage ? 'Change Image' : 'Pick Image'),
+              label: Text(hasImage ? 'Change Image' : 'Replace Image'),
             ),
           ],
         );
@@ -543,15 +421,12 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     );
   }
 
-  // ─────────────────────────────────────────
-  //  SUBMIT BUTTON
-  // ─────────────────────────────────────────
-  Widget _buildSubmitButton(PostEpisodeBloc bloc) {
+  Widget _buildUpdateButton(EditEpisodeBloc bloc) {
     return ElevatedButton(
       onPressed: () {
-        bloc.add(CreateEpisodeEvent(
-          season: int.tryParse(_seasonCtrl.text) ?? 0,
-          episodeNumber: int.tryParse(_episodeCtrl.text) ?? 0,
+        bloc.add(UpdateEpisodeEvent(
+          season: int.tryParse(_seasonCtrl.text) ?? 1,
+          episodeNumber: int.tryParse(_episodeCtrl.text) ?? 1,
           title: _titleCtrl.text,
           description: _descCtrl.text,
         ));
@@ -564,7 +439,58 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           borderRadius: BorderRadius.circular(14),
         ),
       ),
-      child: const Text('Post Episode',
+      child: const Text('Update Episode',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  Widget _buildArchiveButton(EditEpisodeBloc bloc) {
+    return OutlinedButton.icon(
+      onPressed: () async {
+        final ok = await _confirm(
+          context,
+          'Archive episode?',
+          'This episode will be hidden from viewers. You can restore it later.',
+          confirmText: 'Archive',
+        );
+        if (ok) bloc.add(ArchiveEpisodeEvent());
+      },
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.amber,
+        side: const BorderSide(color: Colors.amber),
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+      icon: const Icon(Icons.archive_outlined),
+      label: const Text('Archive Episode',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  Widget _buildDeleteButton(EditEpisodeBloc bloc) {
+    return OutlinedButton.icon(
+      onPressed: () async {
+        final ok = await _confirm(
+          context,
+          'Delete episode?',
+          'This action cannot be undone.',
+          confirmText: 'Delete',
+          confirmColor: Colors.redAccent,
+        );
+        if (ok) bloc.add(DeleteEpisodeEvent());
+      },
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.redAccent,
+        side: const BorderSide(color: Colors.redAccent),
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+      icon: const Icon(Icons.delete_outline),
+      label: const Text('Delete Episode',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }

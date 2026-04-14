@@ -96,12 +96,8 @@ class PostMovieBloc extends Bloc<PostMovieEvent, PostMovieState> {
 
       // 2. Create movie with uploaded image URL
       await movieRepo.postMovie(
-        titleUz: event.titleUz,
-        titleRu: event.titleRu,
-        titleEn: event.titleEn,
-        descriptionUz: event.descriptionUz,
-        descriptionRu: event.descriptionRu,
-        descriptionEn: event.descriptionEn,
+        title: event.title,
+        description: event.description,
         ageLimit: selectedAgeLimit,
         releaseYear: event.releaseYear,
         categoryId: selectedCategoryId,

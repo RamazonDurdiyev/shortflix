@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/widgets/global/episode_bottom_info.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_event.dart';
@@ -622,6 +623,7 @@ class _ActionColumn extends StatelessWidget {
   void _showMoreSheet(BuildContext context) {
     final bloc = context.read<PlayBloc>();
     final episodeId = bloc.episode?[0].id ?? '';
+    final canEdit = bloc.episode?[0].canEdit ?? false;
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF121212),
@@ -666,6 +668,26 @@ class _ActionColumn extends StatelessWidget {
                   );
                 },
               ),
+              if (canEdit)
+                ListTile(
+                  leading: const Icon(Icons.edit_rounded, color: Colors.white),
+                  title: const Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    final episode = bloc.episode?[0];
+                    if (episode == null) return;
+                    Navigator.of(context).pushNamed(
+                      Navigation.editEpisodePage,
+                      arguments: episode,
+                    );
+                  },
+                ),
               const SizedBox(height: 8),
             ],
           ),
