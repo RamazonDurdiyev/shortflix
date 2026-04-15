@@ -169,6 +169,7 @@ Widget _buildMenuGroup(BuildContext context) {
           children: [
             GestureDetector(
               onTap: item.onTap,
+              behavior: HitTestBehavior.opaque,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
