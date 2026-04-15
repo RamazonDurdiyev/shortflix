@@ -40,6 +40,7 @@ const SAVE_MOVIE = "/api/movies/save/";
 const RATE_MOVIE = "/api/ratings";
 const UPDATE_RATE_MOVIE = "/api/ratings/movies/";
 const SAVED_MOVIES = "/api/users/me/saved";
+const ARCHIVED_MOVIES = "/api/movies/my/archived";
 
 // Episodes
 
@@ -53,6 +54,8 @@ const GET_EPISODES = "/api/movies/episodes/";
 const GET_EPISODE = "/api/episodes/filter";
 const SAVED_EPISODES = "/api/users/me/saved-episodes";
 const LIKED_EPISODES = "/api/users/me/liked-episodes";
+const ARCHIVED_EPISODES = "/api/users/me/archived-episodes";
+const ARCHIVED_EPISODE_DETAILS = "/api/users/me/archived-episodes/";
 
 // Comments
 

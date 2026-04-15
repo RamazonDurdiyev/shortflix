@@ -21,3 +21,13 @@ class FetchMyMoviesEvent extends LibraryEvent {
   @override
   List<Object?> get props => [];
 }
+
+class FetchArchivedMoviesEvent extends LibraryEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class FetchArchivedEpisodesEvent extends LibraryEvent {
+  @override
+  List<Object?> get props => [];
+}

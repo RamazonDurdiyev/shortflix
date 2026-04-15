@@ -49,12 +49,19 @@ class _PlayViewState extends State<_PlayView> {
     if (!_initialized) {
       _initialized = true;
       final args = ModalRoute.of(context)?.settings.arguments as Map?;
-      final episodeNumber = (args?['episodeNumber'] as int?) ?? 0;
-      final movieId = (args?['movieId'] as String?) ?? '';
-      if (movieId.isNotEmpty) {
+      final archivedEpisodeId = (args?['archivedEpisodeId'] as String?) ?? '';
+      if (archivedEpisodeId.isNotEmpty) {
         context.read<PlayBloc>().add(
-              FetchEpisodeEvent(movieId: movieId, episodeNumber: episodeNumber),
+              FetchArchivedEpisodeEvent(episodeId: archivedEpisodeId),
             );
+      } else {
+        final episodeNumber = (args?['episodeNumber'] as int?) ?? 0;
+        final movieId = (args?['movieId'] as String?) ?? '';
+        if (movieId.isNotEmpty) {
+          context.read<PlayBloc>().add(
+                FetchEpisodeEvent(movieId: movieId, episodeNumber: episodeNumber),
+              );
+        }
       }
     }
   }

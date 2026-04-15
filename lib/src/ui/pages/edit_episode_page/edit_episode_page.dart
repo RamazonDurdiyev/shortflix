@@ -26,12 +26,8 @@ class _EditEpisodeView extends StatefulWidget {
 }
 
 class _EditEpisodeViewState extends State<_EditEpisodeView> {
-  late final TextEditingController _titleUzCtrl;
-  late final TextEditingController _titleRuCtrl;
-  late final TextEditingController _titleEnCtrl;
-  late final TextEditingController _descUzCtrl;
-  late final TextEditingController _descRuCtrl;
-  late final TextEditingController _descEnCtrl;
+  late final TextEditingController _titleCtrl;
+  late final TextEditingController _descCtrl;
   late final TextEditingController _seasonCtrl;
   late final TextEditingController _episodeCtrl;
   bool _isDialogOpen = false;
@@ -40,12 +36,8 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
   void initState() {
     super.initState();
     final e = widget.episode;
-    _titleUzCtrl = TextEditingController(text: e.title ?? '');
-    _titleRuCtrl = TextEditingController(text: e.title ?? '');
-    _titleEnCtrl = TextEditingController(text: e.title ?? '');
-    _descUzCtrl = TextEditingController(text: e.description ?? '');
-    _descRuCtrl = TextEditingController(text: e.description ?? '');
-    _descEnCtrl = TextEditingController(text: e.description ?? '');
+    _titleCtrl = TextEditingController(text: e.title ?? '');
+    _descCtrl = TextEditingController(text: e.description ?? '');
     _seasonCtrl = TextEditingController(text: (e.season ?? 1).toString());
     _episodeCtrl =
         TextEditingController(text: (e.episodeNumber ?? 1).toString());
@@ -53,12 +45,8 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
 
   @override
   void dispose() {
-    _titleUzCtrl.dispose();
-    _titleRuCtrl.dispose();
-    _titleEnCtrl.dispose();
-    _descUzCtrl.dispose();
-    _descRuCtrl.dispose();
-    _descEnCtrl.dispose();
+    _titleCtrl.dispose();
+    _descCtrl.dispose();
     _seasonCtrl.dispose();
     _episodeCtrl.dispose();
     super.dispose();
@@ -144,6 +132,9 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            style: TextButton.styleFrom(
+              foregroundColor: ColorName.contentSecondary,
+            ),
             child: const Text('Cancel'),
           ),
           TextButton(
@@ -264,29 +255,13 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              _buildSectionLabel('Title'),
-              const SizedBox(height: 8),
-              _buildTextField(_titleUzCtrl, 'Title (UZ)'),
-              const SizedBox(height: 10),
-              _buildTextField(_titleRuCtrl, 'Title (RU)'),
-              const SizedBox(height: 10),
-              _buildTextField(_titleEnCtrl, 'Title (EN)'),
-              const SizedBox(height: 20),
-              _buildSectionLabel('Description'),
-              const SizedBox(height: 8),
-              _buildTextField(_descUzCtrl, 'Description (UZ)', maxLines: 4),
-              const SizedBox(height: 10),
-              _buildTextField(_descRuCtrl, 'Description (RU)', maxLines: 4),
-              const SizedBox(height: 10),
-              _buildTextField(_descEnCtrl, 'Description (EN)', maxLines: 4),
-              const SizedBox(height: 20),
-              _buildSectionLabel('Video'),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
+              _buildTextField(_titleCtrl, 'Title'),
+              const SizedBox(height: 16),
+              _buildTextField(_descCtrl, 'Description', maxLines: 4),
+              const SizedBox(height: 16),
               _buildVideoSection(bloc),
-              const SizedBox(height: 20),
-              _buildSectionLabel('Image'),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               _buildImageSection(bloc),
               const SizedBox(height: 24),
               _buildUpdateButton(bloc),
@@ -298,17 +273,6 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -574,12 +538,8 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
         bloc.add(UpdateEpisodeEvent(
           season: int.tryParse(_seasonCtrl.text) ?? 1,
           episodeNumber: int.tryParse(_episodeCtrl.text) ?? 1,
-          titleUz: _titleUzCtrl.text,
-          titleRu: _titleRuCtrl.text,
-          titleEn: _titleEnCtrl.text,
-          descriptionUz: _descUzCtrl.text,
-          descriptionRu: _descRuCtrl.text,
-          descriptionEn: _descEnCtrl.text,
+          title: _titleCtrl.text,
+          description: _descCtrl.text,
         ));
       },
       style: ElevatedButton.styleFrom(

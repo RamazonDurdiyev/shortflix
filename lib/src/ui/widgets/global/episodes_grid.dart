@@ -10,7 +10,13 @@ import 'package:shortflix/src/services/routes.dart';
 class EpisodesGrid extends StatelessWidget {
   final List<EpisodeModel> episodes;
   final String? movieId;
-  const EpisodesGrid({super.key, required this.episodes, this.movieId});
+  final void Function(EpisodeModel episode)? onEpisodeTap;
+  const EpisodesGrid({
+    super.key,
+    required this.episodes,
+    this.movieId,
+    this.onEpisodeTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +29,7 @@ class EpisodesGrid extends StatelessWidget {
       itemBuilder: (context, index) => EpisodeCard(
         episode: episodes[index],
         movieId: movieId,
+        onTap: onEpisodeTap == null ? null : () => onEpisodeTap!(episodes[index]),
       ),
     );
   }
@@ -31,7 +38,8 @@ class EpisodesGrid extends StatelessWidget {
 class EpisodeCard extends StatelessWidget {
   final EpisodeModel episode;
   final String? movieId;
-  const EpisodeCard({super.key, required this.episode, this.movieId});
+  final VoidCallback? onTap;
+  const EpisodeCard({super.key, required this.episode, this.movieId, this.onTap});
 
   String _formatDuration(int seconds) {
     final m = seconds ~/ 60;
@@ -44,6 +52,10 @@ class EpisodeCard extends StatelessWidget {
     final resolvedMovieId = movieId ?? episode.movieId ?? '';
     return GestureDetector(
       onTap: () {
+        if (onTap != null) {
+          onTap!();
+          return;
+        }
         if (resolvedMovieId.isEmpty) return;
         Navigator.push(
           context,

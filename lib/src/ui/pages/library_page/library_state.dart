@@ -36,3 +36,17 @@ class FetchMyMoviesState extends LibraryState {
   @override
   List<Object?> get props => [state, UniqueKey()];
 }
+
+class FetchArchivedMoviesState extends LibraryState {
+  final BaseState state;
+  FetchArchivedMoviesState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
+}
+
+class FetchArchivedEpisodesState extends LibraryState {
+  final BaseState state;
+  FetchArchivedEpisodesState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
+}

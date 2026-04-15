@@ -97,6 +97,9 @@ class _EditMovieViewState extends State<_EditMovieView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            style: TextButton.styleFrom(
+              foregroundColor: ColorName.contentSecondary,
+            ),
             child: const Text('Cancel'),
           ),
           TextButton(

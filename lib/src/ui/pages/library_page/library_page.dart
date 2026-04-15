@@ -150,6 +150,19 @@ Widget _buildMenuGroup(BuildContext context) {
         );
       },
     ),
+    _MenuItem(
+      icon: Icons.archive_rounded,
+      label: 'Archived',
+      subtitle: 'Movies and episodes you archived',
+      onTap: () {
+        Navigator.push(
+          context,
+          generateRoutes(
+            RouteSettings(name: Navigation.archivedPage),
+          )!,
+        );
+      },
+    ),
   ];
 
   return Container(

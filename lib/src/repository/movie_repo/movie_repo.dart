@@ -361,6 +361,49 @@ class MovieRepo {
   }
 
   // **************************************************************************
+  // fetch archived movies
+  // **************************************************************************
+
+  Future<List<MovieModel>> fetchArchivedMovies() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(ARCHIVED_MOVIES);
+      return res.data["data"].map<MovieModel>((movie) {
+        return MovieModel.fromJson(movie);
+      }).toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // fetch archived episodes
+  // **************************************************************************
+
+  Future<List<EpisodeModel>> fetchArchivedEpisodes() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(ARCHIVED_EPISODES);
+      return (res.data as List)
+          .map<EpisodeModel>((e) => EpisodeModel.fromJson(e))
+          .toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // fetch archived episode details
+  // **************************************************************************
+
+  Future<EpisodeDetailsModel> fetchArchivedEpisodeDetails(String episodeId) async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(ARCHIVED_EPISODE_DETAILS + episodeId);
+      return EpisodeDetailsModel.fromJson(res.data);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
   // post episode
   // **************************************************************************
 
@@ -401,12 +444,8 @@ class MovieRepo {
     required String episodeId,
     int? season,
     int? episodeNumber,
-    String? titleUz,
-    String? titleRu,
-    String? titleEn,
-    String? descriptionUz,
-    String? descriptionRu,
-    String? descriptionEn,
+    String? title,
+    String? description,
     String? videoUrl,
     String? imageUrl,
     int? duration,
@@ -417,12 +456,8 @@ class MovieRepo {
         data: {
           "season": ?season,
           "episodeNumber": ?episodeNumber,
-          "titleUz": ?titleUz,
-          "titleRu": ?titleRu,
-          "titleEn": ?titleEn,
-          "descriptionUz": ?descriptionUz,
-          "descriptionRu": ?descriptionRu,
-          "descriptionEn": ?descriptionEn,
+          "title": ?title,
+          "description": ?description,
           "videoUrl": ?videoUrl,
           "imageUrl": ?imageUrl,
           "duration": ?duration,

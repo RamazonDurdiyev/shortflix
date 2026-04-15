@@ -24,6 +24,10 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       await _fetchNextEpisode(emit);
     });
 
+    on<FetchArchivedEpisodeEvent>((event, emit) async {
+      await _fetchArchivedEpisode(emit, event.episodeId);
+    });
+
     on<PlayTogglePlayPauseEvent>((event, emit) {
       isPlaying = !isPlaying;
       emit(PlayToggleState(isPlaying: isPlaying));
@@ -113,6 +117,34 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       printDebug('PlayBloc _fetchNextEpisode error => $e');
     } finally {
       isFetchingNext = false;
+    }
+  }
+
+  // ─────────────────────────────────────────
+  //  FETCH ARCHIVED EPISODE (single, by id)
+  // ─────────────────────────────────────────
+  Future<void> _fetchArchivedEpisode(
+    Emitter<PlayState> emit,
+    String episodeId,
+  ) async {
+    try {
+      emit(FetchEpisodeState(state: BaseState.loading));
+      final details = await movieRepo.fetchArchivedEpisodeDetails(episodeId);
+      movieId = details.movieId ?? '';
+      episode = [details];
+      episodes
+        ..clear()
+        ..add(details);
+      totalEpisodes = 1;
+      isLiked = details.isLiked ?? false;
+      isSaved = details.isSaved ?? false;
+      commentCount = details.commentCount ?? 0;
+      likeCount = details.likeCount ?? 0;
+      isPlaying = true;
+      emit(FetchEpisodeState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchEpisodeState(state: BaseState.error));
+      printDebug('PlayBloc _fetchArchivedEpisode error => $e');
     }
   }
 

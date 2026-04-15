@@ -22,12 +22,20 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     on<FetchMyMoviesEvent>((event, emit) async {
       await _fetchMyMovies(emit);
     });
+    on<FetchArchivedMoviesEvent>((event, emit) async {
+      await _fetchArchivedMovies(emit);
+    });
+    on<FetchArchivedEpisodesEvent>((event, emit) async {
+      await _fetchArchivedEpisodes(emit);
+    });
   }
 
   List<MovieModel> savedMovies = [];
   List<EpisodeModel> savedEpisodes = [];
   List<EpisodeModel> likedEpisodes = [];
   List<MovieModel> myMovies = [];
+  List<MovieModel> archivedMovies = [];
+  List<EpisodeModel> archivedEpisodes = [];
 
   Future<void> _fetchSavedMovies(Emitter<LibraryState> emit) async {
     try {
@@ -70,6 +78,28 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     } catch (e) {
       emit(FetchMyMoviesState(state: BaseState.error));
       printDebug('LibraryBloc _fetchMyMovies error => $e');
+    }
+  }
+
+  Future<void> _fetchArchivedMovies(Emitter<LibraryState> emit) async {
+    try {
+      emit(FetchArchivedMoviesState(state: BaseState.loading));
+      archivedMovies = await movieRepo.fetchArchivedMovies();
+      emit(FetchArchivedMoviesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchArchivedMoviesState(state: BaseState.error));
+      printDebug('LibraryBloc _fetchArchivedMovies error => $e');
+    }
+  }
+
+  Future<void> _fetchArchivedEpisodes(Emitter<LibraryState> emit) async {
+    try {
+      emit(FetchArchivedEpisodesState(state: BaseState.loading));
+      archivedEpisodes = await movieRepo.fetchArchivedEpisodes();
+      emit(FetchArchivedEpisodesState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchArchivedEpisodesState(state: BaseState.error));
+      printDebug('LibraryBloc _fetchArchivedEpisodes error => $e');
     }
   }
 }

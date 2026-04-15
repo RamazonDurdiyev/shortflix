@@ -22,6 +22,13 @@ class FetchNextEpisodeEvent extends PlayEvent {
   List<Object?> get props => [];
 }
 
+class FetchArchivedEpisodeEvent extends PlayEvent {
+  final String episodeId;
+  FetchArchivedEpisodeEvent({required this.episodeId});
+  @override
+  List<Object?> get props => [episodeId];
+}
+
 class PlayTogglePlayPauseEvent extends PlayEvent {
   @override
   List<Object?> get props => [];
