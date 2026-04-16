@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -62,7 +64,8 @@ class AuthRepo {
     if (!await networkInfo.isConnected) throw NetworkException();
 
     final googleSignIn = GoogleSignIn(
-      serverClientId: GOOGLE_SERVER_CLIENT_ID,
+      clientId: Platform.isIOS ? GOOGLE_IOS_CLIENT_ID : null,
+      serverClientId: GOOGLE_WEB_CLIENT_ID,
       scopes: const ['email', 'profile'],
     );
 
@@ -116,8 +119,8 @@ class AuthRepo {
     );
     if (idToken == null || idToken.isEmpty) {
       throw GoogleSignInFailedException(
-        'Google idToken is null — check that serverClientId matches the '
-        'backend Web OAuth client.',
+        'Google idToken is null — check that the platform OAuth client IDs '
+        'match the ones configured on the backend.',
       );
     }
 

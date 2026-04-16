@@ -21,9 +21,15 @@ const REFRESH = "/api/auth/refresh";
 const SEND_CODE = "/api/auth/login";
 const GOOGLE_AUTH = "/api/auth/google";
 
-// Google OAuth Web Client ID (backend GOOGLE_CLIENT_ID — used as serverClientId in Flutter)
-const GOOGLE_SERVER_CLIENT_ID =
+
+// OAuth client id
+const GOOGLE_ANDROID_CLIENT_ID =
     "702398577621-dc0scstp50fdjihvp72bpusu1u5mmpl1.apps.googleusercontent.com";
+
+const GOOGLE_IOS_CLIENT_ID =
+    "702398577621-hug0kc079la1eropvk06bh24cr9qo32a.apps.googleusercontent.com";
+
+const GOOGLE_WEB_CLIENT_ID = "702398577621-8cdiihlmbq1bsaco6u9p5gdr71eulkja.apps.googleusercontent.com";
 
 // Movies
 
