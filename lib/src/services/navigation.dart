@@ -19,6 +19,7 @@ class Navigation {
   static const String playPage = "/play_page";
   static const String libraryPage = "/playlists_page";
   static const String recPage = "/rec_page";
+  static const String allMoviesPage = "/all_movies_page";
 
   // library pages
   static const String savedMoviesPage = "/saved_movies_page";

@@ -54,6 +54,24 @@ class MovieRepo {
   }
 
   // **************************************************************************
+  // fetch movies by category
+  // **************************************************************************
+
+  Future<List<MovieModel>> fetchMoviesByCategory(String categoryId) async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(
+        SEARCH_MOVIES,
+        queryParameters: {"categoryId": categoryId},
+      );
+      return res.data["data"].map<MovieModel>((movie) {
+        return MovieModel.fromJson(movie);
+      }).toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
   // fetch movies
   // **************************************************************************
 

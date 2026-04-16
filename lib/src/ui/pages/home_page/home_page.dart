@@ -207,8 +207,20 @@ class _HomeContentState extends State<_HomeContent> {
                 ),
 
                 // ── Section: Popular ─────────────────────
-                const SliverToBoxAdapter(
-                  child: _SectionTitle(title: 'Popular on Shortflix'),
+                SliverToBoxAdapter(
+                  child: _SectionTitle(
+                    title: 'Popular on Shortflix',
+                    onSeeAll: () {
+                      Navigator.push(
+                        context,
+                        generateRoutes(
+                          const RouteSettings(
+                            name: Navigation.allMoviesPage,
+                          ),
+                        )!,
+                      );
+                    },
+                  ),
                 ),
 
                 // ── Movies Grid ──────────────────────────
@@ -303,7 +315,19 @@ class _HomeContentState extends State<_HomeContent> {
             spacing: 8,
             runSpacing: 8,
             children: List.generate(bloc.categories.length, (index) {
+              final category = bloc.categories[index];
               return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    generateRoutes(
+                      RouteSettings(
+                        name: Navigation.allMoviesPage,
+                        arguments: category.id,
+                      ),
+                    )!,
+                  );
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
@@ -319,7 +343,7 @@ class _HomeContentState extends State<_HomeContent> {
                     ),
                   ),
                   child: Text(
-                    bloc.categories[index].name,
+                    category.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 13,
@@ -540,7 +564,8 @@ class _SearchBar extends StatelessWidget {
 // ─────────────────────────────────────────
 class _SectionTitle extends StatelessWidget {
   final String title;
-  const _SectionTitle({required this.title});
+  final VoidCallback? onSeeAll;
+  const _SectionTitle({required this.title, this.onSeeAll});
 
   @override
   Widget build(BuildContext context) {
@@ -571,14 +596,18 @@ class _SectionTitle extends StatelessWidget {
               ),
             ],
           ),
-          Text(
-            'See all',
-            style: TextStyle(
-              color: ColorName.accent,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+          if (onSeeAll != null)
+            GestureDetector(
+              onTap: onSeeAll,
+              child: Text(
+                'See all',
+                style: TextStyle(
+                  color: ColorName.accent,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
@@ -13,27 +15,64 @@ class FeaturedCarousel extends StatefulWidget {
 }
 
 class _FeaturedCarouselState extends State<FeaturedCarousel> {
-  final PageController _pageController = PageController(viewportFraction: 0.80);
-  int _currentPage = 0;
+  static const int _initialPage = 10000;
+  static const Duration _autoPlayInterval = Duration(seconds: 3);
+  static const Duration _transitionDuration = Duration(milliseconds: 500);
+
+  late final PageController _pageController;
+  Timer? _autoPlayTimer;
+  int _currentPage = _initialPage;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      viewportFraction: 0.80,
+      initialPage: _initialPage,
+    );
+    _startAutoPlay();
+  }
+
+  @override
+  void didUpdateWidget(covariant FeaturedCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.banners.length != widget.banners.length) {
+      _startAutoPlay();
+    }
+  }
+
+  void _startAutoPlay() {
+    _autoPlayTimer?.cancel();
+    if (widget.banners.length < 2) return;
+    _autoPlayTimer = Timer.periodic(_autoPlayInterval, (_) {
+      if (!_pageController.hasClients) return;
+      _pageController.nextPage(
+        duration: _transitionDuration,
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
 
   @override
   void dispose() {
+    _autoPlayTimer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final count = widget.banners.length;
     return Column(
       children: [
         SizedBox(
           height: 200,
           child: PageView.builder(
             controller: _pageController,
-            itemCount: widget.banners.length,
+            itemCount: count == 0 ? 0 : null,
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemBuilder: (context, index) {
-              final item = widget.banners[index];
+              final item = widget.banners[index % count];
               final isActive = index == _currentPage;
               return GestureDetector(
                 onTap: () {
@@ -168,8 +207,8 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
         // Page indicator dots
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(widget.banners.length, (i) {
-            final active = i == _currentPage;
+          children: List.generate(count, (i) {
+            final active = count == 0 ? false : i == _currentPage % count;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 2.5),
