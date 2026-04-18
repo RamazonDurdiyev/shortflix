@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PostEpisodeBloc>(
           create: (context) => PostEpisodeBloc(
             movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
           ),
         ),
         BlocProvider<RecBloc>(

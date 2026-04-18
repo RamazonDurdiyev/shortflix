@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_bloc.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_event.dart';
@@ -404,6 +405,10 @@ class _EpisodesContent extends StatelessWidget {
               height: 1.5,
             ),
           ),
+          if ((movie.creator?.fullName ?? '').isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _CreatorChip(creator: movie.creator!),
+          ],
           const SizedBox(height: 16),
 
           // ── Save button ──────────────────────
@@ -598,6 +603,69 @@ class _EpisodesContent extends StatelessWidget {
           const SizedBox(height: 4),
         ],
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+//  CREATOR CHIP (clickable)
+// ─────────────────────────────────────────
+class _CreatorChip extends StatelessWidget {
+  const _CreatorChip({required this.creator});
+
+  final CreatorModel creator;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _handleTap(context),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.person_outline_rounded,
+                color: ColorName.contentSecondary,
+                size: 14,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Creator: ',
+                style: TextStyle(
+                  color: ColorName.contentSecondary,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                creator.fullName ?? '',
+                style: TextStyle(
+                  color: ColorName.accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                  decorationColor: ColorName.accent.withValues(alpha: .6),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleTap(BuildContext context) {
+    final userId = creator.id;
+    if (userId == null || userId.isEmpty) return;
+    Navigator.of(context).pushNamed(
+      Navigation.myMoviesPage,
+      arguments: {
+        'userId': userId,
+        'displayName': creator.fullName,
+      },
     );
   }
 }

@@ -5,14 +5,17 @@ import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
+import 'package:shortflix/src/repository/user_repo/user_repo.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_event.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_state.dart';
 import 'package:video_compress/video_compress.dart';
 
 class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
   final MovieRepo movieRepo;
+  final UserRepo userRepo;
 
-  PostEpisodeBloc({required this.movieRepo}) : super(PostEpisodeInitial()) {
+  PostEpisodeBloc({required this.movieRepo, required this.userRepo})
+      : super(PostEpisodeInitial()) {
     on<FetchUserMoviesEvent>((event, emit) async {
       await _fetchUserMovies(emit);
     });
@@ -47,7 +50,8 @@ class PostEpisodeBloc extends Bloc<PostEpisodeEvent, PostEpisodeState> {
   Future<void> _fetchUserMovies(Emitter<PostEpisodeState> emit) async {
     try {
       emit(FetchUserMoviesState(state: BaseState.loading));
-      userMovies = await movieRepo.fetchMoviesOfUser();
+      final currentUser = await userRepo.fetchCurrentUser();
+      userMovies = await movieRepo.fetchMoviesOfUser(currentUser.id ?? '');
       emit(FetchUserMoviesState(state: BaseState.loaded));
     } catch (e) {
       emit(FetchUserMoviesState(state: BaseState.error));

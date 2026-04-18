@@ -35,7 +35,7 @@ const GOOGLE_WEB_CLIENT_ID = "702398577621-8cdiihlmbq1bsaco6u9p5gdr71eulkja.apps
 
 const GET_ALL_MOVIES = "/api/movies";
 const SEARCH_MOVIES = "/api/movies/search";
-const GET_ALL_MOVIES_OF_USER = "/api/movies/my";
+String moviesByUser(String userId) => "/api/movies/user/$userId";
 const GET_MOVIE_DETAILS = "/api/movies/";
 const GET_BANNERS = "/api/movies/banner";
 const CREATE_MOVIE = "/api/movies";

@@ -48,6 +48,9 @@ MovieDetailsModel _$MovieDetailsModelFromJson(Map<String, dynamic> json) =>
       episode: (json['episode'] as num?)?.toInt(),
       watched: json['watched'] as bool?,
       canEdit: json['canEdit'] as bool?,
+      creator: json['creator'] == null
+          ? null
+          : CreatorModel.fromJson(json['creator'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MovieDetailsModelToJson(MovieDetailsModel instance) =>
@@ -67,7 +70,16 @@ Map<String, dynamic> _$MovieDetailsModelToJson(MovieDetailsModel instance) =>
       'episode': instance.episode,
       'watched': instance.watched,
       'canEdit': instance.canEdit,
+      'creator': instance.creator,
     };
+
+CreatorModel _$CreatorModelFromJson(Map<String, dynamic> json) => CreatorModel(
+  id: json['id'] as String?,
+  fullName: json['fullName'] as String?,
+);
+
+Map<String, dynamic> _$CreatorModelToJson(CreatorModel instance) =>
+    <String, dynamic>{'id': instance.id, 'fullName': instance.fullName};
 
 EpisodeModel _$EpisodeModelFromJson(Map<String, dynamic> json) => EpisodeModel(
   id: json['id'] as String?,

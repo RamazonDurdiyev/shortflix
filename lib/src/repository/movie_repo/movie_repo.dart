@@ -75,11 +75,9 @@ class MovieRepo {
   // fetch movies
   // **************************************************************************
 
-  Future<List<MovieModel>> fetchMoviesOfUser() async {
-    // crashlyticsLog(page: 'CategoriesRepo', function: 'fetchCategories');
-
+  Future<List<MovieModel>> fetchMoviesOfUser(String userId) async {
     if (await networkInfo.isConnected) {
-      final res = await client.get(GET_ALL_MOVIES_OF_USER);
+      final res = await client.get(moviesByUser(userId));
       return res.data["data"].map<MovieModel>((movie) {
         return MovieModel.fromJson(movie);
       }).toList();

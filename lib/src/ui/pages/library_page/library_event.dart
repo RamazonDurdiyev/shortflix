@@ -18,8 +18,12 @@ class FetchLikedEpisodesEvent extends LibraryEvent {
 }
 
 class FetchMyMoviesEvent extends LibraryEvent {
+  final String? userId;
+
+  FetchMyMoviesEvent({this.userId});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [userId];
 }
 
 class FetchArchivedMoviesEvent extends LibraryEvent {

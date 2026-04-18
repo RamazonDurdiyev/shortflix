@@ -3,13 +3,16 @@ import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
+import 'package:shortflix/src/repository/user_repo/user_repo.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_event.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_state.dart';
 
 class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   final MovieRepo movieRepo;
+  final UserRepo userRepo;
 
-  LibraryBloc({required this.movieRepo}) : super(Initial()) {
+  LibraryBloc({required this.movieRepo, required this.userRepo})
+      : super(Initial()) {
     on<FetchSavedMoviesEvent>((event, emit) async {
       await _fetchSavedMovies(emit);
     });
@@ -20,7 +23,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       await _fetchLikedEpisodes(emit);
     });
     on<FetchMyMoviesEvent>((event, emit) async {
-      await _fetchMyMovies(emit);
+      await _fetchMyMovies(emit, event.userId);
     });
     on<FetchArchivedMoviesEvent>((event, emit) async {
       await _fetchArchivedMovies(emit);
@@ -70,10 +73,11 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     }
   }
 
-  Future<void> _fetchMyMovies(Emitter<LibraryState> emit) async {
+  Future<void> _fetchMyMovies(Emitter<LibraryState> emit, String? userId) async {
     try {
       emit(FetchMyMoviesState(state: BaseState.loading));
-      myMovies = await movieRepo.fetchMoviesOfUser();
+      final id = userId ?? (await userRepo.fetchCurrentUser()).id ?? '';
+      myMovies = await movieRepo.fetchMoviesOfUser(id);
       emit(FetchMyMoviesState(state: BaseState.loaded));
     } catch (e) {
       emit(FetchMyMoviesState(state: BaseState.error));

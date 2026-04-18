@@ -48,6 +48,7 @@ class MovieDetailsModel {
   final int? episode;
   final bool? watched;
   final bool? canEdit;
+  final CreatorModel? creator;
 
   const MovieDetailsModel({
     required this.id,
@@ -65,12 +66,26 @@ class MovieDetailsModel {
     required this.episode,
     required this.watched,
     this.canEdit,
+    this.creator,
   });
 
   factory MovieDetailsModel.fromJson(Map<String, dynamic> data) =>
       _$MovieDetailsModelFromJson(data);
 
   Map<String, dynamic> toJson() => _$MovieDetailsModelToJson(this);
+}
+
+@JsonSerializable()
+class CreatorModel {
+  final String? id;
+  final String? fullName;
+
+  const CreatorModel({this.id, this.fullName});
+
+  factory CreatorModel.fromJson(Map<String, dynamic> data) =>
+      _$CreatorModelFromJson(data);
+
+  Map<String, dynamic> toJson() => _$CreatorModelToJson(this);
 }
 
 @JsonSerializable()

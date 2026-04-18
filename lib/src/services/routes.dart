@@ -117,7 +117,10 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<LibraryBloc>(
-          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          create: (_) => LibraryBloc(
+            movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
+          ),
           child: const LibraryPage(),
         ),
       );
@@ -186,6 +189,7 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
         BlocProvider<PostEpisodeBloc>(
           create: (_) => PostEpisodeBloc(
             movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
           ),
           child: const PostEpisodePage(),
         ),
@@ -227,7 +231,10 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<LibraryBloc>(
-          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          create: (_) => LibraryBloc(
+            movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
+          ),
           child: const SavedMoviesPage(),
         ),
       );
@@ -236,7 +243,10 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<LibraryBloc>(
-          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          create: (_) => LibraryBloc(
+            movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
+          ),
           child: const SavedEpisodesPage(),
         ),
       );
@@ -245,17 +255,25 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<LibraryBloc>(
-          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          create: (_) => LibraryBloc(
+            movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
+          ),
           child: const LikedEpisodesPage(),
         ),
       );
 
     case Navigation.myMoviesPage:
+      final userId = args is Map ? args['userId'] as String? : null;
+      final displayName = args is Map ? args['displayName'] as String? : null;
       return buildRoute(
         settings,
         BlocProvider<LibraryBloc>(
-          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
-          child: const MyMoviesPage(),
+          create: (_) => LibraryBloc(
+            movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
+          ),
+          child: MyMoviesPage(userId: userId, displayName: displayName),
         ),
       );
 
@@ -263,7 +281,10 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<LibraryBloc>(
-          create: (_) => LibraryBloc(movieRepo: GetIt.instance.get()),
+          create: (_) => LibraryBloc(
+            movieRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(),
+          ),
           child: const ArchivedPage(),
         ),
       );
