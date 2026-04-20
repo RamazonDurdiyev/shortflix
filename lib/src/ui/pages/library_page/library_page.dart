@@ -112,26 +112,13 @@ Widget _buildMenuGroup(BuildContext context) {
     ),
     _MenuItem(
       icon: Icons.bookmark_rounded,
-      label: 'Saved Movies',
-      subtitle: 'Movies you bookmarked',
+      label: 'Saved',
+      subtitle: 'Movies and episodes you bookmarked',
       onTap: () {
         Navigator.push(
           context,
           generateRoutes(
-            RouteSettings(name: Navigation.savedMoviesPage),
-          )!,
-        );
-      },
-    ),
-    _MenuItem(
-      icon: Icons.video_library_rounded,
-      label: 'Saved Episodes',
-      subtitle: 'Episodes you bookmarked',
-      onTap: () {
-        Navigator.push(
-          context,
-          generateRoutes(
-            RouteSettings(name: Navigation.savedEpisodesPage),
+            RouteSettings(name: Navigation.savedPage),
           )!,
         );
       },

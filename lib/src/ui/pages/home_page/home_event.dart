@@ -17,6 +17,11 @@ class FetchBannersEvent extends HomeEvent{
   List<Object?> get props => [];
 }
 
+class FetchUserEvent extends HomeEvent{
+  @override
+  List<Object?> get props => [];
+}
+
 class SearchMoviesEvent extends HomeEvent{
   final String query;
 

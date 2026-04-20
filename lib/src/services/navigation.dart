@@ -22,8 +22,7 @@ class Navigation {
   static const String allMoviesPage = "/all_movies_page";
 
   // library pages
-  static const String savedMoviesPage = "/saved_movies_page";
-  static const String savedEpisodesPage = "/saved_episodes_page";
+  static const String savedPage = "/saved_page";
   static const String likedEpisodesPage = "/liked_episodes_page";
   static const String myMoviesPage = "/my_movies_page";
   static const String archivedPage = "/archived_page";

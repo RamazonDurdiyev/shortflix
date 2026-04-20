@@ -124,6 +124,7 @@ class _HomeContentState extends State<_HomeContent> {
     homeBloc.add(FetchCategoriesEvent());
     homeBloc.add(FetchMoviesEvent());
     homeBloc.add(FetchBannersEvent());
+    homeBloc.add(FetchUserEvent());
   }
 
   @override
@@ -394,27 +395,56 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hello, Someone',
-                  style: TextStyle(
-                    color: ColorName.contentPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'What are you watching today?',
-                  style: TextStyle(
-                    color: ColorName.contentSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+            child: BlocBuilder<HomeBloc, HomeState>(
+              buildWhen: (_, state) => state is FetchUserState,
+              builder: (context, state) {
+                final fullName = context.read<HomeBloc>().user?.fullName ?? '';
+                final hasName = fullName.trim().isNotEmpty;
+                final firstName = hasName
+                    ? fullName.trim().split(RegExp(r'\s+')).first
+                    : 'there';
+                const nameStyle = TextStyle(
+                  color: ColorName.contentPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.3,
+                );
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Hello, ', style: nameStyle),
+                        Flexible(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 700),
+                            switchInCurve:
+                                const Interval(0.55, 1.0, curve: Curves.easeOut),
+                            switchOutCurve:
+                                const Interval(0.55, 1.0, curve: Curves.easeIn),
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(opacity: animation, child: child),
+                            child: Text(
+                              firstName,
+                              key: ValueKey(firstName),
+                              style: nameStyle,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'What are you watching today?',
+                      style: TextStyle(
+                        color: ColorName.contentSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           // Notifications
@@ -439,40 +469,6 @@ class _Header extends StatelessWidget {
                 Icons.notifications_none_rounded,
                 color: Colors.white,
                 size: 20,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Avatar
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                generateRoutes(
-                  RouteSettings(name: Navigation.profilePage),
-                )!,
-              );
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [ColorName.accent, ColorName.accentDark],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Center(
-                child: Text(
-                  'S',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
               ),
             ),
           ),

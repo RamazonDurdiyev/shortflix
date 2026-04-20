@@ -4,8 +4,10 @@ import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
 import 'package:shortflix/src/models/category_model/category_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/repository/category_repo/category_repo.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
+import 'package:shortflix/src/repository/user_repo/user_repo.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_event.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
 
@@ -13,8 +15,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
 
   final CategoryRepo categoryRepo;
   final MovieRepo movieRepo;
+  final UserRepo userRepo;
 
-  HomeBloc({required this.categoryRepo, required this.movieRepo}) : super(Initial()){
+  HomeBloc({
+    required this.categoryRepo,
+    required this.movieRepo,
+    required this.userRepo,
+  }) : super(Initial()){
     on<FetchCategoriesEvent>((event, emit) async{
       await _fetchCategories(emit);
     },);
@@ -24,6 +31,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     on<FetchBannersEvent>((event, emit) async{
       await _fetchBanners(emit);
     },);
+    on<FetchUserEvent>((event, emit) async {
+      await _fetchUser(emit);
+    });
     on<SearchMoviesEvent>((event, emit) async {
       await _searchMovies(emit, event.query);
     });
@@ -42,6 +52,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
   List<MovieModel> movies = [];
   List<BannerModel> banners = [];
   List<MovieModel> searchResults = [];
+  UserModel? user;
   bool isSearching = false;
   int currentNavBarIndex = 0;
   
@@ -67,6 +78,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     }
   }
   
+  Future<void> _fetchUser(Emitter<HomeState> emit) async {
+    try {
+      emit(FetchUserState(state: BaseState.loading));
+      user = await userRepo.fetchCurrentUser();
+      emit(FetchUserState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchUserState(state: BaseState.error));
+      printDebug("HomeBloc _fetchUser error => $e");
+    }
+  }
+
   Future<void> _fetchBanners(Emitter<HomeState> emit) async {
     try {
       emit(FetchBannersState(state: BaseState.loading));
