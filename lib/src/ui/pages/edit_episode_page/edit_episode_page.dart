@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/edit_episode_page/edit_episode_event.dart';
@@ -90,12 +91,15 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
                     ),
                     if (isUploading) ...[
                       const SizedBox(height: 12),
-                      Text(
-                        'Uploading ${(progress * 100).toStringAsFixed(0)}%',
-                        style: const TextStyle(
-                          color: ColorName.contentPrimary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                      Builder(
+                        builder: (ctx) => Text(
+                          AppLocalizations.of(ctx).uploadingPercent(
+                              (progress * 100).toStringAsFixed(0)),
+                          style: const TextStyle(
+                            color: ColorName.contentPrimary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
@@ -119,9 +123,10 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
     BuildContext context,
     String title,
     String message, {
-    String confirmText = 'Confirm',
+    String? confirmText,
     Color? confirmColor,
   }) async {
+    final l = AppLocalizations.of(context);
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -135,14 +140,14 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
             style: TextButton.styleFrom(
               foregroundColor: ColorName.contentSecondary,
             ),
-            child: const Text('Cancel'),
+            child: Text(l.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(
               foregroundColor: confirmColor ?? ColorName.accent,
             ),
-            child: Text(confirmText),
+            child: Text(confirmText ?? l.confirm),
           ),
         ],
       ),
@@ -153,6 +158,7 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<EditEpisodeBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<EditEpisodeBloc, EditEpisodeState>(
       listener: (context, state) {
@@ -177,13 +183,13 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Episode updated')),
+              SnackBar(content: Text(l.episodeUpdated)),
             );
             Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to update episode')),
+              SnackBar(content: Text(l.failedToUpdateEpisode)),
             );
           }
         }
@@ -194,13 +200,13 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Episode deleted')),
+              SnackBar(content: Text(l.episodeDeleted)),
             );
             Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to delete episode')),
+              SnackBar(content: Text(l.failedToDeleteEpisode)),
             );
           }
         }
@@ -211,13 +217,13 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Episode archived')),
+              SnackBar(content: Text(l.episodeArchived)),
             );
             Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to archive episode')),
+              SnackBar(content: Text(l.failedToArchiveEpisode)),
             );
           }
         }
@@ -225,9 +231,9 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
         appBar: AppBar(
-          title: const Text(
-            'Edit Episode',
-            style: TextStyle(
+          title: Text(
+            l.editEpisode,
+            style: const TextStyle(
               color: ColorName.contentPrimary,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.3,
@@ -245,20 +251,20 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildTextField(_seasonCtrl, 'Season',
+                    child: _buildTextField(_seasonCtrl, l.season,
                         keyboardType: TextInputType.number),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildTextField(_episodeCtrl, 'Episode №',
+                    child: _buildTextField(_episodeCtrl, l.episodeNumberLabel,
                         keyboardType: TextInputType.number),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              _buildTextField(_titleCtrl, 'Title'),
+              _buildTextField(_titleCtrl, l.fieldTitle),
               const SizedBox(height: 16),
-              _buildTextField(_descCtrl, 'Description', maxLines: 4),
+              _buildTextField(_descCtrl, l.fieldDescription, maxLines: 4),
               const SizedBox(height: 16),
               _buildVideoSection(bloc),
               const SizedBox(height: 16),
@@ -378,12 +384,13 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              'No video',
+              AppLocalizations.of(context).noVideo,
               style: TextStyle(color: ColorName.contentSecondary),
             ),
           );
         }
 
+        final l = AppLocalizations.of(context);
         final hasAny = newPath != null ||
             (existingUrl != null && existingUrl.isNotEmpty);
 
@@ -399,7 +406,7 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
                     onPressed: () => bloc.add(PickVideoEvent()),
                     style: _outlineBtnStyle(),
                     icon: const Icon(Icons.videocam),
-                    label: Text(hasAny ? 'Change Video' : 'Pick Video'),
+                    label: Text(hasAny ? l.changeVideo : l.pickVideo),
                   ),
                 ),
                 if (hasAny) ...[
@@ -409,16 +416,16 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
                       onPressed: () async {
                         final ok = await _confirm(
                           context,
-                          'Remove video?',
-                          'This will clear the current video from the episode.',
-                          confirmText: 'Remove',
+                          l.removeVideoTitle,
+                          l.removeVideoMessage,
+                          confirmText: l.remove,
                           confirmColor: Colors.redAccent,
                         );
                         if (ok) bloc.add(RemoveVideoEvent());
                       },
                       style: _outlineBtnStyle(color: Colors.redAccent),
                       icon: const Icon(Icons.delete_outline),
-                      label: const Text('Remove'),
+                      label: Text(l.remove),
                     ),
                   ),
                 ],
@@ -471,12 +478,13 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
             ),
             alignment: Alignment.center,
             child: Text(
-              'No image',
+              AppLocalizations.of(context).noImage,
               style: TextStyle(color: ColorName.contentSecondary),
             ),
           );
         }
 
+        final l = AppLocalizations.of(context);
         final hasAny = newPath != null ||
             (existingUrl != null && existingUrl.isNotEmpty);
 
@@ -492,7 +500,7 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
                     onPressed: () => bloc.add(PickImageEvent()),
                     style: _outlineBtnStyle(),
                     icon: const Icon(Icons.image),
-                    label: Text(hasAny ? 'Change Image' : 'Pick Image'),
+                    label: Text(hasAny ? l.changeImage : l.pickImage),
                   ),
                 ),
                 if (hasAny) ...[
@@ -502,16 +510,16 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
                       onPressed: () async {
                         final ok = await _confirm(
                           context,
-                          'Remove image?',
-                          'This will clear the current image from the episode.',
-                          confirmText: 'Remove',
+                          l.removeImageTitle,
+                          l.removeImageEpisodeMessage,
+                          confirmText: l.remove,
                           confirmColor: Colors.redAccent,
                         );
                         if (ok) bloc.add(RemoveImageEvent());
                       },
                       style: _outlineBtnStyle(color: Colors.redAccent),
                       icon: const Icon(Icons.delete_outline),
-                      label: const Text('Remove'),
+                      label: Text(l.remove),
                     ),
                   ),
                 ],
@@ -548,19 +556,20 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
-      child: const Text('Update Episode',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      child: Text(AppLocalizations.of(context).updateEpisode,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 
   Widget _buildArchiveButton(EditEpisodeBloc bloc) {
+    final l = AppLocalizations.of(context);
     return OutlinedButton.icon(
       onPressed: () async {
         final ok = await _confirm(
           context,
-          'Archive episode?',
-          'This episode will be hidden from viewers. You can restore it later.',
-          confirmText: 'Archive',
+          l.archiveEpisodeTitle,
+          l.archiveEpisodeMessage,
+          confirmText: l.archiveAction,
         );
         if (ok) bloc.add(ArchiveEpisodeEvent());
       },
@@ -571,19 +580,20 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       icon: const Icon(Icons.archive_outlined),
-      label: const Text('Archive Episode',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      label: Text(l.archiveEpisode,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 
   Widget _buildDeleteButton(EditEpisodeBloc bloc) {
+    final l = AppLocalizations.of(context);
     return OutlinedButton.icon(
       onPressed: () async {
         final ok = await _confirm(
           context,
-          'Delete episode?',
-          'This action cannot be undone.',
-          confirmText: 'Delete',
+          l.deleteEpisodeTitle,
+          l.deleteMessage,
+          confirmText: l.delete,
           confirmColor: Colors.redAccent,
         );
         if (ok) bloc.add(DeleteEpisodeEvent());
@@ -595,8 +605,8 @@ class _EditEpisodeViewState extends State<_EditEpisodeView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       icon: const Icon(Icons.delete_outline),
-      label: const Text('Delete Episode',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      label: Text(l.deleteEpisode,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 }

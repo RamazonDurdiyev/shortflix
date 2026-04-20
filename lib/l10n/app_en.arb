@@ -1,0 +1,276 @@
+{
+  "@@locale": "en",
+  "language": "Language",
+  "languageUzbek": "Uzbek",
+  "languageRussian": "Russian",
+  "languageEnglish": "English",
+
+  "profile": "Profile",
+  "profileFallbackName": "Someone",
+  "profileFallbackEmail": "someone@email.com",
+  "premium": "Premium",
+  "statWatched": "Watched",
+  "statWatchlist": "Watchlist",
+  "statLiked": "Liked",
+  "sectionAccount": "Account",
+  "sectionSupport": "Support",
+  "editProfile": "Edit Profile",
+  "privacyAndSecurity": "Privacy & Security",
+  "helpCenter": "Help Center",
+  "about": "About",
+  "logOut": "Log Out",
+  "logoutFailed": "Logout failed. Please try again.",
+  "logoutConfirmTitle": "Log out?",
+  "logoutConfirmMessage": "You will need to sign in again to continue watching.",
+  "cancel": "Cancel",
+
+  "editProfileTitle": "Edit Profile",
+  "fullName": "Full Name",
+  "fullNameHint": "Eshmatjon Toshmatov",
+  "fullNameError": "Enter your full name",
+  "phone": "Phone",
+  "phoneHint": "+998901234567",
+  "phoneError": "Enter a valid phone",
+  "dateOfBirth": "Date of Birth",
+  "selectDateOfBirth": "Select date of birth",
+  "change": "Change",
+  "saveChanges": "Save Changes",
+  "uploadPhoto": "Upload photo",
+  "changePhoto": "Change photo",
+  "profileUpdated": "Profile updated",
+  "profileUpdateFailed": "Failed to update profile",
+  "pickImageFailed": "Failed to pick image",
+
+  "myLibrary": "My Library",
+  "myMovies": "My Movies",
+  "myMoviesSubtitle": "Movies you created",
+  "saved": "Saved",
+  "savedSubtitle": "Movies and episodes you bookmarked",
+  "likedEpisodes": "Liked Episodes",
+  "likedEpisodesSubtitle": "Episodes you liked",
+  "archived": "Archived",
+  "archivedSubtitle": "Movies and episodes you archived",
+
+  "tabMovies": "Movies",
+  "tabEpisodes": "Episodes",
+
+  "moviesBy": "Movies by {name}",
+  "@moviesBy": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "noMoviesYet": "No movies yet",
+  "noMoviesCreatedYet": "No movies created yet",
+  "failedToLoadMovies": "Failed to load movies",
+  "failedToLoadYourMovies": "Failed to load your movies",
+
+  "failedToLoadLikedEpisodes": "Failed to load liked episodes",
+  "noLikedEpisodesYet": "No liked episodes yet",
+
+  "failedToLoadSavedMovies": "Failed to load saved movies",
+  "noSavedMoviesYet": "No saved movies yet",
+  "failedToLoadSavedEpisodes": "Failed to load saved episodes",
+  "noSavedEpisodesYet": "No saved episodes yet",
+
+  "failedToLoadArchivedMovies": "Failed to load archived movies",
+  "noArchivedMovies": "No archived movies",
+  "failedToLoadArchivedEpisodes": "Failed to load archived episodes",
+  "noArchivedEpisodes": "No archived episodes",
+
+  "create": "Create",
+  "whatDoYouWantToPost": "What do you want to post?",
+  "movie": "Movie",
+  "movieActionSubtitle": "Add a new movie with details",
+  "episode": "Episode",
+  "episodeActionSubtitle": "Upload an episode to an existing movie",
+
+  "postMovie": "Post Movie",
+  "postEpisode": "Post Episode",
+  "fieldTitle": "Title",
+  "fieldDescription": "Description",
+  "titleHintMovie": "ex: The Dark Knight",
+  "descriptionHintMovie": "ex: Crime in Gotham is at its peak. Bruce Wayne becomes a dark vigilante to protect the city",
+  "titleHintEpisode": "ex: A New Beginning",
+  "descriptionHintEpisode": "ex: The hero arrives in a new city and faces an unexpected enemy",
+  "releaseYear": "Release Year",
+  "selectCategory": "Select category",
+  "selectCategoryTitle": "Select Category",
+  "selectAgeLimit": "Select age limit",
+  "selectAgeLimitTitle": "Select Age Limit",
+  "selectMovie": "Select movie",
+  "selectMovieTitle": "Select Movie",
+  "noMoviesFoundCreateFirst": "No movies found. Create a movie first.",
+  "season": "Season",
+  "episodeNumberLabel": "Episode №",
+  "pickImage": "Pick Image",
+  "changeImage": "Change Image",
+  "pickVideo": "Pick Video",
+  "changeVideo": "Change Video",
+  "uploadingPercent": "Uploading {percent}%",
+  "@uploadingPercent": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "failedToLoadCategories": "Failed to load categories",
+  "pickVideoFailed": "Failed to pick video",
+  "moviePostedSuccessfully": "Movie posted successfully",
+  "episodePostedSuccessfully": "Episode posted successfully",
+  "somethingWentWrong": "Something went wrong",
+
+  "shorts": "Shorts",
+  "failedToLoadShorts": "Failed to load shorts",
+  "noShortsAvailable": "No shorts available",
+  "share": "Share",
+  "more": "More",
+  "save": "Save",
+  "comments": "Comments",
+  "noCommentsYet": "No comments yet",
+  "beFirstToComment": "Be the first to comment",
+  "addAComment": "Add a comment...",
+  "user": "User",
+  "justNow": "just now",
+  "minutesAgoShort": "{count}m ago",
+  "@minutesAgoShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursAgoShort": "{count}h ago",
+  "@hoursAgoShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "daysAgoShort": "{count}d ago",
+  "@daysAgoShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "navHome": "Home",
+  "navPost": "Post",
+  "navLibrary": "Library",
+  "hello": "Hello, ",
+  "fallbackGreetingName": "there",
+  "whatAreYouWatchingToday": "What are you watching today?",
+  "searchMoviesHint": "Search movies, series, genres…",
+  "featuredToday": "Featured Today",
+  "popularOnShortflix": "Popular on Shortflix",
+  "browseByGenre": "Browse by Genre",
+  "noMoviesFound": "No movies found",
+  "searchResultsCount": "Search Results ({count})",
+  "@searchResultsCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "seeAll": "See all",
+
+  "seasonEpisodeLabel": "Season {season}  ·  Episode {episode}",
+  "@seasonEpisodeLabel": {
+    "placeholders": {
+      "season": {"type": "int"},
+      "episode": {"type": "int"}
+    }
+  },
+  "episodeN": "Episode {number}",
+  "@episodeN": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "seasonShort": "S{number}",
+  "@seasonShort": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+
+  "failedToLoadEpisodes": "Failed to load episodes",
+  "noEpisodesForSeason": "No episodes for this season",
+  "edit": "Edit",
+  "yourRating": "Your rating",
+  "rateThisMovie": "Rate this movie",
+  "creatorLabel": "Creator: ",
+
+  "emailLabel": "Email",
+  "emailHint": "you@example.com",
+  "emailError": "Enter a valid email",
+  "passwordLabel": "Password",
+  "passwordError": "Password must be at least 6 characters",
+  "forgotPassword": "Forgot password?",
+  "welcomeBack": "Welcome back",
+  "signInSubtitle": "Sign in to continue watching",
+  "signIn": "Sign In",
+  "orDivider": "OR",
+  "continueWithGoogle": "Continue with Google",
+  "dontHaveAccount": "Don't have an account? ",
+  "signUp": "Sign Up",
+  "incorrectEmailOrPassword": "Incorrect email or password",
+  "googleSignInFailed": "Google sign-in failed. Please try again.",
+  "createAccountHeading": "Create account",
+  "createAccountSubtitle": "Join millions watching on Shortflix",
+  "createAccountButton": "Create Account",
+  "alreadyHaveAccount": "Already have an account? ",
+  "signUpFailed": "Sign up failed. Please try again.",
+  "fullNameHintSignUp": "John Doe",
+
+  "checkYourEmail": "Check your email",
+  "sentCodeTo": "We sent a 6-digit code to ",
+  "yourEmailFallback": "your email",
+  "verify": "Verify",
+  "didntReceiveCode": "Didn't receive the code? ",
+  "resend": "Resend",
+  "invalidCode": "Invalid code. Please try again.",
+  "codeResent": "Code resent!",
+
+  "appTagline": "Watch. Discover. Enjoy.",
+  "noConnection": "No Connection",
+  "checkInternetConnection": "Please check your internet connection and try again.",
+  "retry": "Retry",
+
+  "editMovie": "Edit Movie",
+  "editEpisode": "Edit Episode",
+  "updateMovie": "Update Movie",
+  "updateEpisode": "Update Episode",
+  "archiveMovie": "Archive Movie",
+  "archiveEpisode": "Archive Episode",
+  "deleteMovie": "Delete Movie",
+  "deleteEpisode": "Delete Episode",
+  "movieUpdated": "Movie updated",
+  "failedToUpdateMovie": "Failed to update movie",
+  "episodeUpdated": "Episode updated",
+  "failedToUpdateEpisode": "Failed to update episode",
+  "movieDeleted": "Movie deleted",
+  "failedToDeleteMovie": "Failed to delete movie",
+  "episodeDeleted": "Episode deleted",
+  "failedToDeleteEpisode": "Failed to delete episode",
+  "movieArchived": "Movie archived",
+  "failedToArchiveMovie": "Failed to archive movie",
+  "episodeArchived": "Episode archived",
+  "failedToArchiveEpisode": "Failed to archive episode",
+  "confirm": "Confirm",
+  "remove": "Remove",
+  "archiveAction": "Archive",
+  "delete": "Delete",
+  "removeImageTitle": "Remove image?",
+  "removeImageMovieMessage": "This will clear the current poster from the movie.",
+  "removeImageEpisodeMessage": "This will clear the current image from the episode.",
+  "removeVideoTitle": "Remove video?",
+  "removeVideoMessage": "This will clear the current video from the episode.",
+  "archiveMovieTitle": "Archive movie?",
+  "archiveMovieMessage": "This movie will be hidden from viewers. You can restore it later.",
+  "archiveEpisodeTitle": "Archive episode?",
+  "archiveEpisodeMessage": "This episode will be hidden from viewers. You can restore it later.",
+  "deleteMovieTitle": "Delete movie?",
+  "deleteEpisodeTitle": "Delete episode?",
+  "deleteMessage": "This action cannot be undone.",
+  "noImage": "No image",
+  "noVideo": "No video",
+
+  "allMovies": "All Movies",
+  "allCategory": "All"
+}

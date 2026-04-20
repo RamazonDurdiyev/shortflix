@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_bloc.dart';
@@ -38,6 +39,7 @@ class _ArchivedPageState extends State<ArchivedPage>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       appBar: AppBar(
@@ -59,9 +61,9 @@ class _ArchivedPageState extends State<ArchivedPage>
             ),
           ),
         ),
-        title: const Text(
-          'Archived',
-          style: TextStyle(
+        title: Text(
+          l.archived,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -74,9 +76,9 @@ class _ArchivedPageState extends State<ArchivedPage>
           indicatorColor: ColorName.accent,
           splashFactory: NoSplash.splashFactory,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
-          tabs: const [
-            Tab(text: 'Movies'),
-            Tab(text: 'Episodes'),
+          tabs: [
+            Tab(text: l.tabMovies),
+            Tab(text: l.tabEpisodes),
           ],
         ),
       ),
@@ -96,6 +98,7 @@ class _MoviesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocBuilder<LibraryBloc, LibraryState>(
       buildWhen: (_, state) => state is FetchArchivedMoviesState,
       builder: (context, state) {
@@ -110,12 +113,12 @@ class _MoviesTab extends StatelessWidget {
 
         if (state is FetchArchivedMoviesState &&
             state.state == BaseState.error) {
-          return _message(Icons.error_outline_rounded,
-              'Failed to load archived movies');
+          return _message(
+              Icons.error_outline_rounded, l.failedToLoadArchivedMovies);
         }
 
         if (bloc.archivedMovies.isEmpty) {
-          return _message(Icons.archive_outlined, 'No archived movies');
+          return _message(Icons.archive_outlined, l.noArchivedMovies);
         }
 
         return SingleChildScrollView(
@@ -133,6 +136,7 @@ class _EpisodesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocBuilder<LibraryBloc, LibraryState>(
       buildWhen: (_, state) => state is FetchArchivedEpisodesState,
       builder: (context, state) {
@@ -147,12 +151,12 @@ class _EpisodesTab extends StatelessWidget {
 
         if (state is FetchArchivedEpisodesState &&
             state.state == BaseState.error) {
-          return _message(Icons.error_outline_rounded,
-              'Failed to load archived episodes');
+          return _message(
+              Icons.error_outline_rounded, l.failedToLoadArchivedEpisodes);
         }
 
         if (bloc.archivedEpisodes.isEmpty) {
-          return _message(Icons.archive_outlined, 'No archived episodes');
+          return _message(Icons.archive_outlined, l.noArchivedEpisodes);
         }
 
         return SingleChildScrollView(

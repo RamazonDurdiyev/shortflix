@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/pages/edit_movie_page/edit_movie_bloc.dart';
 import 'package:shortflix/src/ui/pages/edit_movie_page/edit_movie_event.dart';
@@ -84,9 +85,10 @@ class _EditMovieViewState extends State<_EditMovieView> {
     BuildContext context,
     String title,
     String message, {
-    String confirmText = 'Confirm',
+    String? confirmText,
     Color? confirmColor,
   }) async {
+    final l = AppLocalizations.of(context);
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -100,14 +102,14 @@ class _EditMovieViewState extends State<_EditMovieView> {
             style: TextButton.styleFrom(
               foregroundColor: ColorName.contentSecondary,
             ),
-            child: const Text('Cancel'),
+            child: Text(l.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(
               foregroundColor: confirmColor ?? ColorName.accent,
             ),
-            child: Text(confirmText),
+            child: Text(confirmText ?? l.confirm),
           ),
         ],
       ),
@@ -118,6 +120,7 @@ class _EditMovieViewState extends State<_EditMovieView> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<EditMovieBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<EditMovieBloc, EditMovieState>(
       listener: (context, state) {
@@ -138,13 +141,13 @@ class _EditMovieViewState extends State<_EditMovieView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Movie updated')),
+              SnackBar(content: Text(l.movieUpdated)),
             );
             Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to update movie')),
+              SnackBar(content: Text(l.failedToUpdateMovie)),
             );
           }
         }
@@ -155,13 +158,13 @@ class _EditMovieViewState extends State<_EditMovieView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Movie deleted')),
+              SnackBar(content: Text(l.movieDeleted)),
             );
             Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to delete movie')),
+              SnackBar(content: Text(l.failedToDeleteMovie)),
             );
           }
         }
@@ -172,13 +175,13 @@ class _EditMovieViewState extends State<_EditMovieView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Movie archived')),
+              SnackBar(content: Text(l.movieArchived)),
             );
             Navigator.of(context).pop(true);
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to archive movie')),
+              SnackBar(content: Text(l.failedToArchiveMovie)),
             );
           }
         }
@@ -186,9 +189,9 @@ class _EditMovieViewState extends State<_EditMovieView> {
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
         appBar: AppBar(
-          title: const Text(
-            'Edit Movie',
-            style: TextStyle(
+          title: Text(
+            l.editMovie,
+            style: const TextStyle(
               color: ColorName.contentPrimary,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.3,
@@ -203,11 +206,11 @@ class _EditMovieViewState extends State<_EditMovieView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildTextField(_titleCtrl, 'Title'),
+              _buildTextField(_titleCtrl, l.fieldTitle),
               const SizedBox(height: 16),
-              _buildTextField(_descCtrl, 'Description', maxLines: 4),
+              _buildTextField(_descCtrl, l.fieldDescription, maxLines: 4),
               const SizedBox(height: 16),
-              _buildTextField(_yearCtrl, 'Release Year',
+              _buildTextField(_yearCtrl, l.releaseYear,
                   keyboardType: TextInputType.number),
               const SizedBox(height: 12),
               _buildCategoryDropdown(bloc),
@@ -303,7 +306,7 @@ class _EditMovieViewState extends State<_EditMovieView> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    selectedName ?? 'Select category',
+                    selectedName ?? AppLocalizations.of(context).selectCategory,
                     style: TextStyle(
                       color: selectedName != null
                           ? Colors.white
@@ -342,9 +345,9 @@ class _EditMovieViewState extends State<_EditMovieView> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Select Category',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).selectCategoryTitle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -412,7 +415,9 @@ class _EditMovieViewState extends State<_EditMovieView> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    selected.isNotEmpty ? selected : 'Select age limit',
+                    selected.isNotEmpty
+                        ? selected
+                        : AppLocalizations.of(context).selectAgeLimit,
                     style: TextStyle(
                       color: selected.isNotEmpty
                           ? Colors.white
@@ -455,9 +460,9 @@ class _EditMovieViewState extends State<_EditMovieView> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Select Age Limit',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).selectAgeLimitTitle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -528,12 +533,13 @@ class _EditMovieViewState extends State<_EditMovieView> {
             ),
             alignment: Alignment.center,
             child: Text(
-              'No image',
+              AppLocalizations.of(context).noImage,
               style: TextStyle(color: ColorName.contentSecondary),
             ),
           );
         }
 
+        final l = AppLocalizations.of(context);
         final hasAny = newPath != null ||
             (existingUrl != null && existingUrl.isNotEmpty);
 
@@ -549,7 +555,7 @@ class _EditMovieViewState extends State<_EditMovieView> {
                     onPressed: () => bloc.add(PickImageEvent()),
                     style: _outlineBtnStyle(),
                     icon: const Icon(Icons.image),
-                    label: Text(hasAny ? 'Change Image' : 'Pick Image'),
+                    label: Text(hasAny ? l.changeImage : l.pickImage),
                   ),
                 ),
                 if (hasAny) ...[
@@ -559,16 +565,16 @@ class _EditMovieViewState extends State<_EditMovieView> {
                       onPressed: () async {
                         final ok = await _confirm(
                           context,
-                          'Remove image?',
-                          'This will clear the current poster from the movie.',
-                          confirmText: 'Remove',
+                          l.removeImageTitle,
+                          l.removeImageMovieMessage,
+                          confirmText: l.remove,
                           confirmColor: Colors.redAccent,
                         );
                         if (ok) bloc.add(RemoveImageEvent());
                       },
                       style: _outlineBtnStyle(color: Colors.redAccent),
                       icon: const Icon(Icons.delete_outline),
-                      label: const Text('Remove'),
+                      label: Text(l.remove),
                     ),
                   ),
                 ],
@@ -604,19 +610,20 @@ class _EditMovieViewState extends State<_EditMovieView> {
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
-      child: const Text('Update Movie',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      child: Text(AppLocalizations.of(context).updateMovie,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 
   Widget _buildArchiveButton(EditMovieBloc bloc) {
+    final l = AppLocalizations.of(context);
     return OutlinedButton.icon(
       onPressed: () async {
         final ok = await _confirm(
           context,
-          'Archive movie?',
-          'This movie will be hidden from viewers. You can restore it later.',
-          confirmText: 'Archive',
+          l.archiveMovieTitle,
+          l.archiveMovieMessage,
+          confirmText: l.archiveAction,
         );
         if (ok) bloc.add(ArchiveMovieEvent());
       },
@@ -627,19 +634,20 @@ class _EditMovieViewState extends State<_EditMovieView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       icon: const Icon(Icons.archive_outlined),
-      label: const Text('Archive Movie',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      label: Text(l.archiveMovie,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 
   Widget _buildDeleteButton(EditMovieBloc bloc) {
+    final l = AppLocalizations.of(context);
     return OutlinedButton.icon(
       onPressed: () async {
         final ok = await _confirm(
           context,
-          'Delete movie?',
-          'This action cannot be undone.',
-          confirmText: 'Delete',
+          l.deleteMovieTitle,
+          l.deleteMessage,
+          confirmText: l.delete,
           confirmColor: Colors.redAccent,
         );
         if (ok) bloc.add(DeleteMovieEvent());
@@ -651,8 +659,8 @@ class _EditMovieViewState extends State<_EditMovieView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       icon: const Icon(Icons.delete_outline),
-      label: const Text('Delete Movie',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      label: Text(l.deleteMovie,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 }

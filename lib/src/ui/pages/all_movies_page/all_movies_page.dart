@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/ui/pages/all_movies_page/all_movies_bloc.dart';
 import 'package:shortflix/src/ui/pages/all_movies_page/all_movies_event.dart';
 import 'package:shortflix/src/ui/pages/all_movies_page/all_movies_state.dart';
@@ -46,9 +47,9 @@ class _AllMoviesPageState extends State<AllMoviesPage> {
             ),
           ),
         ),
-        title: const Text(
-          'All Movies',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context).allMovies,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -84,7 +85,7 @@ class _AllMoviesPageState extends State<AllMoviesPage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Failed to load movies',
+                          AppLocalizations.of(context).failedToLoadMovies,
                           style: TextStyle(
                             color: ColorName.contentSecondary,
                             fontSize: 14,
@@ -107,7 +108,7 @@ class _AllMoviesPageState extends State<AllMoviesPage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'No movies found',
+                          AppLocalizations.of(context).noMoviesFound,
                           style: TextStyle(
                             color: ColorName.contentSecondary,
                             fontSize: 14,
@@ -154,7 +155,7 @@ class _CategoryFilterBar extends StatelessWidget {
               if (index == 0) {
                 final active = bloc.selectedCategoryId == null;
                 return _CategoryChip(
-                  label: 'All',
+                  label: AppLocalizations.of(context).allCategory,
                   active: active,
                   onTap: () => bloc.add(SelectCategoryEvent(categoryId: null)),
                 );

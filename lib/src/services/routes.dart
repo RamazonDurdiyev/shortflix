@@ -33,6 +33,7 @@ import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
 import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_page.dart';
+import 'package:shortflix/src/ui/pages/language_page/language_page.dart';
 import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_page.dart';
@@ -112,6 +113,9 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
           child: EditProfilePage(user: args as UserModel?),
         ),
       );
+
+    case Navigation.languagePage:
+      return buildRoute(settings, const LanguagePage());
 
     case Navigation.libraryPage:
       return buildRoute(

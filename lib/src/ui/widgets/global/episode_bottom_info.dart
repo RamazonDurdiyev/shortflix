@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
 
@@ -21,15 +22,15 @@ class EpisodeBottomInfo extends StatelessWidget {
     );
   }
 
-  String _formatDate(String isoString) {
+  String _formatDate(AppLocalizations l, String isoString) {
     try {
       final date = DateTime.parse(isoString);
       final now = DateTime.now();
       final diff = now.difference(date);
-      if (diff.inMinutes < 1) return 'just now';
-      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-      if (diff.inHours < 24) return '${diff.inHours}h ago';
-      if (diff.inDays < 7) return '${diff.inDays}d ago';
+      if (diff.inMinutes < 1) return l.justNow;
+      if (diff.inMinutes < 60) return l.minutesAgoShort(diff.inMinutes);
+      if (diff.inHours < 24) return l.hoursAgoShort(diff.inHours);
+      if (diff.inDays < 7) return l.daysAgoShort(diff.inDays);
       return '${date.day}.${date.month.toString().padLeft(2, '0')}.${date.year}';
     } catch (_) {
       return isoString;
@@ -38,6 +39,7 @@ class EpisodeBottomInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final hasMovieHeader = (episode.movieTitle != null &&
             episode.movieTitle!.isNotEmpty) ||
         (episode.movieImageUrl != null && episode.movieImageUrl!.isNotEmpty) ||
@@ -65,7 +67,10 @@ class EpisodeBottomInfo extends StatelessWidget {
                 color: Colors.white54, size: 13),
             const SizedBox(width: 5),
             Text(
-              'Season ${episode.season}  ·  Episode ${episode.episodeNumber}',
+              l.seasonEpisodeLabel(
+                episode.season ?? 0,
+                episode.episodeNumber ?? 0,
+              ),
               style: const TextStyle(
                 color: Colors.white54,
                 fontSize: 12,
@@ -75,7 +80,7 @@ class EpisodeBottomInfo extends StatelessWidget {
             if (episode.createdAt != null) ...[
               const SizedBox(width: 8),
               Text(
-                '·  ${_formatDate(episode.createdAt!)}',
+                '·  ${_formatDate(l, episode.createdAt!)}',
                 style: const TextStyle(
                   color: Colors.white54,
                   fontSize: 12,

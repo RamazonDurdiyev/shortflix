@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/comment_model/comment_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/widgets/global/episode_bottom_info.dart';
@@ -37,6 +38,7 @@ class _RecPageState extends State<RecPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: BlocBuilder<RecBloc, RecState>(
@@ -57,7 +59,7 @@ class _RecPageState extends State<RecPage> {
                       color: ColorName.contentSecondary, size: 48),
                   const SizedBox(height: 12),
                   Text(
-                    'Failed to load shorts',
+                    l.failedToLoadShorts,
                     style: TextStyle(
                         color: ColorName.contentSecondary, fontSize: 14),
                   ),
@@ -70,7 +72,7 @@ class _RecPageState extends State<RecPage> {
           if (shorts.isEmpty) {
             return Center(
               child: Text(
-                'No shorts available',
+                l.noShortsAvailable,
                 style: TextStyle(
                     color: ColorName.contentSecondary, fontSize: 14),
               ),
@@ -294,9 +296,9 @@ class _ShortsPageViewState extends State<_ShortsPageView> {
                           horizontal: 16, vertical: 8),
                       child: Row(
                         children: [
-                          const Text(
-                            'Shorts',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context).shorts,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -551,9 +553,9 @@ class _ActionColumn extends StatelessWidget {
                 child: const Icon(Icons.reply_rounded, color: Colors.white, size: 30),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Share',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context).share,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -566,13 +568,13 @@ class _ActionColumn extends StatelessWidget {
         // ── More ──────────────────────────────
         GestureDetector(
           onTap: () => _showMoreSheet(context),
-          child: const Column(
+          child: Column(
             children: [
-              Icon(Icons.more_horiz_rounded, color: Colors.white, size: 30),
-              SizedBox(height: 4),
+              const Icon(Icons.more_horiz_rounded, color: Colors.white, size: 30),
+              const SizedBox(height: 4),
               Text(
-                'More',
-                style: TextStyle(
+                AppLocalizations.of(context).more,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -613,6 +615,7 @@ class _ActionColumn extends StatelessWidget {
               BlocBuilder<RecBloc, RecState>(
                 buildWhen: (_, state) => state is RecSaveState,
                 builder: (context, state) {
+                  final l = AppLocalizations.of(context);
                   final isSaved = context.read<RecBloc>().isSaved;
                   return ListTile(
                     leading: Icon(
@@ -620,7 +623,7 @@ class _ActionColumn extends StatelessWidget {
                       color: isSaved ? ColorName.accent : Colors.white,
                     ),
                     title: Text(
-                      isSaved ? 'Saved' : 'Save',
+                      isSaved ? l.saved : l.save,
                       style: TextStyle(
                         color: isSaved ? ColorName.accent : Colors.white,
                         fontWeight: FontWeight.w600,
@@ -677,15 +680,15 @@ class _CommentsSheetState extends State<_CommentsSheet> {
     super.dispose();
   }
 
-  String _formatTime(String isoString) {
+  String _formatTime(AppLocalizations l, String isoString) {
     try {
       final date = DateTime.parse(isoString);
       final now = DateTime.now();
       final diff = now.difference(date);
-      if (diff.inMinutes < 1) return 'just now';
-      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-      if (diff.inHours < 24) return '${diff.inHours}h ago';
-      if (diff.inDays < 7) return '${diff.inDays}d ago';
+      if (diff.inMinutes < 1) return l.justNow;
+      if (diff.inMinutes < 60) return l.minutesAgoShort(diff.inMinutes);
+      if (diff.inHours < 24) return l.hoursAgoShort(diff.inHours);
+      if (diff.inDays < 7) return l.daysAgoShort(diff.inDays);
       return '${date.day}.${date.month.toString().padLeft(2, '0')}.${date.year}';
     } catch (_) {
       return isoString;
@@ -702,6 +705,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<RecBloc>();
+    final l = AppLocalizations.of(context);
 
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.6,
@@ -724,9 +728,9 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    const Text(
-                      'Comments',
-                      style: TextStyle(
+                    Text(
+                      l.comments,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -766,9 +770,9 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                         Icon(Icons.chat_bubble_outline_rounded,
                             color: Colors.white24, size: 48),
                         const SizedBox(height: 12),
-                        const Text(
-                          'No comments yet',
-                          style: TextStyle(
+                        Text(
+                          l.noCommentsYet,
+                          style: const TextStyle(
                             color: Colors.white38,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -776,8 +780,9 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Be the first to comment',
-                          style: TextStyle(color: Colors.white24, fontSize: 12),
+                          l.beFirstToComment,
+                          style: const TextStyle(
+                              color: Colors.white24, fontSize: 12),
                         ),
                       ],
                     ),
@@ -791,7 +796,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                       const Divider(color: Colors.white12, height: 24),
                   itemBuilder: (_, i) {
                     final c = comments[i];
-                    return _buildCommentItem(c);
+                    return _buildCommentItem(l, c);
                   },
                 );
               },
@@ -814,9 +819,9 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                     controller: _controller,
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
-                      hintText: 'Add a comment...',
-                      hintStyle:
-                          TextStyle(color: Colors.white38, fontSize: 14),
+                      hintText: l.addAComment,
+                      hintStyle: const TextStyle(
+                          color: Colors.white38, fontSize: 14),
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) => _submitComment(),
@@ -850,7 +855,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
     );
   }
 
-  Widget _buildCommentItem(CommentModel c) {
+  Widget _buildCommentItem(AppLocalizations l, CommentModel c) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -867,7 +872,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
               Row(
                 children: [
                   Text(
-                    c.userName ?? 'User',
+                    c.userName ?? l.user,
                     style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 13,
@@ -877,7 +882,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                   if (c.createdTime != null) ...[
                     const SizedBox(width: 8),
                     Text(
-                      _formatTime(c.createdTime!),
+                      _formatTime(l, c.createdTime!),
                       style: const TextStyle(
                         color: Colors.white30,
                         fontSize: 11,

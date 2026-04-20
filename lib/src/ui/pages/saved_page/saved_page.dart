@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_bloc.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_event.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_state.dart';
@@ -36,6 +37,7 @@ class _SavedPageState extends State<SavedPage>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       appBar: AppBar(
@@ -57,9 +59,9 @@ class _SavedPageState extends State<SavedPage>
             ),
           ),
         ),
-        title: const Text(
-          'Saved',
-          style: TextStyle(
+        title: Text(
+          l.saved,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -72,9 +74,9 @@ class _SavedPageState extends State<SavedPage>
           indicatorColor: ColorName.accent,
           splashFactory: NoSplash.splashFactory,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
-          tabs: const [
-            Tab(text: 'Movies'),
-            Tab(text: 'Episodes'),
+          tabs: [
+            Tab(text: l.tabMovies),
+            Tab(text: l.tabEpisodes),
           ],
         ),
       ),
@@ -94,6 +96,7 @@ class _MoviesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocBuilder<LibraryBloc, LibraryState>(
       buildWhen: (_, state) => state is FetchSavedMoviesState,
       builder: (context, state) {
@@ -109,11 +112,11 @@ class _MoviesTab extends StatelessWidget {
         if (state is FetchSavedMoviesState &&
             state.state == BaseState.error) {
           return _message(
-              Icons.error_outline_rounded, 'Failed to load saved movies');
+              Icons.error_outline_rounded, l.failedToLoadSavedMovies);
         }
 
         if (bloc.savedMovies.isEmpty) {
-          return _message(Icons.bookmark_border_rounded, 'No saved movies yet');
+          return _message(Icons.bookmark_border_rounded, l.noSavedMoviesYet);
         }
 
         return SingleChildScrollView(
@@ -131,6 +134,7 @@ class _EpisodesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocBuilder<LibraryBloc, LibraryState>(
       buildWhen: (_, state) => state is FetchSavedEpisodesState,
       builder: (context, state) {
@@ -146,12 +150,12 @@ class _EpisodesTab extends StatelessWidget {
         if (state is FetchSavedEpisodesState &&
             state.state == BaseState.error) {
           return _message(
-              Icons.error_outline_rounded, 'Failed to load saved episodes');
+              Icons.error_outline_rounded, l.failedToLoadSavedEpisodes);
         }
 
         if (bloc.savedEpisodes.isEmpty) {
           return _message(
-              Icons.video_library_outlined, 'No saved episodes yet');
+              Icons.video_library_outlined, l.noSavedEpisodesYet);
         }
 
         return SingleChildScrollView(

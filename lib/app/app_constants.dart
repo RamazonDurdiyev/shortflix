@@ -81,6 +81,7 @@ const SHORTS = "/api/shorts";
 // Local data
 
 const USER_TOKEN = "auth";
+const LANGUAGE = "language";
 
 // API Keys
 

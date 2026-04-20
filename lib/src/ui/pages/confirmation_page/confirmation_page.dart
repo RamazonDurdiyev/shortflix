@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/confirmation_page/confirmation_bloc.dart';
@@ -61,6 +62,7 @@ void initState() {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ConfirmationBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<ConfirmationBloc, ConfirmationState>(
       listener: (context, state) {
@@ -72,10 +74,10 @@ void initState() {
           );
         }
         if (state is ConfirmationSubmitState && state.state == BaseState.error) {
-          _showSnackbar(context, 'Invalid code. Please try again.');
+          _showSnackbar(context, l.invalidCode);
         }
         if (state is ConfirmationResendState && state.state == BaseState.loaded) {
-          _showSnackbar(context, 'Code resent!', success: true);
+          _showSnackbar(context, l.codeResent, success: true);
         }
       },
       child: Scaffold(
@@ -132,6 +134,7 @@ void initState() {
   }
 
   Widget _buildHeading() {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -146,9 +149,9 @@ void initState() {
           child: Icon(Icons.mark_email_read_outlined, color: ColorName.accent, size: 28),
         ),
         const SizedBox(height: 20),
-        const Text(
-          'Check your email',
-          style: TextStyle(
+        Text(
+          l.checkYourEmail,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -165,9 +168,9 @@ void initState() {
               height: 1.5,
             ),
             children: [
-              const TextSpan(text: 'We sent a 6-digit code to '),
+              TextSpan(text: l.sentCodeTo),
               TextSpan(
-                text: _email.isEmpty ? 'your email' : _email,
+                text: _email.isEmpty ? l.yourEmailFallback : _email,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -251,10 +254,10 @@ void initState() {
                 ? const Center(
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                   )
-                : const Center(
+                : Center(
                     child: Text(
-                      'Verify',
-                      style: TextStyle(
+                      AppLocalizations.of(context).verify,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -271,6 +274,7 @@ void initState() {
     return BlocBuilder<ConfirmationBloc, ConfirmationState>(
       buildWhen: (_, state) => state is ConfirmationResendState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final isLoading = state is ConfirmationResendState && state.state == BaseState.loading;
 
         return Center(
@@ -278,7 +282,7 @@ void initState() {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Didn't receive the code? ",
+                l.didntReceiveCode,
                 style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
               ),
               GestureDetector(
@@ -295,7 +299,7 @@ void initState() {
                         ),
                       )
                     : Text(
-                        'Resend',
+                        l.resend,
                         style: TextStyle(
                           color: ColorName.accent,
                           fontSize: 13,

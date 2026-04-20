@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
@@ -151,7 +152,8 @@ class EpisodeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Episode ${episode.episodeNumber}',
+                      AppLocalizations.of(context)
+                          .episodeN(episode.episodeNumber ?? 0),
                       style: TextStyle(
                         color: ColorName.contentSecondary,
                         fontSize: 11,

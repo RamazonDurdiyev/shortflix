@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_event.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_state.dart';
@@ -60,7 +61,8 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
             bloc: bloc,
             buildWhen: (_, s) =>
                 s is UploadVideoProgressState || s is CreateEpisodeState,
-            builder: (_, state) {
+            builder: (ctx, state) {
+              final l = AppLocalizations.of(ctx);
               final isUploading = state is UploadVideoProgressState ||
                   bloc.uploadProgress > 0 && bloc.uploadProgress < 1;
               final progress = bloc.uploadProgress;
@@ -85,7 +87,8 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                     if (isUploading) ...[
                       const SizedBox(height: 12),
                       Text(
-                        'Uploading ${(progress * 100).toStringAsFixed(0)}%',
+                        l.uploadingPercent(
+                            (progress * 100).toStringAsFixed(0)),
                         style: const TextStyle(
                           color: ColorName.contentPrimary,
                           fontSize: 13,
@@ -112,6 +115,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PostEpisodeBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<PostEpisodeBloc, PostEpisodeState>(
       listener: (context, state) {
@@ -124,7 +128,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to load movies')),
+              SnackBar(content: Text(l.failedToLoadMovies)),
             );
           }
         }
@@ -137,7 +141,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
             _dismissLoadingDialog(context);
             if (state.state == BaseState.error) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Failed to pick video')),
+                SnackBar(content: Text(l.pickVideoFailed)),
               );
             }
           }
@@ -151,7 +155,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
             _dismissLoadingDialog(context);
             if (state.state == BaseState.error) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Failed to pick image')),
+                SnackBar(content: Text(l.pickImageFailed)),
               );
             }
           }
@@ -169,13 +173,13 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Episode posted successfully')),
+              SnackBar(content: Text(l.episodePostedSuccessfully)),
             );
             Navigator.of(context).pop();
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Something went wrong')),
+              SnackBar(content: Text(l.somethingWentWrong)),
             );
           }
         }
@@ -183,9 +187,9 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
         appBar: AppBar(
-          title: const Text(
-            'Post Episode',
-            style: TextStyle(
+          title: Text(
+            l.postEpisode,
+            style: const TextStyle(
               color: ColorName.contentPrimary,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.3,
@@ -210,7 +214,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                   Expanded(
                     child: _buildTextField(
                       _seasonCtrl,
-                      'Season',
+                      l.season,
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -218,7 +222,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                   Expanded(
                     child: _buildTextField(
                       _episodeCtrl,
-                      'Episode №',
+                      l.episodeNumberLabel,
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -226,19 +230,13 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
               ),
               const SizedBox(height: 12),
 
-              // _buildSectionLabel('Title'),
-              // const SizedBox(height: 8),
-              _buildTextField(_titleCtrl, 'Title',
-                  hint: 'ex: A New Beginning'),
+              _buildTextField(_titleCtrl, l.fieldTitle,
+                  hint: l.titleHintEpisode),
 
               const SizedBox(height: 20),
 
-              // _buildSectionLabel('Description'),
-              // const SizedBox(height: 8),
-              _buildTextField(_descCtrl, 'Description',
-                  maxLines: 4,
-                  hint:
-                      'ex: The hero arrives in a new city and faces an unexpected enemy'),
+              _buildTextField(_descCtrl, l.fieldDescription,
+                  maxLines: 4, hint: l.descriptionHintEpisode),
 
               const SizedBox(height: 20),
 
@@ -332,6 +330,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
       buildWhen: (_, state) =>
           state is FetchUserMoviesState || state is SelectMovieState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final selectedName = bloc.userMovies
             .where((m) => m.id == bloc.selectedMovieId)
             .firstOrNull
@@ -358,7 +357,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    selectedName ?? 'Select movie',
+                    selectedName ?? l.selectMovie,
                     style: TextStyle(
                       color: selectedName != null
                           ? Colors.white
@@ -378,6 +377,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   }
 
   void _showMoviesSheet(BuildContext context, PostEpisodeBloc bloc) {
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: ColorName.backgroundSecondary,
@@ -397,9 +397,9 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Select Movie',
-            style: TextStyle(
+          Text(
+            l.selectMovieTitle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -407,11 +407,11 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           ),
           const SizedBox(height: 8),
           if (bloc.userMovies.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(24),
+            Padding(
+              padding: const EdgeInsets.all(24),
               child: Text(
-                'No movies found. Create a movie first.',
-                style: TextStyle(color: Colors.grey),
+                l.noMoviesFoundCreateFirst,
+                style: const TextStyle(color: Colors.grey),
               ),
             )
           else
@@ -456,6 +456,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     return BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
       buildWhen: (_, state) => state is PickVideoState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final hasVideo = bloc.videoPath != null;
 
         return Column(
@@ -494,7 +495,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: const Icon(Icons.videocam),
-              label: Text(hasVideo ? 'Change Video' : 'Pick Video'),
+              label: Text(hasVideo ? l.changeVideo : l.pickVideo),
             ),
           ],
         );
@@ -509,6 +510,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
     return BlocBuilder<PostEpisodeBloc, PostEpisodeState>(
       buildWhen: (_, state) => state is PickImageState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final hasImage = bloc.imagePath != null;
 
         return Column(
@@ -535,7 +537,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: const Icon(Icons.image),
-              label: Text(hasImage ? 'Change Image' : 'Pick Image'),
+              label: Text(hasImage ? l.changeImage : l.pickImage),
             ),
           ],
         );
@@ -547,6 +549,7 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
   //  SUBMIT BUTTON
   // ─────────────────────────────────────────
   Widget _buildSubmitButton(PostEpisodeBloc bloc) {
+    final l = AppLocalizations.of(context);
     return ElevatedButton(
       onPressed: () {
         bloc.add(CreateEpisodeEvent(
@@ -564,8 +567,8 @@ class _PostEpisodeViewState extends State<_PostEpisodeView> {
           borderRadius: BorderRadius.circular(14),
         ),
       ),
-      child: const Text('Post Episode',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+      child: Text(l.postEpisode,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
     );
   }
 }

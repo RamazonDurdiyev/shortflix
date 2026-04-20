@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 
@@ -11,20 +12,21 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
+            _buildTopBar(l),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
                 physics: const BouncingScrollPhysics(),
                 children: [
                   const SizedBox(height: 8),
-                  _buildSectionTitle('My Library'),
-                  _buildMenuGroup(context),
+                  _buildSectionTitle(l.myLibrary),
+                  _buildMenuGroup(context, l),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -39,16 +41,16 @@ class LibraryPage extends StatelessWidget {
 // ─────────────────────────────────────────
 //  TOP BAR
 // ─────────────────────────────────────────
-Widget _buildTopBar() {
+Widget _buildTopBar(AppLocalizations l) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
     child: Row(
       children: [
         const SizedBox(width: 14),
-        const Expanded(
+        Expanded(
           child: Text(
-            'My Library',
-            style: TextStyle(
+            l.myLibrary,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -95,12 +97,12 @@ Widget _buildSectionTitle(String title) {
 // ─────────────────────────────────────────
 //  MENU GROUP
 // ─────────────────────────────────────────
-Widget _buildMenuGroup(BuildContext context) {
+Widget _buildMenuGroup(BuildContext context, AppLocalizations l) {
   final items = [
     _MenuItem(
       icon: Icons.movie_creation_rounded,
-      label: 'My Movies',
-      subtitle: 'Movies you created',
+      label: l.myMovies,
+      subtitle: l.myMoviesSubtitle,
       onTap: () {
         Navigator.push(
           context,
@@ -112,8 +114,8 @@ Widget _buildMenuGroup(BuildContext context) {
     ),
     _MenuItem(
       icon: Icons.bookmark_rounded,
-      label: 'Saved',
-      subtitle: 'Movies and episodes you bookmarked',
+      label: l.saved,
+      subtitle: l.savedSubtitle,
       onTap: () {
         Navigator.push(
           context,
@@ -125,8 +127,8 @@ Widget _buildMenuGroup(BuildContext context) {
     ),
     _MenuItem(
       icon: Icons.favorite_rounded,
-      label: 'Liked Episodes',
-      subtitle: 'Episodes you liked',
+      label: l.likedEpisodes,
+      subtitle: l.likedEpisodesSubtitle,
       color: ColorName.accent,
       onTap: () {
         Navigator.push(
@@ -139,8 +141,8 @@ Widget _buildMenuGroup(BuildContext context) {
     ),
     _MenuItem(
       icon: Icons.archive_rounded,
-      label: 'Archived',
-      subtitle: 'Movies and episodes you archived',
+      label: l.archived,
+      subtitle: l.archivedSubtitle,
       onTap: () {
         Navigator.push(
           context,

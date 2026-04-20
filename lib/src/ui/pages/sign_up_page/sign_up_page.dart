@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/sign_up_page/sign_up_bloc.dart';
@@ -87,6 +88,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<SignUpBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
@@ -99,7 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
           );
         }
         if (state is SignUpSubmitState && state.state == BaseState.error) {
-          _showSnackbar(context, 'Sign up failed. Please try again.');
+          _showSnackbar(context, l.signUpFailed);
         }
         if (state is SignUpGoogleState && state.state == BaseState.loaded) {
           Navigator.pushAndRemoveUntil(
@@ -111,7 +113,7 @@ class _SignUpPageState extends State<SignUpPage> {
         if (state is SignUpGoogleState && state.state == BaseState.error) {
           _showSnackbar(
             context,
-            state.errorMessage ?? 'Google sign-in failed. Please try again.',
+            state.errorMessage ?? l.googleSignInFailed,
           );
         }
       },
@@ -132,39 +134,39 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 32),
 
                 _buildInputField(
-                  label: 'Full Name',
-                  hint: 'John Doe',
+                  label: l.fullName,
+                  hint: l.fullNameHintSignUp,
                   icon: Icons.person_outline_rounded,
                   ctrl: _fullNameCtrl,
                   onChanged: (_) => setState(() {}),
                   errorText: _fullNameCtrl.text.isNotEmpty && !_fullNameValid
-                      ? 'Enter your full name'
+                      ? l.fullNameError
                       : null,
                 ),
                 const SizedBox(height: 16),
 
                 _buildInputField(
-                  label: 'Email',
-                  hint: 'you@example.com',
+                  label: l.emailLabel,
+                  hint: l.emailHint,
                   icon: Icons.mail_outline_rounded,
                   ctrl: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (_) => setState(() {}),
                   errorText: _emailCtrl.text.isNotEmpty && !_emailValid
-                      ? 'Enter a valid email'
+                      ? l.emailError
                       : null,
                 ),
                 const SizedBox(height: 16),
 
                 _buildInputField(
-                  label: 'Password',
+                  label: l.passwordLabel,
                   hint: '••••••••',
                   icon: Icons.lock_outline_rounded,
                   ctrl: _passwordCtrl,
                   obscure: _obscure,
                   onChanged: (_) => setState(() {}),
                   errorText: _passwordCtrl.text.isNotEmpty && !_passwordValid
-                      ? 'Password must be at least 6 characters'
+                      ? l.passwordError
                       : null,
                   suffix: GestureDetector(
                     onTap: () => setState(() => _obscure = !_obscure),
@@ -261,12 +263,13 @@ class _SignUpPageState extends State<SignUpPage> {
   //  HEADING
   // ─────────────────────────────────────────
   Widget _buildHeading() {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Create account',
-          style: TextStyle(
+        Text(
+          l.createAccountHeading,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -276,7 +279,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Join millions watching on Shortflix',
+          l.createAccountSubtitle,
           style: TextStyle(color: ColorName.contentSecondary, fontSize: 14),
         ),
       ],
@@ -287,18 +290,19 @@ class _SignUpPageState extends State<SignUpPage> {
   //  DATE FIELD
   // ─────────────────────────────────────────
   Widget _buildDateField() {
+    final l = AppLocalizations.of(context);
     final hasDate = _selectedDate != null;
     final label = hasDate
         ? '${_selectedDate!.day.toString().padLeft(2, '0')}.'
             '${_selectedDate!.month.toString().padLeft(2, '0')}.'
             '${_selectedDate!.year}'
-        : 'Select date of birth';
+        : l.selectDateOfBirth;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Date of Birth',
+          l.dateOfBirth,
           style: TextStyle(
             color: ColorName.contentSecondary,
             fontSize: 13,
@@ -340,7 +344,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 14),
                     child: Text(
-                      'Change',
+                      l.change,
                       style: TextStyle(
                         color: ColorName.accent,
                         fontSize: 12,
@@ -391,10 +395,10 @@ class _SignUpPageState extends State<SignUpPage> {
                       strokeWidth: 2,
                     ),
                   )
-                : const Center(
+                : Center(
                     child: Text(
-                      'Create Account',
-                      style: TextStyle(
+                      AppLocalizations.of(context).createAccountButton,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -419,7 +423,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            'OR',
+            AppLocalizations.of(context).orDivider,
             style: TextStyle(
               color: ColorName.contentSecondary,
               fontSize: 12,
@@ -488,9 +492,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Text(
-                        'Continue with Google',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context).continueWithGoogle,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -508,18 +512,19 @@ class _SignUpPageState extends State<SignUpPage> {
   //  SIGN IN ROW
   // ─────────────────────────────────────────
   Widget _buildSignInRow(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Already have an account? ',
+            l.alreadyHaveAccount,
             style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
           ),
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Text(
-              'Sign In',
+              l.signIn,
               style: TextStyle(
                 color: ColorName.accent,
                 fontSize: 13,

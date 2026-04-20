@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_event.dart';
 import 'package:shortflix/src/ui/pages/post_movie_page/post_movie_state.dart';
@@ -77,6 +78,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<PostMovieBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<PostMovieBloc, PostMovieState>(
       listener: (context, state) {
@@ -89,7 +91,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to load categories')),
+              SnackBar(content: Text(l.failedToLoadCategories)),
             );
           }
         }
@@ -102,7 +104,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
             _dismissLoadingDialog(context);
             if (state.state == BaseState.error) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Failed to pick image')),
+                SnackBar(content: Text(l.pickImageFailed)),
               );
             }
           }
@@ -115,13 +117,13 @@ class _PostMovieViewState extends State<_PostMovieView> {
           } else if (state.state == BaseState.loaded) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Movie posted successfully')),
+              SnackBar(content: Text(l.moviePostedSuccessfully)),
             );
             Navigator.of(context).pop();
           } else if (state.state == BaseState.error) {
             _dismissLoadingDialog(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Something went wrong')),
+              SnackBar(content: Text(l.somethingWentWrong)),
             );
           }
         }
@@ -129,9 +131,9 @@ class _PostMovieViewState extends State<_PostMovieView> {
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
         appBar: AppBar(
-          title: const Text(
-            'Post Movie',
-            style: TextStyle(
+          title: Text(
+            l.postMovie,
+            style: const TextStyle(
               color: ColorName.contentPrimary,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.3,
@@ -146,24 +148,19 @@ class _PostMovieViewState extends State<_PostMovieView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // _buildSectionLabel('Title'),
-              // const SizedBox(height: 8),
               _buildTextField(
                 _titleCtrl,
-                'Title',
-                hint: 'ex: The Dark Knight',
+                l.fieldTitle,
+                hint: l.titleHintMovie,
               ),
 
               const SizedBox(height: 20),
 
-              // _buildSectionLabel('Description'),
-              // const SizedBox(height: 8),
               _buildTextField(
                 _descCtrl,
-                'Description',
+                l.fieldDescription,
                 maxLines: 3,
-                hint:
-                    'ex: Crime in Gotham is at its peak. Bruce Wayne becomes a dark vigilante to protect the city',
+                hint: l.descriptionHintMovie,
               ),
 
               const SizedBox(height: 20),
@@ -171,7 +168,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
               // ── Release Year ────────────────────────
               _buildTextField(
                 _yearCtrl,
-                'Release Year',
+                l.releaseYear,
                 keyboardType: TextInputType.number,
               ),
 
@@ -275,6 +272,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
       buildWhen: (_, state) =>
           state is FetchCategoriesState || state is SelectCategoryState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final selectedName = bloc.categories
             .where((c) => c.id == bloc.selectedCategoryId)
             .firstOrNull
@@ -304,7 +302,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    selectedName ?? 'Select category',
+                    selectedName ?? l.selectCategory,
                     style: TextStyle(
                       color: selectedName != null
                           ? Colors.white
@@ -326,6 +324,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
   }
 
   void _showCategoriesSheet(BuildContext context, PostMovieBloc bloc) {
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: ColorName.backgroundSecondary,
@@ -345,9 +344,9 @@ class _PostMovieViewState extends State<_PostMovieView> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Select Category',
-            style: TextStyle(
+          Text(
+            l.selectCategoryTitle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -401,6 +400,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
     return BlocBuilder<PostMovieBloc, PostMovieState>(
       buildWhen: (_, state) => state is SelectAgeLimitState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final selected = bloc.selectedAgeLimit;
 
         return GestureDetector(
@@ -427,7 +427,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    selected.isNotEmpty ? selected : 'Select age limit',
+                    selected.isNotEmpty ? selected : l.selectAgeLimit,
                     style: TextStyle(
                       color: selected.isNotEmpty
                           ? Colors.white
@@ -453,6 +453,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
     PostMovieBloc bloc,
     List<String> ageLimits,
   ) {
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: ColorName.backgroundSecondary,
@@ -472,9 +473,9 @@ class _PostMovieViewState extends State<_PostMovieView> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Select Age Limit',
-            style: TextStyle(
+          Text(
+            l.selectAgeLimitTitle,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -513,6 +514,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
     return BlocBuilder<PostMovieBloc, PostMovieState>(
       buildWhen: (_, state) => state is PickImageState,
       builder: (context, state) {
+        final l = AppLocalizations.of(context);
         final hasImage = bloc.imagePath != null;
 
         return Column(
@@ -539,7 +541,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: const Icon(Icons.image),
-              label: Text(hasImage ? 'Change Image' : 'Pick Image'),
+              label: Text(hasImage ? l.changeImage : l.pickImage),
             ),
           ],
         );
@@ -551,6 +553,7 @@ class _PostMovieViewState extends State<_PostMovieView> {
   //  SUBMIT BUTTON
   // ─────────────────────────────────────────
   Widget _buildSubmitButton(PostMovieBloc bloc) {
+    final l = AppLocalizations.of(context);
     return ElevatedButton(
       onPressed: () {
         bloc.add(
@@ -567,9 +570,9 @@ class _PostMovieViewState extends State<_PostMovieView> {
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
-      child: const Text(
-        'Post Movie',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      child: Text(
+        l.postMovie,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
     );
   }

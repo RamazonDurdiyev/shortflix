@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/episodes_page/episodes_bloc.dart';
@@ -66,7 +67,7 @@ class _EpisodesPageState extends State<EpisodesPage> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Failed to load episodes',
+                    AppLocalizations.of(context).failedToLoadEpisodes,
                     style: TextStyle(
                       color: ColorName.contentSecondary,
                       fontSize: 14,
@@ -118,9 +119,9 @@ class _EpisodesContent extends StatelessWidget {
               ),
             ),
           ),
-          title: const Text(
-            'Episodes',
-            style: TextStyle(
+          title: Text(
+            AppLocalizations.of(context).tabEpisodes,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -173,7 +174,7 @@ class _EpisodesContent extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Center(
                     child: Text(
-                      'No episodes for this season',
+                      AppLocalizations.of(context).noEpisodesForSeason,
                       style: TextStyle(
                         color: ColorName.contentSecondary,
                         fontSize: 14,
@@ -223,9 +224,9 @@ class _EpisodesContent extends StatelessWidget {
             const SizedBox(height: 20),
             ListTile(
               leading: const Icon(Icons.edit_rounded, color: Colors.white),
-              title: const Text(
-                'Edit',
-                style: TextStyle(
+              title: Text(
+                AppLocalizations.of(context).edit,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
@@ -446,7 +447,9 @@ class _EpisodesContent extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        isSaved ? 'Saved' : 'Save',
+                        isSaved
+                            ? AppLocalizations.of(context).saved
+                            : AppLocalizations.of(context).save,
                         style: TextStyle(
                           color: isSaved ? ColorName.accent : Colors.white,
                           fontSize: 13,
@@ -471,7 +474,9 @@ class _EpisodesContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userRating > 0 ? 'Your rating' : 'Rate this movie',
+                    userRating > 0
+                        ? AppLocalizations.of(context).yourRating
+                        : AppLocalizations.of(context).rateThisMovie,
                     style: TextStyle(
                       color: ColorName.contentSecondary,
                       fontSize: 12,
@@ -537,9 +542,9 @@ class _EpisodesContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Text(
-                'Episodes',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context).tabEpisodes,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
@@ -581,7 +586,7 @@ class _EpisodesContent extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'S$s',
+                            AppLocalizations.of(context).seasonShort(s ?? 0),
                             style: TextStyle(
                               color: isActive
                                   ? Colors.white
@@ -634,7 +639,7 @@ class _CreatorChip extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'Creator: ',
+                AppLocalizations.of(context).creatorLabel,
                 style: TextStyle(
                   color: ColorName.contentSecondary,
                   fontSize: 12,

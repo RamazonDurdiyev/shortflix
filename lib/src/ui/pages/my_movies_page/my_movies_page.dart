@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_bloc.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_event.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_state.dart';
@@ -26,26 +27,27 @@ class _MyMoviesPageState extends State<MyMoviesPage> {
         .add(FetchMyMoviesEvent(userId: widget.userId));
   }
 
-  String get _title {
+  String _title(AppLocalizations l) {
     final name = widget.displayName?.trim();
-    if (name != null && name.isNotEmpty) return 'Movies by $name';
-    return 'My Movies';
+    if (name != null && name.isNotEmpty) return l.moviesBy(name);
+    return l.myMovies;
   }
 
-  String get _emptyLabel {
+  String _emptyLabel(AppLocalizations l) {
     final name = widget.displayName?.trim();
-    if (name != null && name.isNotEmpty) return 'No movies yet';
-    return 'No movies created yet';
+    if (name != null && name.isNotEmpty) return l.noMoviesYet;
+    return l.noMoviesCreatedYet;
   }
 
-  String get _errorLabel {
+  String _errorLabel(AppLocalizations l) {
     final name = widget.displayName?.trim();
-    if (name != null && name.isNotEmpty) return 'Failed to load movies';
-    return 'Failed to load your movies';
+    if (name != null && name.isNotEmpty) return l.failedToLoadMovies;
+    return l.failedToLoadYourMovies;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       appBar: AppBar(
@@ -68,7 +70,7 @@ class _MyMoviesPageState extends State<MyMoviesPage> {
           ),
         ),
         title: Text(
-          _title,
+          _title(l),
           style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -98,7 +100,7 @@ class _MyMoviesPageState extends State<MyMoviesPage> {
                       color: ColorName.contentSecondary, size: 48),
                   const SizedBox(height: 12),
                   Text(
-                    _errorLabel,
+                    _errorLabel(l),
                     style: TextStyle(
                         color: ColorName.contentSecondary, fontSize: 14),
                   ),
@@ -116,7 +118,7 @@ class _MyMoviesPageState extends State<MyMoviesPage> {
                       color: ColorName.contentSecondary, size: 48),
                   const SizedBox(height: 12),
                   Text(
-                    _emptyLabel,
+                    _emptyLabel(l),
                     style: TextStyle(
                         color: ColorName.contentSecondary, fontSize: 14),
                   ),

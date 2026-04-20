@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_bloc.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_event.dart';
 import 'package:shortflix/src/ui/pages/library_page/library_state.dart';
@@ -23,6 +24,7 @@ class _LikedEpisodesPageState extends State<LikedEpisodesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       appBar: AppBar(
@@ -44,9 +46,9 @@ class _LikedEpisodesPageState extends State<LikedEpisodesPage> {
             ),
           ),
         ),
-        title: const Text(
-          'Liked Episodes',
-          style: TextStyle(
+        title: Text(
+          l.likedEpisodes,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -75,7 +77,7 @@ class _LikedEpisodesPageState extends State<LikedEpisodesPage> {
                       color: ColorName.contentSecondary, size: 48),
                   const SizedBox(height: 12),
                   Text(
-                    'Failed to load liked episodes',
+                    l.failedToLoadLikedEpisodes,
                     style: TextStyle(
                         color: ColorName.contentSecondary, fontSize: 14),
                   ),
@@ -93,7 +95,7 @@ class _LikedEpisodesPageState extends State<LikedEpisodesPage> {
                       color: ColorName.contentSecondary, size: 48),
                   const SizedBox(height: 12),
                   Text(
-                    'No liked episodes yet',
+                    l.noLikedEpisodesYet,
                     style: TextStyle(
                         color: ColorName.contentSecondary, fontSize: 14),
                   ),

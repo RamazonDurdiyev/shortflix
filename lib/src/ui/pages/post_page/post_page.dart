@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 
@@ -8,12 +9,13 @@ class PostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: ColorName.backgroundPrimary,
       appBar: AppBar(
-        title: const Text(
-          'Create',
-          style: TextStyle(
+        title: Text(
+          l.create,
+          style: const TextStyle(
             color: ColorName.contentPrimary,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.3,
@@ -28,10 +30,10 @@ class PostPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'What do you want to post?',
+            Text(
+              l.whatDoYouWantToPost,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: ColorName.contentPrimary,
@@ -41,8 +43,8 @@ class PostPage extends StatelessWidget {
             const SizedBox(height: 32),
             _ActionCard(
               icon: Icons.movie,
-              title: 'Movie',
-              subtitle: 'Add a new movie with details',
+              title: l.movie,
+              subtitle: l.movieActionSubtitle,
               onTap: () => Navigator.push(
                 context,
                 generateRoutes(
@@ -52,8 +54,8 @@ class PostPage extends StatelessWidget {
             const SizedBox(height: 16),
             _ActionCard(
               icon: Icons.video_library,
-              title: 'Episode',
-              subtitle: 'Upload an episode to an existing movie',
+              title: l.episode,
+              subtitle: l.episodeActionSubtitle,
               onTap: () => Navigator.push(
                 context,
                 generateRoutes(

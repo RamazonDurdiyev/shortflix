@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
@@ -31,33 +32,33 @@ class _NavItem {
   });
 }
 
-const List<_NavItem> _navItems = [
-  _NavItem(
-    icon: Icons.home_outlined,
-    activeIcon: Icons.home_rounded,
-    label: 'Home',
-  ),
-  _NavItem(
-    icon: Icons.video_collection_outlined,
-    activeIcon: Icons.video_collection_rounded,
-    label: 'Shorts',
-  ),
-  _NavItem(
-    icon: Icons.add_circle_outline_rounded,
-    activeIcon: Icons.add_circle_rounded,
-    label: 'Post',
-  ),
-  _NavItem(
-    icon: Icons.playlist_play_outlined,
-    activeIcon: Icons.playlist_play_rounded,
-    label: 'Library',
-  ),
-  _NavItem(
-    icon: Icons.person_outline_rounded,
-    activeIcon: Icons.person_rounded,
-    label: 'Profile',
-  ),
-];
+List<_NavItem> _buildNavItems(AppLocalizations l) => [
+      _NavItem(
+        icon: Icons.home_outlined,
+        activeIcon: Icons.home_rounded,
+        label: l.navHome,
+      ),
+      _NavItem(
+        icon: Icons.video_collection_outlined,
+        activeIcon: Icons.video_collection_rounded,
+        label: l.shorts,
+      ),
+      _NavItem(
+        icon: Icons.add_circle_outline_rounded,
+        activeIcon: Icons.add_circle_rounded,
+        label: l.navPost,
+      ),
+      _NavItem(
+        icon: Icons.playlist_play_outlined,
+        activeIcon: Icons.playlist_play_rounded,
+        label: l.navLibrary,
+      ),
+      _NavItem(
+        icon: Icons.person_outline_rounded,
+        activeIcon: Icons.person_rounded,
+        label: l.profile,
+      ),
+    ];
 
 // ─────────────────────────────────────────
 //  PAGES
@@ -192,8 +193,9 @@ class _HomeContentState extends State<_HomeContent> {
                 ),
               ] else ...[
                 // ── Section: Featured ───────────────────
-                const SliverToBoxAdapter(
-                  child: _SectionTitle(title: 'Featured Today'),
+                SliverToBoxAdapter(
+                  child: _SectionTitle(
+                      title: AppLocalizations.of(context).featuredToday),
                 ),
 
                 // ── Carousel ────────────────────────────
@@ -210,7 +212,7 @@ class _HomeContentState extends State<_HomeContent> {
                 // ── Section: Popular ─────────────────────
                 SliverToBoxAdapter(
                   child: _SectionTitle(
-                    title: 'Popular on Shortflix',
+                    title: AppLocalizations.of(context).popularOnShortflix,
                     onSeeAll: () {
                       Navigator.push(
                         context,
@@ -243,8 +245,9 @@ class _HomeContentState extends State<_HomeContent> {
                 ),
 
                 // ── Section: Categories ──────────────────
-                const SliverToBoxAdapter(
-                  child: _SectionTitle(title: 'Browse by Genre'),
+                SliverToBoxAdapter(
+                  child: _SectionTitle(
+                      title: AppLocalizations.of(context).browseByGenre),
                 ),
 
                 // ── Categories Wrap ───────────────────────
@@ -261,6 +264,7 @@ class _HomeContentState extends State<_HomeContent> {
   }
 
   Widget _buildSearchResults(HomeBloc bloc, HomeState state) {
+    final l = AppLocalizations.of(context);
     if (state is SearchMoviesState && state.state == BaseState.loading) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 40),
@@ -275,7 +279,7 @@ class _HomeContentState extends State<_HomeContent> {
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Center(
           child: Text(
-            'No movies found',
+            l.noMoviesFound,
             style: TextStyle(color: ColorName.contentSecondary, fontSize: 14),
           ),
         ),
@@ -288,7 +292,7 @@ class _HomeContentState extends State<_HomeContent> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
           child: Text(
-            'Search Results (${bloc.searchResults.length})',
+            l.searchResultsCount(bloc.searchResults.length),
             style: const TextStyle(
               color: ColorName.contentPrimary,
               fontSize: 17,
@@ -398,11 +402,12 @@ class _Header extends StatelessWidget {
             child: BlocBuilder<HomeBloc, HomeState>(
               buildWhen: (_, state) => state is FetchUserState,
               builder: (context, state) {
+                final l = AppLocalizations.of(context);
                 final fullName = context.read<HomeBloc>().user?.fullName ?? '';
                 final hasName = fullName.trim().isNotEmpty;
                 final firstName = hasName
                     ? fullName.trim().split(RegExp(r'\s+')).first
-                    : 'there';
+                    : l.fallbackGreetingName;
                 const nameStyle = TextStyle(
                   color: ColorName.contentPrimary,
                   fontSize: 20,
@@ -414,7 +419,7 @@ class _Header extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Text('Hello, ', style: nameStyle),
+                        Text(l.hello, style: nameStyle),
                         Flexible(
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 700),
@@ -436,7 +441,7 @@ class _Header extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'What are you watching today?',
+                      l.whatAreYouWatchingToday,
                       style: TextStyle(
                         color: ColorName.contentSecondary,
                         fontSize: 12,
@@ -525,7 +530,7 @@ class _SearchBar extends StatelessWidget {
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Search movies, series, genres…',
+                  hintText: AppLocalizations.of(context).searchMoviesHint,
                   hintStyle: TextStyle(
                     color: ColorName.contentSecondary,
                     fontSize: 14,
@@ -596,7 +601,7 @@ class _SectionTitle extends StatelessWidget {
             GestureDetector(
               onTap: onSeeAll,
               child: Text(
-                'See all',
+                AppLocalizations.of(context).seeAll,
                 style: TextStyle(
                   color: ColorName.accent,
                   fontSize: 13,
@@ -625,6 +630,7 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navItems = _buildNavItems(AppLocalizations.of(context));
     return Container(
       decoration: BoxDecoration(
         color: ColorName.backgroundSecondary,
@@ -638,8 +644,8 @@ class BottomNavBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(_navItems.length, (index) {
-              final item = _navItems[index];
+            children: List.generate(navItems.length, (index) {
+              final item = navItems[index];
               final isActive = index == currentIndex;
               final isPost = index == 2;
 

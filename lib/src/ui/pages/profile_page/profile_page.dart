@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
 import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
+import 'package:shortflix/src/ui/pages/language_page/language_page.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_event.dart';
 import 'package:shortflix/src/ui/pages/profile_page/profile_state.dart';
@@ -36,6 +40,7 @@ class _ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocListener<ProfileBloc, ProfileState>(
       listenWhen: (_, state) => state is LogoutState,
       listener: (context, state) {
@@ -49,7 +54,7 @@ class _ProfileView extends StatelessWidget {
         if (state is LogoutState && state.state == BaseState.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Logout failed. Please try again.'),
+              content: Text(l.logoutFailed),
               backgroundColor: Colors.redAccent,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -83,49 +88,66 @@ class _ProfileView extends StatelessWidget {
 
             return Column(
               children: [
-                _buildTopBar(context),
+                _buildTopBar(context, l),
                 Expanded(
                   child: ListView(
                     padding: EdgeInsets.zero,
                     physics: const BouncingScrollPhysics(),
                     children: [
                       _buildProfileHeader(
+                        l: l,
                         user: user,
                         isLoading: isLoading,
                         onEditTap: openEditProfile,
                       ),
-                      _buildStatsRow(),
+                      _buildStatsRow(l),
                       const SizedBox(height: 8),
-                      _buildSectionTitle('Account'),
+                      _buildSectionTitle(l.sectionAccount),
                       _buildMenuGroup([
                         _MenuItem(
                           icon: Icons.person_outline_rounded,
-                          label: 'Edit Profile',
+                          label: l.editProfile,
                           onTap: openEditProfile,
                         ),
                         _MenuItem(
                           icon: Icons.lock_outline_rounded,
-                          label: 'Privacy & Security',
+                          label: l.privacyAndSecurity,
                         ),
                         _MenuItem(
                           icon: Icons.language_rounded,
-                          label: 'Language',
-                          trailing: _buildValueLabel('English'),
+                          label: l.language,
+                          trailing: ValueListenableBuilder(
+                            valueListenable:
+                                Hive.box('default').listenable(keys: [LANGUAGE]),
+                            builder: (context, Box box, _) {
+                              final code = box.get(LANGUAGE) as String?;
+                              return _buildValueLabel(languageLabelFor(
+                                  AppLocalizations.of(context), code));
+                            },
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              generateRoutes(
+                                RouteSettings(name: Navigation.languagePage),
+                              )!,
+                            );
+                          },
                         ),
                       ]),
-                      _buildSectionTitle('Support'),
+                      _buildSectionTitle(l.sectionSupport),
                       _buildMenuGroup([
                         _MenuItem(
                           icon: Icons.help_outline_rounded,
-                          label: 'Help Center',
+                          label: l.helpCenter,
                         ),
                         _MenuItem(
                           icon: Icons.info_outline_rounded,
-                          label: 'About',
+                          label: l.about,
                         ),
                       ]),
                       const SizedBox(height: 16),
-                      _buildLogoutButton(context, profileBloc),
+                      _buildLogoutButton(context, profileBloc, l),
                       const SizedBox(height: 8),
                       _buildVersionLabel(),
                       const SizedBox(height: 32),
@@ -162,16 +184,16 @@ class _MenuItem {
 // ─────────────────────────────────────────
 //  TOP BAR
 // ─────────────────────────────────────────
-Widget _buildTopBar(BuildContext context) {
+Widget _buildTopBar(BuildContext context, AppLocalizations l) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
     child: Row(
       children: [
         const SizedBox(width: 14),
-        const Expanded(
+        Expanded(
           child: Text(
-            'Profile',
-            style: TextStyle(
+            l.profile,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -205,12 +227,13 @@ Widget _buildTopBar(BuildContext context) {
 //  PROFILE HEADER
 // ─────────────────────────────────────────
 Widget _buildProfileHeader({
+  required AppLocalizations l,
   required UserModel? user,
   required bool isLoading,
   required VoidCallback onEditTap,
 }) {
-  final fullName = user?.fullName ?? (isLoading ? '...' : 'Someone');
-  final email = user?.email ?? (isLoading ? '...' : 'someone@email.com');
+  final fullName = user?.fullName ?? (isLoading ? '...' : l.profileFallbackName);
+  final email = user?.email ?? (isLoading ? '...' : l.profileFallbackEmail);
   final initial =
       (fullName.isNotEmpty ? fullName.trim()[0] : 'S').toUpperCase();
   final avatarUrl = user?.avatar;
@@ -285,7 +308,7 @@ Widget _buildProfileHeader({
                     Icon(Icons.star_rounded, color: ColorName.accent, size: 12),
                     const SizedBox(width: 4),
                     Text(
-                      'Premium',
+                      l.premium,
                       style: TextStyle(
                         color: ColorName.accent,
                         fontSize: 11,
@@ -324,7 +347,7 @@ Widget _buildProfileHeader({
 // ─────────────────────────────────────────
 //  STATS ROW
 // ─────────────────────────────────────────
-Widget _buildStatsRow() {
+Widget _buildStatsRow(AppLocalizations l) {
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 20),
     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -335,11 +358,11 @@ Widget _buildStatsRow() {
     ),
     child: Row(
       children: [
-        _buildStatItem('48', 'Watched'),
+        _buildStatItem('48', l.statWatched),
         _buildStatDivider(),
-        _buildStatItem('12', 'Watchlist'),
+        _buildStatItem('12', l.statWatchlist),
         _buildStatDivider(),
-        _buildStatItem('36', 'Liked'),
+        _buildStatItem('36', l.statLiked),
       ],
     ),
   );
@@ -436,6 +459,7 @@ Widget _buildMenuGroup(List<_MenuItem> items) {
 Widget _buildMenuItem(_MenuItem item) {
   return GestureDetector(
     onTap: item.onTap ?? () {},
+    behavior: HitTestBehavior.opaque,
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
@@ -485,7 +509,8 @@ Widget _buildValueLabel(String value) {
 // ─────────────────────────────────────────
 //  LOGOUT BUTTON
 // ─────────────────────────────────────────
-Widget _buildLogoutButton(BuildContext context, ProfileBloc profileBloc) {
+Widget _buildLogoutButton(
+    BuildContext context, ProfileBloc profileBloc, AppLocalizations l) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20),
     child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -531,7 +556,7 @@ Widget _buildLogoutButton(BuildContext context, ProfileBloc profileBloc) {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Log Out',
+                        l.logOut,
                         style: TextStyle(
                           color: ColorName.accent,
                           fontSize: 14,
@@ -548,6 +573,7 @@ Widget _buildLogoutButton(BuildContext context, ProfileBloc profileBloc) {
 }
 
 Future<bool?> _confirmLogout(BuildContext context) {
+  final l = AppLocalizations.of(context);
   return showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -555,26 +581,26 @@ Future<bool?> _confirmLogout(BuildContext context) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      title: const Text(
-        'Log out?',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      title: Text(
+        l.logoutConfirmTitle,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       content: Text(
-        'You will need to sign in again to continue watching.',
+        l.logoutConfirmMessage,
         style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
           child: Text(
-            'Cancel',
+            l.cancel,
             style: TextStyle(color: ColorName.contentSecondary),
           ),
         ),
         TextButton(
           onPressed: () => Navigator.pop(ctx, true),
           child: Text(
-            'Log Out',
+            l.logOut,
             style: TextStyle(
               color: ColorName.accent,
               fontWeight: FontWeight.bold,

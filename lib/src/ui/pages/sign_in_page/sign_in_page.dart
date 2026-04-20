@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_bloc.dart';
@@ -39,6 +40,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<SignInBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
@@ -50,7 +52,7 @@ class _SignInPageState extends State<SignInPage> {
           );
         }
         if (state is SignInSubmitState && state.state == BaseState.error) {
-          _showSnackbar(context, 'Incorrect email or password');
+          _showSnackbar(context, l.incorrectEmailOrPassword);
         }
         if (state is SignInNotSignedUpState) {
           Navigator.pushNamed(
@@ -69,7 +71,7 @@ class _SignInPageState extends State<SignInPage> {
         if (state is SignInGoogleState && state.state == BaseState.error) {
           _showSnackbar(
             context,
-            state.errorMessage ?? 'Google sign-in failed. Please try again.',
+            state.errorMessage ?? l.googleSignInFailed,
           );
         }
       },
@@ -89,24 +91,24 @@ class _SignInPageState extends State<SignInPage> {
                 _buildHeading(),
                 const SizedBox(height: 32),
                 _buildInputField(
-                  label: 'Email',
-                  hint: 'you@example.com',
+                  label: l.emailLabel,
+                  hint: l.emailHint,
                   icon: Icons.mail_outline_rounded,
                   ctrl: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   errorText: _emailCtrl.text.isNotEmpty && !_emailValid
-                      ? 'Enter a valid email'
+                      ? l.emailError
                       : null,
                 ),
                 const SizedBox(height: 16),
                 _buildInputField(
-                  label: 'Password',
+                  label: l.passwordLabel,
                   hint: '••••••••',
                   icon: Icons.lock_outline_rounded,
                   ctrl: _passwordCtrl,
                   obscure: _obscure,
                   errorText: _passwordCtrl.text.isNotEmpty && !_passwordValid
-                      ? 'Password must be at least 6 characters'
+                      ? l.passwordError
                       : null,
                   suffix: GestureDetector(
                     onTap: () => setState(() => _obscure = !_obscure),
@@ -128,7 +130,7 @@ class _SignInPageState extends State<SignInPage> {
                   child: GestureDetector(
                     onTap: () {},
                     child: Text(
-                      'Forgot password?',
+                      l.forgotPassword,
                       style: TextStyle(
                         color: ColorName.accent,
                         fontSize: 13,
@@ -197,12 +199,13 @@ class _SignInPageState extends State<SignInPage> {
   //  HEADING
   // ─────────────────────────────────────────
   Widget _buildHeading() {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Welcome back',
-          style: TextStyle(
+        Text(
+          l.welcomeBack,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -212,7 +215,7 @@ class _SignInPageState extends State<SignInPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Sign in to continue watching',
+          l.signInSubtitle,
           style: TextStyle(color: ColorName.contentSecondary, fontSize: 14),
         ),
       ],
@@ -253,10 +256,10 @@ class _SignInPageState extends State<SignInPage> {
                       strokeWidth: 2,
                     ),
                   )
-                : const Center(
+                : Center(
                     child: Text(
-                      'Sign In',
-                      style: TextStyle(
+                      AppLocalizations.of(context).signIn,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -281,7 +284,7 @@ class _SignInPageState extends State<SignInPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            'OR',
+            AppLocalizations.of(context).orDivider,
             style: TextStyle(
               color: ColorName.contentSecondary,
               fontSize: 12,
@@ -350,9 +353,9 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Text(
-                        'Continue with Google',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context).continueWithGoogle,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -370,18 +373,19 @@ class _SignInPageState extends State<SignInPage> {
   //  SIGN UP ROW
   // ─────────────────────────────────────────
   Widget _buildSignUpRow(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "Don't have an account? ",
+            l.dontHaveAccount,
             style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
           ),
           GestureDetector(
             onTap: () => Navigator.pushNamed(context, Navigation.signUpPage),
             child: Text(
-              'Sign Up',
+              l.signUp,
               style: TextStyle(
                 color: ColorName.accent,
                 fontSize: 13,

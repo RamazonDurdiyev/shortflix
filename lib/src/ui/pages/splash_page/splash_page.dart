@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/splash_page/splash_cubit.dart';
@@ -115,7 +116,7 @@ class _SplashPageState extends State<SplashPage>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Watch. Discover. Enjoy.',
+                    AppLocalizations.of(context).appTagline,
                     style: TextStyle(
                       color: ColorName.contentSecondary,
                       fontSize: 13,
@@ -149,18 +150,19 @@ class _SplashPageState extends State<SplashPage>
   }
 
   void _showNoNetworkDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         backgroundColor: ColorName.backgroundSecondary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'No Connection',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          l.noConnection,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Please check your internet connection and try again.',
+          l.checkInternetConnection,
           style: TextStyle(color: ColorName.contentSecondary),
         ),
         actions: [
@@ -170,7 +172,7 @@ class _SplashPageState extends State<SplashPage>
               context.read<SplashCubit>().init();
             },
             child: Text(
-              'Retry',
+              l.retry,
               style: TextStyle(
                 color: ColorName.accent,
                 fontWeight: FontWeight.bold,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_event.dart';
@@ -98,18 +99,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<EditProfileBloc>();
+    final l = AppLocalizations.of(context);
 
     return BlocListener<EditProfileBloc, EditProfileState>(
       listener: (context, state) {
         if (state is UpdateUserState && state.state == BaseState.loaded) {
-          _showSnackbar(context, 'Profile updated', success: true);
+          _showSnackbar(context, l.profileUpdated, success: true);
           Navigator.of(context).pop(true);
         }
         if (state is UpdateUserState && state.state == BaseState.error) {
-          _showSnackbar(context, 'Failed to update profile');
+          _showSnackbar(context, l.profileUpdateFailed);
         }
         if (state is PickImageState && state.state == BaseState.error) {
-          _showSnackbar(context, 'Failed to pick image');
+          _showSnackbar(context, l.pickImageFailed);
         }
       },
       child: Scaffold(
@@ -123,41 +125,41 @@ class _EditProfilePageState extends State<EditProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 24),
-                _buildTopBar(context),
+                _buildTopBar(context, l),
                 const SizedBox(height: 24),
 
-                _buildAvatarPicker(bloc),
+                _buildAvatarPicker(bloc, l),
                 const SizedBox(height: 24),
 
                 _buildInputField(
-                  label: 'Full Name',
-                  hint: 'Eshmatjon Toshmatov',
+                  label: l.fullName,
+                  hint: l.fullNameHint,
                   icon: Icons.person_outline_rounded,
                   ctrl: _fullNameCtrl,
                   onChanged: (_) => setState(() {}),
                   errorText: _fullNameCtrl.text.isNotEmpty && !_fullNameValid
-                      ? 'Enter your full name'
+                      ? l.fullNameError
                       : null,
                 ),
                 const SizedBox(height: 16),
 
                 _buildInputField(
-                  label: 'Phone',
-                  hint: '+998901234567',
+                  label: l.phone,
+                  hint: l.phoneHint,
                   icon: Icons.phone_outlined,
                   ctrl: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   onChanged: (_) => setState(() {}),
                   errorText: _phoneCtrl.text.isNotEmpty && !_phoneValid
-                      ? 'Enter a valid phone'
+                      ? l.phoneError
                       : null,
                 ),
                 const SizedBox(height: 16),
 
-                _buildDateField(),
+                _buildDateField(l),
                 const SizedBox(height: 28),
 
-                _buildSubmitButton(bloc),
+                _buildSubmitButton(bloc, l),
                 const SizedBox(height: 24),
               ],
             ),
@@ -170,7 +172,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // ─────────────────────────────────────────
   //  TOP BAR
   // ─────────────────────────────────────────
-  Widget _buildTopBar(BuildContext context) {
+  Widget _buildTopBar(BuildContext context, AppLocalizations l) {
     return Row(
       children: [
         GestureDetector(
@@ -191,9 +193,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ),
         const SizedBox(width: 14),
-        const Text(
-          'Edit Profile',
-          style: TextStyle(
+        Text(
+          l.editProfileTitle,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -207,7 +209,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // ─────────────────────────────────────────
   //  AVATAR PICKER
   // ─────────────────────────────────────────
-  Widget _buildAvatarPicker(EditProfileBloc bloc) {
+  Widget _buildAvatarPicker(EditProfileBloc bloc, AppLocalizations l) {
     return BlocBuilder<EditProfileBloc, EditProfileState>(
       buildWhen: (_, state) => state is PickImageState,
       builder: (context, state) {
@@ -301,7 +303,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               GestureDetector(
                 onTap: isPicking ? null : () => bloc.add(PickImageEvent()),
                 child: Text(
-                  pickedPath != null ? 'Change photo' : 'Upload photo',
+                  pickedPath != null ? l.changePhoto : l.uploadPhoto,
                   style: TextStyle(
                     color: ColorName.accent,
                     fontSize: 13,
@@ -319,19 +321,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // ─────────────────────────────────────────
   //  DATE FIELD
   // ─────────────────────────────────────────
-  Widget _buildDateField() {
+  Widget _buildDateField(AppLocalizations l) {
     final hasDate = _selectedDate != null;
     final label = hasDate
         ? '${_selectedDate!.day.toString().padLeft(2, '0')}.'
             '${_selectedDate!.month.toString().padLeft(2, '0')}.'
             '${_selectedDate!.year}'
-        : 'Select date of birth';
+        : l.selectDateOfBirth;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Date of Birth',
+          l.dateOfBirth,
           style: TextStyle(
             color: ColorName.contentSecondary,
             fontSize: 13,
@@ -375,7 +377,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 14),
                     child: Text(
-                      'Change',
+                      l.change,
                       style: TextStyle(
                         color: ColorName.accent,
                         fontSize: 12,
@@ -394,7 +396,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   // ─────────────────────────────────────────
   //  SUBMIT BUTTON
   // ─────────────────────────────────────────
-  Widget _buildSubmitButton(EditProfileBloc bloc) {
+  Widget _buildSubmitButton(EditProfileBloc bloc, AppLocalizations l) {
     return BlocBuilder<EditProfileBloc, EditProfileState>(
       builder: (context, state) {
         final isLoading =
@@ -428,10 +430,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       strokeWidth: 2,
                     ),
                   )
-                : const Center(
+                : Center(
                     child: Text(
-                      'Save Changes',
-                      style: TextStyle(
+                      l.saveChanges,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
