@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "753167810629",
+    "project_id": "shortflix-notification-service",
+    "storage_bucket": "shortflix-notification-service.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753167810629:android:f8532ade7f36c868f4a32c",
+        "android_client_info": {
+          "package_name": "com.mpmg.shortflix"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA-Kmq8-PsJh1bDbyBI-DSl5ifMJP_i0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

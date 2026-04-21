@@ -3,12 +3,15 @@ import 'dart:io' show Platform;
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/core/error/exceptions.dart';
 import 'package:shortflix/core/network/network_info.dart';
+import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/models/auth_model/auth_model.dart';
+import 'package:shortflix/src/services/notifications/fcm_service.dart';
 
 class AuthRepo {
   final NetworkInfo networkInfo;
@@ -20,6 +23,14 @@ class AuthRepo {
     required this.client,
     required this.localStorage,
   });
+
+  Future<void> _registerFcmToken() async {
+    try {
+      await GetIt.instance.get<FcmService>().registerCurrentToken();
+    } catch (e) {
+      printDebug('[AuthRepo] _registerFcmToken error => $e');
+    }
+  }
 
   // ─────────────────────────────────────────
   //  SIGN IN
@@ -43,6 +54,7 @@ class AuthRepo {
         Map<String, dynamic>.from(res.data as Map),
       );
       await localStorage.put(USER_TOKEN, auth);
+      await _registerFcmToken();
     } on DioException catch (e) {
       final message =
           e.response?.data?['message']?.toString().toLowerCase() ?? '';
@@ -134,6 +146,7 @@ class AuthRepo {
         Map<String, dynamic>.from(res.data as Map),
       );
       await localStorage.put(USER_TOKEN, auth);
+      await _registerFcmToken();
     } on DioException catch (e, st) {
       debugPrint(
         '[GoogleSignIn] backend /auth/google failed '
@@ -199,6 +212,7 @@ class AuthRepo {
       Map<String, dynamic>.from(res.data as Map),
     );
     await localStorage.put(USER_TOKEN, auth);
+    await _registerFcmToken();
   }
 
   // ─────────────────────────────────────────
@@ -225,6 +239,11 @@ class AuthRepo {
   //  CLEAR AUTH
   // ─────────────────────────────────────────
   Future<void> clearAuth() async {
+    try {
+      await GetIt.instance.get<FcmService>().unregisterCurrentToken();
+    } catch (e) {
+      printDebug('[AuthRepo] clearAuth unregisterCurrentToken error => $e');
+    }
     await localStorage.delete(USER_TOKEN);
   }
 }

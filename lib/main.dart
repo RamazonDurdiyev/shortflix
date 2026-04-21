@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:shortflix/firebase_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shortflix/app/app_constants.dart';
 import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/auth_model/auth_model_adapter.dart';
+import 'package:shortflix/src/services/notifications/fcm_service.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/post_episode_page/post_episode_bloc.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
@@ -42,7 +45,11 @@ void main() async {
 Future<void> _init() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AuthModelAdapter());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await di.init();
+  await GetIt.instance.get<FcmService>().init();
 }
 
 class MyApp extends StatelessWidget {

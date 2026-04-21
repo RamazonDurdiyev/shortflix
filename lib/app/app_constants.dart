@@ -78,10 +78,17 @@ const ADD_COMMENT = "/api/comments";
 
 const SHORTS = "/api/shorts";
 
+// Notifications
+
+const DEVICE_TOKEN = "/api/notifications/device-token";
+const BROADCAST_NOTIFICATION = "/api/notifications/broadcast";
+const NOTIFICATION_HISTORY = "/api/notifications/history";
+
 // Local data
 
 const USER_TOKEN = "auth";
 const LANGUAGE = "language";
+const FCM_TOKEN = "fcm_token";
 
 // API Keys
 
