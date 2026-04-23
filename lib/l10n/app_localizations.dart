@@ -823,7 +823,7 @@ abstract class AppLocalizations {
   /// No description provided for @featuredToday.
   ///
   /// In en, this message translates to:
-  /// **'Featured Today'**
+  /// **'Last Added'**
   String get featuredToday;
 
   /// No description provided for @popularOnShortflix.

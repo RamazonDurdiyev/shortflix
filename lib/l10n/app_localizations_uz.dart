@@ -387,7 +387,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get searchMoviesHint => 'Filmlar, seriallar, janrlarni qidirish…';
 
   @override
-  String get featuredToday => 'Bugungi tavsiya';
+  String get featuredToday => 'Yangi qo\'shilgan';
 
   @override
   String get popularOnShortflix => 'Shortflix-da mashhur';

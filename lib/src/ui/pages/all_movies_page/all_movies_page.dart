@@ -148,7 +148,7 @@ class _CategoryFilterBar extends StatelessWidget {
           height: 48,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: bloc.categories.length + 1,
             separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
@@ -189,25 +189,27 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: active ? ColorName.accent : ColorName.backgroundSecondary,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: active ? ColorName.accent : ColorName.surfaceSecondary,
-            width: 1,
+    return Center(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: active ? ColorName.accent : ColorName.backgroundSecondary,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: active ? ColorName.accent : ColorName.surfaceSecondary,
+              width: 1,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: active ? Colors.white : ColorName.contentPrimary,
-            fontSize: 13,
-            fontWeight: active ? FontWeight.bold : FontWeight.w500,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: active ? Colors.white : ColorName.contentPrimary,
+              fontSize: 13,
+              fontWeight: active ? FontWeight.bold : FontWeight.w500,
+            ),
           ),
         ),
       ),

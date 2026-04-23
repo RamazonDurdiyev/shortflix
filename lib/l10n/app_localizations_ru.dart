@@ -387,7 +387,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchMoviesHint => 'Поиск фильмов, сериалов, жанров…';
 
   @override
-  String get featuredToday => 'Рекомендуем сегодня';
+  String get featuredToday => 'Недавно добавленные';
 
   @override
   String get popularOnShortflix => 'Популярное в Shortflix';

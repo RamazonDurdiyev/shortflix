@@ -25,15 +25,13 @@ Dio addInterceptor(Dio dio) {
     InterceptorsWrapper(
       onRequest: (options, handler) {
         final token = tokenHelper.getToken();
-        // Get selected language
-        final selectedLangCode = box.get('selected_language') ?? 'uz';
+        final selectedLangCode = box.get(LANGUAGE) ?? 'uz';
+        options.headers['Accept'] = "Application/json";
+        options.headers['languageCode'] = selectedLangCode;
         if (token != null) {
           options.headers['Authorization'] = "bearer $token";
-          options.headers['Accept'] = "Application/json";
-          options.headers['languageCode'] = selectedLangCode;
-          printDebug("addInterceptor: headers => ${options.headers}");
-          return handler.next(options);
         }
+        printDebug("addInterceptor: headers => ${options.headers}");
         return handler.next(options);
       },
       onError: (e, handler) async {

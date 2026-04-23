@@ -383,7 +383,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchMoviesHint => 'Search movies, series, genres…';
 
   @override
-  String get featuredToday => 'Featured Today';
+  String get featuredToday => 'Last Added';
 
   @override
   String get popularOnShortflix => 'Popular on Shortflix';

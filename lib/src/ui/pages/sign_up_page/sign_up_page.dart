@@ -76,7 +76,15 @@ class _SignUpPageState extends State<SignUpPage> {
         data: Theme.of(context).copyWith(
           colorScheme: ColorScheme.dark(
             primary: ColorName.accent,
+            onPrimary: Colors.white,
             surface: ColorName.backgroundSecondary,
+            onSurface: ColorName.contentPrimary,
+          ),
+          dialogTheme: DialogThemeData(
+            backgroundColor: ColorName.backgroundSecondary,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(foregroundColor: ColorName.accent),
           ),
         ),
         child: child!,
