@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
+import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +15,7 @@ import 'package:shortflix/core/network/network_info.dart';
 import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/models/auth_model/auth_model.dart';
 import 'package:shortflix/src/services/notifications/fcm_service.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthRepo {
   final NetworkInfo networkInfo;
@@ -158,6 +162,99 @@ class AuthRepo {
   }
 
   // ─────────────────────────────────────────
+  //  APPLE SIGN IN (iOS only)
+  //  1) generate raw nonce, send SHA-256(nonce) to Apple
+  //  2) POST /api/auth/apple { identityToken, fullName?, nonce: raw }
+  //  3) store AuthModel in Hive
+  // ─────────────────────────────────────────
+  Future<void> signInWithApple() async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    if (!(Platform.isIOS || Platform.isMacOS)) {
+      throw AppleSignInFailedException(
+        'Apple Sign In is only available on iOS/macOS.',
+      );
+    }
+
+    final rawNonce = _generateRawNonce();
+    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
+    AuthorizationCredentialAppleID credential;
+    try {
+      credential = await SignInWithApple.getAppleIDCredential(
+        scopes: const [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+    } on SignInWithAppleAuthorizationException catch (e, st) {
+      debugPrint('[AppleSignIn] SignInWithAppleAuthorizationException '
+          'code=${e.code} message=${e.message}');
+      debugPrint(st.toString());
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw AppleSignInCancelledException();
+      }
+      throw AppleSignInFailedException(
+        'Apple sign-in failed: ${e.code.name} ${e.message}',
+      );
+    } catch (e, st) {
+      debugPrint('[AppleSignIn] unexpected error: $e');
+      debugPrint(st.toString());
+      throw AppleSignInFailedException('Apple sign-in failed: $e');
+    }
+
+    final identityToken = credential.identityToken;
+    debugPrint('[AppleSignIn] identityToken present=${identityToken != null} '
+        'email=${credential.email} givenName=${credential.givenName}');
+    if (identityToken == null || identityToken.isEmpty) {
+      throw AppleSignInFailedException('Apple identityToken is null.');
+    }
+
+    // Apple returns fullName only on the FIRST sign-in for this Apple ID.
+    // Combine given + family and send it; on later sign-ins it will be null,
+    // which the backend handles.
+    final givenName = credential.givenName?.trim() ?? '';
+    final familyName = credential.familyName?.trim() ?? '';
+    final fullName = [givenName, familyName]
+        .where((s) => s.isNotEmpty)
+        .join(' ')
+        .trim();
+
+    try {
+      final res = await client.post(
+        APPLE_AUTH,
+        data: {
+          'identityToken': identityToken,
+          if (fullName.isNotEmpty) 'fullName': fullName,
+          'nonce': rawNonce,
+        },
+      );
+
+      final auth = AuthModel.fromJson(
+        Map<String, dynamic>.from(res.data as Map),
+      );
+      await localStorage.put(USER_TOKEN, auth);
+      await _registerFcmToken();
+    } on DioException catch (e, st) {
+      debugPrint('[AppleSignIn] backend /auth/apple failed '
+          'status=${e.response?.statusCode} body=${e.response?.data}');
+      debugPrint(st.toString());
+      rethrow;
+    }
+  }
+
+  String _generateRawNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
+  }
+
+  // ─────────────────────────────────────────
   //  SIGN UP
   // ─────────────────────────────────────────
   Future<void> signUp({
@@ -264,4 +361,15 @@ class GoogleSignInFailedException implements Exception {
   GoogleSignInFailedException(this.message);
   @override
   String toString() => 'GoogleSignInFailedException: $message';
+}
+
+class AppleSignInCancelledException implements Exception {
+  final String message = 'Apple sign-in cancelled';
+}
+
+class AppleSignInFailedException implements Exception {
+  final String message;
+  AppleSignInFailedException(this.message);
+  @override
+  String toString() => 'AppleSignInFailedException: $message';
 }

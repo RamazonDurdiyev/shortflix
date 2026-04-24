@@ -20,6 +20,7 @@ const VERIFY_CODE = "/api/auth/verify-otp";
 const REFRESH = "/api/auth/refresh";
 const SEND_CODE = "/api/auth/login";
 const GOOGLE_AUTH = "/api/auth/google";
+const APPLE_AUTH = "/api/auth/apple";
 
 
 // OAuth client id

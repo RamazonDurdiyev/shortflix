@@ -474,6 +474,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get continueWithGoogle => 'Google bilan davom etish';
 
   @override
+  String get continueWithApple => 'Apple bilan davom etish';
+
+  @override
   String get dontHaveAccount => 'Hisobingiz yo\'qmi? ';
 
   @override
@@ -485,6 +488,10 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get googleSignInFailed =>
       'Google orqali kirib bo\'lmadi. Qayta urining.';
+
+  @override
+  String get appleSignInFailed =>
+      'Apple orqali kirib bo\'lmadi. Qayta urining.';
 
   @override
   String get createAccountHeading => 'Hisob yaratish';

@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
@@ -74,6 +76,19 @@ class _SignInPageState extends State<SignInPage> {
             state.errorMessage ?? l.googleSignInFailed,
           );
         }
+        if (state is SignInAppleState && state.state == BaseState.loaded) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            generateRoutes(RouteSettings(name: Navigation.homePage))!,
+            (_) => false,
+          );
+        }
+        if (state is SignInAppleState && state.state == BaseState.error) {
+          _showSnackbar(
+            context,
+            state.errorMessage ?? l.appleSignInFailed,
+          );
+        }
       },
       child: Scaffold(
         backgroundColor: ColorName.backgroundPrimary,
@@ -145,6 +160,10 @@ class _SignInPageState extends State<SignInPage> {
                 _buildDivider(),
                 const SizedBox(height: 20),
                 _buildGoogleButton(bloc),
+                if (Platform.isIOS) ...[
+                  const SizedBox(height: 12),
+                  _buildAppleButton(bloc),
+                ],
                 const SizedBox(height: 32),
                 _buildSignUpRow(context),
                 const SizedBox(height: 24),
@@ -357,6 +376,64 @@ class _SignInPageState extends State<SignInPage> {
                         AppLocalizations.of(context).continueWithGoogle,
                         style: const TextStyle(
                           color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ─────────────────────────────────────────
+  //  APPLE BUTTON (iOS only)
+  // ─────────────────────────────────────────
+  Widget _buildAppleButton(SignInBloc bloc) {
+    return BlocBuilder<SignInBloc, SignInState>(
+      buildWhen: (_, state) => state is SignInAppleState,
+      builder: (context, state) {
+        final isLoading =
+            state is SignInAppleState && state.state == BaseState.loading;
+
+        return GestureDetector(
+          onTap: isLoading ? null : () => bloc.add(SignInAppleEvent()),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 52,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: isLoading
+                ? const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        AppLocalizations.of(context).continueWithApple,
+                        style: const TextStyle(
+                          color: Colors.black,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),

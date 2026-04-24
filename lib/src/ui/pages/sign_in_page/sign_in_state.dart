@@ -23,6 +23,14 @@ class SignInGoogleState extends SignInState {
   List<Object?> get props => [state, errorMessage];
 }
 
+class SignInAppleState extends SignInState {
+  final BaseState state;
+  final String? errorMessage;
+  SignInAppleState({required this.state, this.errorMessage});
+  @override
+  List<Object?> get props => [state, errorMessage];
+}
+
 // emitted when backend says user not signed up
 class SignInNotSignedUpState extends SignInState {
   final String email;

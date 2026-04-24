@@ -27,7 +27,7 @@ Dio addInterceptor(Dio dio) {
         final token = tokenHelper.getToken();
         final selectedLangCode = box.get(LANGUAGE) ?? 'uz';
         options.headers['Accept'] = "Application/json";
-        options.headers['languageCode'] = selectedLangCode;
+        options.headers['accept-language'] = selectedLangCode;
         if (token != null) {
           options.headers['Authorization'] = "bearer $token";
         }

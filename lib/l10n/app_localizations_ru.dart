@@ -473,6 +473,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get continueWithGoogle => 'Продолжить с Google';
 
   @override
+  String get continueWithApple => 'Продолжить с Apple';
+
+  @override
   String get dontHaveAccount => 'Нет аккаунта? ';
 
   @override
@@ -484,6 +487,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get googleSignInFailed =>
       'Не удалось войти через Google. Попробуйте ещё раз.';
+
+  @override
+  String get appleSignInFailed =>
+      'Не удалось войти через Apple. Попробуйте ещё раз.';
 
   @override
   String get createAccountHeading => 'Создать аккаунт';

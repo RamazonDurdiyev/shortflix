@@ -16,6 +16,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     on<SignInGoogleEvent>((event, emit) async {
       await _signInWithGoogle(emit);
     });
+    on<SignInAppleEvent>((event, emit) async {
+      await _signInWithApple(emit);
+    });
   }
 
   Future<void> _signInWithGoogle(Emitter<SignInState> emit) async {
@@ -31,6 +34,23 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         errorMessage: _describeError(e),
       ));
       printDebug('SignInBloc _signInWithGoogle error => $e');
+      printDebug(st);
+    }
+  }
+
+  Future<void> _signInWithApple(Emitter<SignInState> emit) async {
+    try {
+      emit(SignInAppleState(state: BaseState.loading));
+      await authRepo.signInWithApple();
+      emit(SignInAppleState(state: BaseState.loaded));
+    } on AppleSignInCancelledException {
+      emit(SignInAppleState(state: BaseState.initial));
+    } catch (e, st) {
+      emit(SignInAppleState(
+        state: BaseState.error,
+        errorMessage: _describeError(e),
+      ));
+      printDebug('SignInBloc _signInWithApple error => $e');
       printDebug(st);
     }
   }

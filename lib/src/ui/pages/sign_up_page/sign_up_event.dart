@@ -23,3 +23,8 @@ class SignUpGoogleEvent extends SignUpEvent {
   @override
   List<Object?> get props => [];
 }
+
+class SignUpAppleEvent extends SignUpEvent {
+  @override
+  List<Object?> get props => [];
+}

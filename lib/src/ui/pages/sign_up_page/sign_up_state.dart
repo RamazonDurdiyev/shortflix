@@ -25,3 +25,11 @@ class SignUpGoogleState extends SignUpState {
   @override
   List<Object?> get props => [state, errorMessage];
 }
+
+class SignUpAppleState extends SignUpState {
+  final BaseState state;
+  final String? errorMessage;
+  SignUpAppleState({required this.state, this.errorMessage});
+  @override
+  List<Object?> get props => [state, errorMessage];
+}

@@ -16,3 +16,8 @@ class SignInGoogleEvent extends SignInEvent {
   @override
   List<Object?> get props => [];
 }
+
+class SignInAppleEvent extends SignInEvent {
+  @override
+  List<Object?> get props => [];
+}
