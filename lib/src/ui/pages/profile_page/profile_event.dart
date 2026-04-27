@@ -11,3 +11,8 @@ class LogoutEvent extends ProfileEvent{
   @override
   List<Object?> get props => [];
 }
+
+class DeleteAccountEvent extends ProfileEvent{
+  @override
+  List<Object?> get props => [];
+}

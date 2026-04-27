@@ -8,6 +8,7 @@ const int RECEIVE_TIME_OUT = 30000;
 // User
 
 const GET_USER = "/api/users/me";
+const DELETE_USER = "/api/users/me";
 
 // Categories
 

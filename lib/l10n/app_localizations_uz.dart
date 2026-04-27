@@ -76,6 +76,29 @@ class AppLocalizationsUz extends AppLocalizations {
   String get cancel => 'Bekor qilish';
 
   @override
+  String get privacyPolicy => 'Maxfiylik siyosati';
+
+  @override
+  String get privacyPolicyLoadFailed => 'Maxfiylik siyosatini yuklab bo\'lmadi';
+
+  @override
+  String get dangerZone => 'Xavfli amallar';
+
+  @override
+  String get deleteAccount => 'Hisobni o\'chirish';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Hisobni o\'chirasizmi?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Hisobingiz va unga bog\'liq barcha ma\'lumotlar butunlay o\'chiriladi. Bu amalni qaytarib bo\'lmaydi.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Hisobni o\'chirib bo\'lmadi. Qayta urining.';
+
+  @override
   String get editProfileTitle => 'Profilni tahrirlash';
 
   @override

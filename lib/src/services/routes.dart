@@ -34,6 +34,7 @@ import 'package:shortflix/src/ui/pages/profile_page/profile_page.dart';
 import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_bloc.dart';
 import 'package:shortflix/src/ui/pages/edit_profile_page/edit_profile_page.dart';
 import 'package:shortflix/src/ui/pages/language_page/language_page.dart';
+import 'package:shortflix/src/ui/pages/privacy_policy_page/privacy_policy_page.dart';
 import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_page.dart';
@@ -116,6 +117,9 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
 
     case Navigation.languagePage:
       return buildRoute(settings, const LanguagePage());
+
+    case Navigation.privacyPolicyPage:
+      return buildRoute(settings, const PrivacyPolicyPage());
 
     case Navigation.libraryPage:
       return buildRoute(

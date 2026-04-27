@@ -20,6 +20,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<LogoutEvent>((event, emit) async {
       await _logout(emit);
     });
+    on<DeleteAccountEvent>((event, emit) async {
+      await _deleteAccount(emit);
+    });
   }
 
   UserModel? user;
@@ -49,6 +52,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     } catch (e) {
       emit(LogoutState(state: BaseState.error));
       printDebug("ProfileBloc _logout error => $e");
+    }
+  }
+
+  Future<void> _deleteAccount(Emitter<ProfileState> emit) async {
+    try {
+      emit(DeleteAccountState(state: BaseState.loading));
+      await authRepo.deleteAccount();
+      try {
+        await GoogleSignIn().signOut();
+      } catch (e) {
+        printDebug("ProfileBloc _deleteAccount google signOut error => $e");
+      }
+      user = null;
+      emit(DeleteAccountState(state: BaseState.loaded));
+    } catch (e) {
+      emit(DeleteAccountState(state: BaseState.error));
+      printDebug("ProfileBloc _deleteAccount error => $e");
     }
   }
 }

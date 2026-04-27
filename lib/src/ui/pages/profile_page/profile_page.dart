@@ -42,7 +42,8 @@ class _ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return BlocListener<ProfileBloc, ProfileState>(
-      listenWhen: (_, state) => state is LogoutState,
+      listenWhen: (_, state) =>
+          state is LogoutState || state is DeleteAccountState,
       listener: (context, state) {
         if (state is LogoutState && state.state == BaseState.loaded) {
           Navigator.pushAndRemoveUntil(
@@ -55,6 +56,25 @@ class _ProfileView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l.logoutFailed),
+              backgroundColor: Colors.redAccent,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+        if (state is DeleteAccountState && state.state == BaseState.loaded) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            generateRoutes(RouteSettings(name: Navigation.signInPage))!,
+            (_) => false,
+          );
+        }
+        if (state is DeleteAccountState && state.state == BaseState.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l.deleteAccountFailed),
               backgroundColor: Colors.redAccent,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -142,13 +162,29 @@ class _ProfileView extends StatelessWidget {
                           label: l.helpCenter,
                         ),
                         _MenuItem(
+                          icon: Icons.privacy_tip_outlined,
+                          label: l.privacyPolicy,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              generateRoutes(
+                                RouteSettings(
+                                    name: Navigation.privacyPolicyPage),
+                              )!,
+                            );
+                          },
+                        ),
+                        _MenuItem(
                           icon: Icons.info_outline_rounded,
                           label: l.about,
                         ),
                       ]),
                       const SizedBox(height: 16),
                       _buildLogoutButton(context, profileBloc, l),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 24),
+                      _buildSectionTitle(l.dangerZone),
+                      _buildDeleteAccountButton(context, profileBloc, l),
+                      const SizedBox(height: 12),
                       _buildVersionLabel(),
                       const SizedBox(height: 32),
                     ],
@@ -603,6 +639,114 @@ Future<bool?> _confirmLogout(BuildContext context) {
             l.logOut,
             style: TextStyle(
               color: ColorName.accent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// ─────────────────────────────────────────
+//  DELETE ACCOUNT BUTTON
+// ─────────────────────────────────────────
+Widget _buildDeleteAccountButton(
+    BuildContext context, ProfileBloc profileBloc, AppLocalizations l) {
+  const danger = Color(0xFFE5484D);
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (_, state) => state is DeleteAccountState,
+      builder: (context, state) {
+        final isLoading = state is DeleteAccountState &&
+            state.state == BaseState.loading;
+
+        return GestureDetector(
+          onTap: isLoading
+              ? null
+              : () async {
+                  final confirmed = await _confirmDeleteAccount(context);
+                  if (confirmed == true) {
+                    profileBloc.add(DeleteAccountEvent());
+                  }
+                },
+          child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: danger.withValues(alpha: .08),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: danger.withValues(alpha: .35)),
+            ),
+            child: isLoading
+                ? const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: danger,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.delete_forever_rounded,
+                        color: danger,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        l.deleteAccount,
+                        style: const TextStyle(
+                          color: danger,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Future<bool?> _confirmDeleteAccount(BuildContext context) {
+  const danger = Color(0xFFE5484D);
+  final l = AppLocalizations.of(context);
+  return showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: ColorName.backgroundSecondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        l.deleteAccountConfirmTitle,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        l.deleteAccountConfirmMessage,
+        style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(
+            l.cancel,
+            style: TextStyle(color: ColorName.contentSecondary),
+          ),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: Text(
+            l.deleteAccount,
+            style: const TextStyle(
+              color: danger,
               fontWeight: FontWeight.bold,
             ),
           ),

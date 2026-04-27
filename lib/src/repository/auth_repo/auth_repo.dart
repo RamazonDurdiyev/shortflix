@@ -343,6 +343,17 @@ class AuthRepo {
     }
     await localStorage.delete(USER_TOKEN);
   }
+
+  // ─────────────────────────────────────────
+  //  DELETE ACCOUNT
+  //  Calls DELETE /api/users/me on the backend, then clears local auth.
+  //  Required by Apple Guideline 5.1.1(v) for apps with account creation.
+  // ─────────────────────────────────────────
+  Future<void> deleteAccount() async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+    await client.delete(DELETE_USER);
+    await clearAuth();
+  }
 }
 
 // ─────────────────────────────────────────

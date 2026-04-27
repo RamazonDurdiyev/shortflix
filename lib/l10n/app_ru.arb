@@ -23,6 +23,13 @@
   "logoutConfirmTitle": "Выйти?",
   "logoutConfirmMessage": "Чтобы продолжить смотреть, нужно будет войти снова.",
   "cancel": "Отмена",
+  "privacyPolicy": "Политика конфиденциальности",
+  "privacyPolicyLoadFailed": "Не удалось загрузить Политику конфиденциальности",
+  "dangerZone": "Опасная зона",
+  "deleteAccount": "Удалить аккаунт",
+  "deleteAccountConfirmTitle": "Удалить аккаунт?",
+  "deleteAccountConfirmMessage": "Ваш аккаунт и все связанные данные будут удалены безвозвратно. Это действие нельзя отменить.",
+  "deleteAccountFailed": "Не удалось удалить аккаунт. Попробуйте ещё раз.",
 
   "editProfileTitle": "Редактировать профиль",
   "fullName": "Полное имя",

@@ -23,6 +23,13 @@
   "logoutConfirmTitle": "Log out?",
   "logoutConfirmMessage": "You will need to sign in again to continue watching.",
   "cancel": "Cancel",
+  "privacyPolicy": "Privacy Policy",
+  "privacyPolicyLoadFailed": "Failed to load Privacy Policy",
+  "dangerZone": "Danger Zone",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirmTitle": "Delete account?",
+  "deleteAccountConfirmMessage": "This will permanently delete your account and all your data. This action cannot be undone.",
+  "deleteAccountFailed": "Failed to delete account. Please try again.",
 
   "editProfileTitle": "Edit Profile",
   "fullName": "Full Name",

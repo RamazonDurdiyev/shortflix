@@ -17,6 +17,7 @@ class Navigation {
   static const String profilePage = "/profile_page";
   static const String editProfilePage = "/edit_profile_page";
   static const String languagePage = "/language_page";
+  static const String privacyPolicyPage = "/privacy_policy_page";
   static const String playPage = "/play_page";
   static const String libraryPage = "/playlists_page";
   static const String recPage = "/rec_page";

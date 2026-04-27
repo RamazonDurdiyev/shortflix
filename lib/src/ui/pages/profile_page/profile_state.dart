@@ -23,3 +23,11 @@ class LogoutState extends ProfileState{
   @override
   List<Object?> get props => [state];
 }
+
+class DeleteAccountState extends ProfileState{
+  final BaseState state;
+
+  DeleteAccountState({required this.state});
+  @override
+  List<Object?> get props => [state];
+}

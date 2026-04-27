@@ -76,6 +76,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cancel => 'Отмена';
 
   @override
+  String get privacyPolicy => 'Политика конфиденциальности';
+
+  @override
+  String get privacyPolicyLoadFailed =>
+      'Не удалось загрузить Политику конфиденциальности';
+
+  @override
+  String get dangerZone => 'Опасная зона';
+
+  @override
+  String get deleteAccount => 'Удалить аккаунт';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Удалить аккаунт?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Ваш аккаунт и все связанные данные будут удалены безвозвратно. Это действие нельзя отменить.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Не удалось удалить аккаунт. Попробуйте ещё раз.';
+
+  @override
   String get editProfileTitle => 'Редактировать профиль';
 
   @override

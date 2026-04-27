@@ -23,6 +23,13 @@
   "logoutConfirmTitle": "Chiqasizmi?",
   "logoutConfirmMessage": "Ko'rishni davom ettirish uchun yana tizimga kirishingiz kerak.",
   "cancel": "Bekor qilish",
+  "privacyPolicy": "Maxfiylik siyosati",
+  "privacyPolicyLoadFailed": "Maxfiylik siyosatini yuklab bo'lmadi",
+  "dangerZone": "Xavfli amallar",
+  "deleteAccount": "Hisobni o'chirish",
+  "deleteAccountConfirmTitle": "Hisobni o'chirasizmi?",
+  "deleteAccountConfirmMessage": "Hisobingiz va unga bog'liq barcha ma'lumotlar butunlay o'chiriladi. Bu amalni qaytarib bo'lmaydi.",
+  "deleteAccountFailed": "Hisobni o'chirib bo'lmadi. Qayta urining.",
 
   "editProfileTitle": "Profilni tahrirlash",
   "fullName": "To'liq ism",
