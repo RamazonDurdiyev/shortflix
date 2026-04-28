@@ -92,7 +92,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get deleteAccountConfirmMessage =>
-      'Hisobingiz va unga bog\'liq barcha ma\'lumotlar butunlay o\'chiriladi. Bu amalni qaytarib bo\'lmaydi.';
+      'Hisobingiz o\'chirishga rejalashtiriladi va 30 kundan so\'ng butunlay o\'chiriladi. Shu 30 kun ichida istalgan vaqtda yana tizimga kirish orqali hisobingizni tiklashingiz mumkin.';
 
   @override
   String get deleteAccountFailed =>

@@ -92,7 +92,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountConfirmMessage =>
-      'This will permanently delete your account and all your data. This action cannot be undone.';
+      'Your account will be scheduled for deletion and permanently removed after 30 days. You can restore it any time within these 30 days by simply signing in again.';
 
   @override
   String get deleteAccountFailed =>

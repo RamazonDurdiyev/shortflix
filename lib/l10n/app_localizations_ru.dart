@@ -93,7 +93,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get deleteAccountConfirmMessage =>
-      'Ваш аккаунт и все связанные данные будут удалены безвозвратно. Это действие нельзя отменить.';
+      'Ваш аккаунт будет запланирован к удалению и окончательно удалён через 30 дней. В течение этих 30 дней вы можете восстановить его в любой момент, просто войдя снова.';
 
   @override
   String get deleteAccountFailed =>
