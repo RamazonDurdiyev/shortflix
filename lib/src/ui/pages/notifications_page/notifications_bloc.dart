@@ -20,37 +20,37 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   Future<void> _fetchNotifications(Emitter<NotificationsState> emit) async {
     emit(FetchNotificationsState(state: BaseState.loading));
 
-    List<NotificationModel> mine = [];
-    List<NotificationModel> broadcasts = [];
-    bool mineOk = false;
-    bool broadcastsOk = false;
+    List<NotificationModel> personal = [];
+    List<NotificationModel> general = [];
+    bool personalOk = false;
+    bool generalOk = false;
 
     await Future.wait([
       () async {
         try {
-          mine = await notificationsRepo.list();
-          mineOk = true;
+          personal = await notificationsRepo.list();
+          personalOk = true;
         } catch (e) {
           printDebug("NotificationsBloc fetch personal error => $e");
         }
       }(),
       () async {
         try {
-          broadcasts = await notificationsRepo.broadcasts();
-          broadcastsOk = true;
+          general = await notificationsRepo.broadcasts();
+          generalOk = true;
         } catch (e) {
-          printDebug("NotificationsBloc fetch broadcasts error => $e");
+          printDebug("NotificationsBloc fetch general error => $e");
         }
       }(),
     ]);
 
-    if (!mineOk && !broadcastsOk) {
+    if (!personalOk && !generalOk) {
       notifications = [];
       emit(FetchNotificationsState(state: BaseState.error));
       return;
     }
 
-    final combined = [...mine, ...broadcasts];
+    final combined = [...personal, ...general];
     combined.sort((a, b) {
       final ad = a.createdAt;
       final bd = b.createdAt;
@@ -62,14 +62,23 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     notifications = combined;
     emit(FetchNotificationsState(state: BaseState.loaded));
 
-    if (mineOk) {
-      _markAllReadInBackground();
+    if (personalOk) {
+      _markAllPersonalReadInBackground();
+    }
+    if (generalOk) {
+      _markAllGeneralReadInBackground();
     }
   }
 
-  void _markAllReadInBackground() {
-    notificationsRepo.markAllRead().catchError((e) {
-      printDebug("NotificationsBloc _markAllRead error => $e");
+  void _markAllPersonalReadInBackground() {
+    notificationsRepo.markAllPersonalRead().catchError((e) {
+      printDebug("NotificationsBloc _markAllPersonalRead error => $e");
+    });
+  }
+
+  void _markAllGeneralReadInBackground() {
+    notificationsRepo.markAllGeneralRead().catchError((e) {
+      printDebug("NotificationsBloc _markAllGeneralRead error => $e");
     });
   }
 }

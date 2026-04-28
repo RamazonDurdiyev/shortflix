@@ -128,12 +128,25 @@ class NotificationsRepo {
   }
 
   // ─────────────────────────────────────────
-  //  MARK ALL READ
-  //  POST /api/notifications/me/read-all
+  //  MARK ALL PERSONAL READ
+  //  PATCH /api/notifications/me/read-all
+  //  Marks all of the current user's PERSONAL notifications (likes/comments)
+  //  as read. Does not affect general broadcasts.
   // ─────────────────────────────────────────
-  Future<void> markAllRead() async {
+  Future<void> markAllPersonalRead() async {
     if (!await networkInfo.isConnected) throw NetworkException();
 
-    await client.post(READ_ALL_NOTIFICATIONS);
+    await client.patch(READ_ALL_PERSONAL_NOTIFICATIONS);
+  }
+
+  // ─────────────────────────────────────────
+  //  MARK ALL GENERAL READ
+  //  PATCH /api/notifications/read-all
+  //  Marks all general (broadcast) notifications as read for the current user.
+  // ─────────────────────────────────────────
+  Future<void> markAllGeneralRead() async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    await client.patch(READ_ALL_GENERAL_NOTIFICATIONS);
   }
 }
