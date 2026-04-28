@@ -77,15 +77,63 @@ class NotificationsRepo {
     if (!await networkInfo.isConnected) throw NetworkException();
 
     final res = await client.get(
+      MY_NOTIFICATIONS,
+      queryParameters: {'limit': limit, 'offset': offset},
+    );
+    return _parseList(res.data);
+  }
+
+  // ─────────────────────────────────────────
+  //  LIST BROADCASTS (general / system-wide)
+  //  GET /api/notifications
+  // ─────────────────────────────────────────
+  Future<List<NotificationModel>> broadcasts({
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    final res = await client.get(
       NOTIFICATIONS,
       queryParameters: {'limit': limit, 'offset': offset},
     );
-    final data = res.data;
+    return _parseList(res.data);
+  }
+
+  List<NotificationModel> _parseList(dynamic data) {
     final List items = data is List
         ? data
         : (data is Map ? (data['items'] ?? data['data'] ?? []) as List : const []);
     return items
         .map((e) => NotificationModel.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
+  }
+
+  // ─────────────────────────────────────────
+  //  UNREAD COUNT
+  //  GET /api/notifications/me/unread-count -> { "unreadCount": int }
+  // ─────────────────────────────────────────
+  Future<int> unreadCount() async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    final res = await client.get(UNREAD_COUNT_NOTIFICATIONS);
+    final data = res.data;
+    if (data is Map) {
+      final raw = data['unreadCount'];
+      if (raw is int) return raw;
+      if (raw is num) return raw.toInt();
+      if (raw is String) return int.tryParse(raw) ?? 0;
+    }
+    return 0;
+  }
+
+  // ─────────────────────────────────────────
+  //  MARK ALL READ
+  //  POST /api/notifications/me/read-all
+  // ─────────────────────────────────────────
+  Future<void> markAllRead() async {
+    if (!await networkInfo.isConnected) throw NetworkException();
+
+    await client.post(READ_ALL_NOTIFICATIONS);
   }
 }

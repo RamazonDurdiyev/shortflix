@@ -42,6 +42,14 @@ class FetchUserState extends HomeState{
   List<Object?> get props => [state];
 }
 
+class FetchUnreadCountState extends HomeState{
+  final BaseState state;
+
+  FetchUnreadCountState({required this.state});
+  @override
+  List<Object?> get props => [state, UniqueKey()];
+}
+
 class SearchMoviesState extends HomeState{
   final BaseState state;
 

@@ -126,6 +126,7 @@ class _HomeContentState extends State<_HomeContent> {
     homeBloc.add(FetchMoviesEvent());
     homeBloc.add(FetchBannersEvent());
     homeBloc.add(FetchUserEvent());
+    homeBloc.add(FetchUnreadCountEvent());
   }
 
   @override
@@ -454,27 +455,74 @@ class _Header extends StatelessWidget {
           ),
           // Notifications
           GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final homeBloc = context.read<HomeBloc>();
+              await Navigator.push(
                 context,
                 generateRoutes(
                   RouteSettings(name: Navigation.notificationsPage),
                 )!,
               );
+              homeBloc.add(FetchUnreadCountEvent());
             },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: ColorName.backgroundSecondary,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: ColorName.surfaceSecondary),
-              ),
-              child: const Icon(
-                Icons.notifications_none_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
+            child: BlocBuilder<HomeBloc, HomeState>(
+              buildWhen: (_, state) => state is FetchUnreadCountState,
+              builder: (context, state) {
+                final count = context.read<HomeBloc>().unreadCount;
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: ColorName.backgroundSecondary,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: ColorName.surfaceSecondary),
+                      ),
+                      child: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                    if (count > 0)
+                      Positioned(
+                        top: -4,
+                        right: -4,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 2,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorName.accent,
+                            borderRadius: BorderRadius.circular(9),
+                            border: Border.all(
+                              color: ColorName.backgroundPrimary,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              count > 99 ? '99+' : '$count',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                height: 1.1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ),
         ],

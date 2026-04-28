@@ -87,6 +87,7 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
             categoryRepo: GetIt.instance.get(),
             movieRepo: GetIt.instance.get(),
             userRepo: GetIt.instance.get(),
+            notificationsRepo: GetIt.instance.get(),
           ),
           child: const HomePage(),
         ),

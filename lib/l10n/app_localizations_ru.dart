@@ -186,6 +186,21 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String notifLikedYourEpisode(String name) {
+    return '$name оценил(а) ваш эпизод';
+  }
+
+  @override
+  String notifCommentedOnYourEpisode(String name) {
+    return '$name прокомментировал(а) ваш эпизод';
+  }
+
+  @override
+  String notifInteractedWithYou(String name) {
+    return '$name взаимодействовал(а) с вашим контентом';
+  }
+
+  @override
   String get noMoviesYet => 'Пока нет фильмов';
 
   @override

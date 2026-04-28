@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
           create: (context) => HomeBloc(
             categoryRepo: GetIt.instance.get(),
             movieRepo: GetIt.instance.get(),
-            userRepo: GetIt.instance.get(),
+            userRepo: GetIt.instance.get(), notificationsRepo: GetIt.instance.get(),
           ),
         ),
         BlocProvider<PostEpisodeBloc>(

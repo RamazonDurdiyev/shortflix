@@ -18,13 +18,58 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   }
 
   Future<void> _fetchNotifications(Emitter<NotificationsState> emit) async {
-    try {
-      emit(FetchNotificationsState(state: BaseState.loading));
-      notifications = await notificationsRepo.list();
-      emit(FetchNotificationsState(state: BaseState.loaded));
-    } catch (e) {
+    emit(FetchNotificationsState(state: BaseState.loading));
+
+    List<NotificationModel> mine = [];
+    List<NotificationModel> broadcasts = [];
+    bool mineOk = false;
+    bool broadcastsOk = false;
+
+    await Future.wait([
+      () async {
+        try {
+          mine = await notificationsRepo.list();
+          mineOk = true;
+        } catch (e) {
+          printDebug("NotificationsBloc fetch personal error => $e");
+        }
+      }(),
+      () async {
+        try {
+          broadcasts = await notificationsRepo.broadcasts();
+          broadcastsOk = true;
+        } catch (e) {
+          printDebug("NotificationsBloc fetch broadcasts error => $e");
+        }
+      }(),
+    ]);
+
+    if (!mineOk && !broadcastsOk) {
+      notifications = [];
       emit(FetchNotificationsState(state: BaseState.error));
-      printDebug("NotificationsBloc _fetchNotifications error => $e");
+      return;
     }
+
+    final combined = [...mine, ...broadcasts];
+    combined.sort((a, b) {
+      final ad = a.createdAt;
+      final bd = b.createdAt;
+      if (ad == null && bd == null) return 0;
+      if (ad == null) return 1;
+      if (bd == null) return -1;
+      return bd.compareTo(ad);
+    });
+    notifications = combined;
+    emit(FetchNotificationsState(state: BaseState.loaded));
+
+    if (mineOk) {
+      _markAllReadInBackground();
+    }
+  }
+
+  void _markAllReadInBackground() {
+    notificationsRepo.markAllRead().catchError((e) {
+      printDebug("NotificationsBloc _markAllRead error => $e");
+    });
   }
 }

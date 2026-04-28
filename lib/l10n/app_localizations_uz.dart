@@ -185,6 +185,21 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String notifLikedYourEpisode(String name) {
+    return '$name epizodingizni yoqtirdi';
+  }
+
+  @override
+  String notifCommentedOnYourEpisode(String name) {
+    return '$name epizodingizga izoh qoldirdi';
+  }
+
+  @override
+  String notifInteractedWithYou(String name) {
+    return '$name kontentingizga munosabat bildirdi';
+  }
+
+  @override
   String get noMoviesYet => 'Hozircha filmlar yo\'q';
 
   @override

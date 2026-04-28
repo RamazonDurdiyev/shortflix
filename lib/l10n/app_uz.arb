@@ -62,6 +62,9 @@
   "tabEpisodes": "Epizodlar",
 
   "moviesBy": "{name} filmlari",
+  "notifLikedYourEpisode": "{name} epizodingizni yoqtirdi",
+  "notifCommentedOnYourEpisode": "{name} epizodingizga izoh qoldirdi",
+  "notifInteractedWithYou": "{name} kontentingizga munosabat bildirdi",
   "noMoviesYet": "Hozircha filmlar yo'q",
   "noMoviesCreatedYet": "Siz hali film yaratmagansiz",
   "failedToLoadMovies": "Filmlarni yuklab bo'lmadi",

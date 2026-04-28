@@ -7,6 +7,7 @@ import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/models/user_model/user_model.dart';
 import 'package:shortflix/src/repository/category_repo/category_repo.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
+import 'package:shortflix/src/repository/notifications_repo/notifications_repo.dart';
 import 'package:shortflix/src/repository/user_repo/user_repo.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_event.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
@@ -16,11 +17,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
   final CategoryRepo categoryRepo;
   final MovieRepo movieRepo;
   final UserRepo userRepo;
+  final NotificationsRepo notificationsRepo;
 
   HomeBloc({
     required this.categoryRepo,
     required this.movieRepo,
     required this.userRepo,
+    required this.notificationsRepo,
   }) : super(Initial()){
     on<FetchCategoriesEvent>((event, emit) async{
       await _fetchCategories(emit);
@@ -33,6 +36,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     },);
     on<FetchUserEvent>((event, emit) async {
       await _fetchUser(emit);
+    });
+    on<FetchUnreadCountEvent>((event, emit) async {
+      await _fetchUnreadCount(emit);
     });
     on<SearchMoviesEvent>((event, emit) async {
       await _searchMovies(emit, event.query);
@@ -53,6 +59,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
   List<BannerModel> banners = [];
   List<MovieModel> searchResults = [];
   UserModel? user;
+  int unreadCount = 0;
   bool isSearching = false;
   int currentNavBarIndex = 0;
   
@@ -86,6 +93,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>{
     } catch (e) {
       emit(FetchUserState(state: BaseState.error));
       printDebug("HomeBloc _fetchUser error => $e");
+    }
+  }
+
+  Future<void> _fetchUnreadCount(Emitter<HomeState> emit) async {
+    try {
+      emit(FetchUnreadCountState(state: BaseState.loading));
+      unreadCount = await notificationsRepo.unreadCount();
+      emit(FetchUnreadCountState(state: BaseState.loaded));
+    } catch (e) {
+      emit(FetchUnreadCountState(state: BaseState.error));
+      printDebug("HomeBloc _fetchUnreadCount error => $e");
     }
   }
 

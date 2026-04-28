@@ -67,6 +67,24 @@
       "name": {"type": "String"}
     }
   },
+  "notifLikedYourEpisode": "{name} liked your episode",
+  "@notifLikedYourEpisode": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "notifCommentedOnYourEpisode": "{name} commented on your episode",
+  "@notifCommentedOnYourEpisode": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "notifInteractedWithYou": "{name} interacted with your content",
+  "@notifInteractedWithYou": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "noMoviesYet": "No movies yet",
   "noMoviesCreatedYet": "No movies created yet",
   "failedToLoadMovies": "Failed to load movies",

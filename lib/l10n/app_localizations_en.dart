@@ -185,6 +185,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String notifLikedYourEpisode(String name) {
+    return '$name liked your episode';
+  }
+
+  @override
+  String notifCommentedOnYourEpisode(String name) {
+    return '$name commented on your episode';
+  }
+
+  @override
+  String notifInteractedWithYou(String name) {
+    return '$name interacted with your content';
+  }
+
+  @override
   String get noMoviesYet => 'No movies yet';
 
   @override

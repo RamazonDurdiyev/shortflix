@@ -442,6 +442,24 @@ abstract class AppLocalizations {
   /// **'Movies by {name}'**
   String moviesBy(String name);
 
+  /// No description provided for @notifLikedYourEpisode.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} liked your episode'**
+  String notifLikedYourEpisode(String name);
+
+  /// No description provided for @notifCommentedOnYourEpisode.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} commented on your episode'**
+  String notifCommentedOnYourEpisode(String name);
+
+  /// No description provided for @notifInteractedWithYou.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} interacted with your content'**
+  String notifInteractedWithYou(String name);
+
   /// No description provided for @noMoviesYet.
   ///
   /// In en, this message translates to:

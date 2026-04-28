@@ -62,6 +62,9 @@
   "tabEpisodes": "Эпизоды",
 
   "moviesBy": "Фильмы пользователя {name}",
+  "notifLikedYourEpisode": "{name} оценил(а) ваш эпизод",
+  "notifCommentedOnYourEpisode": "{name} прокомментировал(а) ваш эпизод",
+  "notifInteractedWithYou": "{name} взаимодействовал(а) с вашим контентом",
   "noMoviesYet": "Пока нет фильмов",
   "noMoviesCreatedYet": "Вы ещё не создали ни одного фильма",
   "failedToLoadMovies": "Не удалось загрузить фильмы",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/notification_model/notification_model.dart';
 import 'package:shortflix/src/ui/pages/notifications_page/notifications_bloc.dart';
 import 'package:shortflix/src/ui/pages/notifications_page/notifications_event.dart';
@@ -89,10 +90,10 @@ Widget _buildList(BuildContext context, List<NotificationModel> items) {
       physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       children: [
         if (today.isNotEmpty) _buildSectionLabel('Today'),
-        ...today.map(_buildNotificationItem),
+        ...today.map((n) => _buildNotificationItem(context, n)),
         if (today.isNotEmpty && earlier.isNotEmpty) _buildDivider('Earlier'),
         if (today.isEmpty && earlier.isNotEmpty) _buildSectionLabel('Earlier'),
-        ...earlier.map(_buildNotificationItem),
+        ...earlier.map((n) => _buildNotificationItem(context, n)),
         const SizedBox(height: 24),
       ],
     ),
@@ -179,43 +180,53 @@ Widget _buildDivider(String label) {
 // ─────────────────────────────────────────
 //  NOTIFICATION ITEM
 // ─────────────────────────────────────────
-Widget _buildNotificationItem(NotificationModel n) {
-  final title = n.title ?? '';
-  final body = n.body ?? '';
+Widget _buildNotificationItem(BuildContext context, NotificationModel n) {
   final time = _formatRelative(n.createdAt);
+  final l = AppLocalizations.of(context);
 
-  return Padding(
+  final actor = n.actor;
+  final hasActor = actor != null && (actor.fullName ?? '').trim().isNotEmpty;
+  final actorName = hasActor ? actor.fullName!.trim() : '';
+  final avatarUrl = actor?.avatar;
+
+  // Build the displayed line.
+  // Priority: actor + type sentence. Fall back to legacy title/body for broadcasts.
+  String headline;
+  String? subtext;
+  if (hasActor) {
+    headline = _typeSentence(l, n.type, actorName);
+    subtext = null;
+  } else {
+    headline = (n.title ?? '').trim();
+    final body = (n.body ?? '').trim();
+    subtext = body.isEmpty ? null : body;
+  }
+
+  return Container(
+    color: n.isRead
+        ? Colors.transparent
+        : ColorName.accent.withValues(alpha: .06),
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: ColorName.accent.withValues(alpha: .12),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.notifications_rounded,
-            color: ColorName.accent,
-            size: 20,
-          ),
-        ),
+        _buildAvatar(avatarUrl: avatarUrl, name: actorName, type: n.type),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
-                      title,
+                      headline,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
+                        height: 1.35,
                       ),
                     ),
                   ),
@@ -231,10 +242,10 @@ Widget _buildNotificationItem(NotificationModel n) {
                   ],
                 ],
               ),
-              if (body.isNotEmpty) ...[
+              if (subtext != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  body,
+                  subtext,
                   style: TextStyle(
                     color: ColorName.contentSecondary,
                     fontSize: 13,
@@ -245,9 +256,119 @@ Widget _buildNotificationItem(NotificationModel n) {
             ],
           ),
         ),
+        if (!n.isRead) ...[
+          const SizedBox(width: 8),
+          Container(
+            margin: const EdgeInsets.only(top: 6),
+            width: 8,
+            height: 8,
+            decoration: const BoxDecoration(
+              color: ColorName.accent,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
       ],
     ),
   );
+}
+
+Widget _buildAvatar({
+  required String? avatarUrl,
+  required String name,
+  required String? type,
+}) {
+  final hasAvatar = (avatarUrl ?? '').isNotEmpty;
+  final hasActor = name.isNotEmpty || hasAvatar;
+  final initial = name.isNotEmpty ? name[0].toUpperCase() : '';
+
+  return Stack(
+    clipBehavior: Clip.none,
+    children: [
+      Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: ColorName.accent.withValues(alpha: .12),
+          shape: BoxShape.circle,
+          image: hasAvatar
+              ? DecorationImage(
+                  image: NetworkImage(avatarUrl!),
+                  fit: BoxFit.cover,
+                )
+              : null,
+        ),
+        child: hasAvatar
+            ? null
+            : Center(
+                child: hasActor
+                    ? Text(
+                        initial,
+                        style: const TextStyle(
+                          color: ColorName.accent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.campaign_rounded,
+                        color: ColorName.accent,
+                        size: 22,
+                      ),
+              ),
+      ),
+      if (hasActor)
+        Positioned(
+          right: -2,
+          bottom: -2,
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: ColorName.backgroundPrimary,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: ColorName.backgroundPrimary,
+                width: 2,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: ColorName.accent,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _iconForType(type),
+                size: 11,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
+
+String _typeSentence(AppLocalizations l, String? type, String name) {
+  switch (type) {
+    case 'episode_like':
+      return l.notifLikedYourEpisode(name);
+    case 'episode_comment':
+      return l.notifCommentedOnYourEpisode(name);
+    default:
+      return l.notifInteractedWithYou(name);
+  }
+}
+
+IconData _iconForType(String? type) {
+  switch (type) {
+    case 'episode_like':
+      return Icons.favorite_rounded;
+    case 'episode_comment':
+      return Icons.chat_bubble_rounded;
+    default:
+      return Icons.notifications_rounded;
+  }
 }
 
 // ─────────────────────────────────────────
