@@ -84,7 +84,7 @@ const SHORTS = "/api/shorts";
 
 const DEVICE_TOKEN = "/api/notifications/device-token";
 const BROADCAST_NOTIFICATION = "/api/notifications/broadcast";
-const NOTIFICATION_HISTORY = "/api/notifications/history";
+const NOTIFICATIONS = "/api/notifications";
 
 // Local data
 

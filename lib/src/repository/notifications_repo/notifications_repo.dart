@@ -70,18 +70,21 @@ class NotificationsRepo {
   }
 
   // ─────────────────────────────────────────
-  //  HISTORY (SUPER_ADMIN)
-  //  GET /api/notifications/history
+  //  LIST ALL
+  //  GET /api/notifications
   // ─────────────────────────────────────────
-  Future<List<NotificationModel>> history() async {
+  Future<List<NotificationModel>> list({int limit = 50, int offset = 0}) async {
     if (!await networkInfo.isConnected) throw NetworkException();
 
-    final res = await client.get(NOTIFICATION_HISTORY);
+    final res = await client.get(
+      NOTIFICATIONS,
+      queryParameters: {'limit': limit, 'offset': offset},
+    );
     final data = res.data;
-    final List list = data is List
+    final List items = data is List
         ? data
         : (data is Map ? (data['items'] ?? data['data'] ?? []) as List : const []);
-    return list
+    return items
         .map((e) => NotificationModel.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
   }

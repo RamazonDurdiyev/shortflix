@@ -10,6 +10,7 @@ import 'package:shortflix/src/ui/pages/episodes_page/episodes_page.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_page.dart';
 import 'package:shortflix/src/ui/pages/notifications_page/notifications_bloc.dart';
+import 'package:shortflix/src/ui/pages/notifications_page/notifications_event.dart';
 import 'package:shortflix/src/ui/pages/notifications_page/notifications_page.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_page.dart';
@@ -95,7 +96,9 @@ Route? generateRoutes(RouteSettings settings, [bool fadeTransition = false]) {
       return buildRoute(
         settings,
         BlocProvider<NotificationsBloc>(
-          create: (_) => NotificationsBloc(),
+          create: (_) => NotificationsBloc(
+            notificationsRepo: GetIt.instance.get(),
+          )..add(FetchNotificationsEvent()),
           child: const NotificationsPage(),
         ),
       );

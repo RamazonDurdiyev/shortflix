@@ -387,7 +387,7 @@ class _Header extends StatelessWidget {
             ),
             child: const Center(
               child: Text(
-                'N',
+                'Sh',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
