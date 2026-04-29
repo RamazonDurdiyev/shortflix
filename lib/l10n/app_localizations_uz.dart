@@ -428,7 +428,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get featuredToday => 'Yangi qo\'shilgan';
 
   @override
-  String get popularOnShortflix => 'Shortflix-da mashhur';
+  String get popularOnShortflix => '916TV-da mashhur';
 
   @override
   String get browseByGenre => 'Janr bo\'yicha ko\'rish';
@@ -536,7 +536,7 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get createAccountSubtitle =>
-      'Shortflix-dagi millionlab tomoshabinlarga qo\'shiling';
+      '916TV-dagi millionlab tomoshabinlarga qo\'shiling';
 
   @override
   String get createAccountButton => 'Hisob yaratish';

@@ -889,7 +889,7 @@ abstract class AppLocalizations {
   /// No description provided for @popularOnShortflix.
   ///
   /// In en, this message translates to:
-  /// **'Popular on Shortflix'**
+  /// **'Popular on 916TV'**
   String get popularOnShortflix;
 
   /// No description provided for @browseByGenre.
@@ -1081,7 +1081,7 @@ abstract class AppLocalizations {
   /// No description provided for @createAccountSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Join millions watching on Shortflix'**
+  /// **'Join millions watching on 916TV'**
   String get createAccountSubtitle;
 
   /// No description provided for @createAccountButton.

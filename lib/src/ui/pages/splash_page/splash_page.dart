@@ -79,68 +79,11 @@ class _SplashPageState extends State<SplashPage>
             opacity: _fadeAnim,
             child: ScaleTransition(
               scale: _scaleAnim,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // ── Logo ────────────────────────────
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: ColorName.accent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'N',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w900,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // ── App name ────────────────────────
-                  const Text(
-                    'Shortflix',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    AppLocalizations.of(context).appTagline,
-                    style: TextStyle(
-                      color: ColorName.contentSecondary,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 48),
-
-                  // ── Loading indicator ───────────────
-                  BlocBuilder<SplashCubit, SplashState>(
-                    builder: (context, state) {
-                      if (state is SplashLoading) {
-                        return SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            color: ColorName.accent,
-                            strokeWidth: 2,
-                          ),
-                        );
-                      }
-                      return const SizedBox(height: 24);
-                    },
-                  ),
-                ],
+              child: Image.asset(
+                'assets/images/916TV_transparent.png',
+                width: 240,
+                height: 240,
+                fit: BoxFit.contain,
               ),
             ),
           ),

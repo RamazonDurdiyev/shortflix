@@ -256,29 +256,11 @@ class _SignUpPageState extends State<SignUpPage> {
         const SizedBox(width: 14),
         Row(
           children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: ColorName.accent,
-                borderRadius: BorderRadius.circular(7),
-              ),
-              child: const Center(
-                child: Text(
-                  'N',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'Shortflix',
-              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            Image.asset(
+              'assets/images/916TV_transparent.png',
+              width: 56,
+              height: 56,
+              fit: BoxFit.contain,
             ),
           ],
         ),

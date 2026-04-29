@@ -181,34 +181,11 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildLogo() {
     return Row(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: ColorName.accent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Center(
-            child: Text(
-              'N',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        const Text(
-          'Shortflix',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.3,
-          ),
+        Image.asset(
+          'assets/images/916TV_transparent.png',
+          width: 80,
+          height: 80,
+          fit: BoxFit.contain,
         ),
       ],
     );

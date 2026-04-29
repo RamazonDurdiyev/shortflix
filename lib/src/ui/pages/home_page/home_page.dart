@@ -379,80 +379,13 @@ class _Header extends StatelessWidget {
       child: Row(
         children: [
           // Logo
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: ColorName.accent,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: const Center(
-              child: Text(
-                'Sh',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
+          Image.asset(
+            'assets/images/916TV_transparent.png',
+            width: 96,
+            height: 96,
+            fit: BoxFit.contain,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: BlocBuilder<HomeBloc, HomeState>(
-              buildWhen: (_, state) => state is FetchUserState,
-              builder: (context, state) {
-                final l = AppLocalizations.of(context);
-                final fullName = context.read<HomeBloc>().user?.fullName ?? '';
-                final hasName = fullName.trim().isNotEmpty;
-                final firstName = hasName
-                    ? fullName.trim().split(RegExp(r'\s+')).first
-                    : l.fallbackGreetingName;
-                const nameStyle = TextStyle(
-                  color: ColorName.contentPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.3,
-                );
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(l.hello, style: nameStyle),
-                        Flexible(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 700),
-                            switchInCurve:
-                                const Interval(0.55, 1.0, curve: Curves.easeOut),
-                            switchOutCurve:
-                                const Interval(0.55, 1.0, curve: Curves.easeIn),
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(opacity: animation, child: child),
-                            child: Text(
-                              firstName,
-                              key: ValueKey(firstName),
-                              style: nameStyle,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      l.whatAreYouWatchingToday,
-                      style: TextStyle(
-                        color: ColorName.contentSecondary,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+          const Spacer(),
           // Notifications
           GestureDetector(
             onTap: () async {

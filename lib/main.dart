@@ -83,7 +83,7 @@ class MyApp extends StatelessWidget {
         builder: (context, Box box, _) {
           final code = box.get(LANGUAGE) as String?;
           return MaterialApp(
-            title: 'Shortflix',
+            title: '916TV',
             debugShowCheckedModeBanner: false,
             onGenerateRoute: generateRoutes,
             initialRoute: Navigation.splashPage,

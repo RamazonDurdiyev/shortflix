@@ -429,7 +429,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get featuredToday => 'Недавно добавленные';
 
   @override
-  String get popularOnShortflix => 'Популярное в Shortflix';
+  String get popularOnShortflix => 'Популярное в 916TV';
 
   @override
   String get browseByGenre => 'Просмотр по жанрам';
@@ -535,8 +535,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get createAccountHeading => 'Создать аккаунт';
 
   @override
-  String get createAccountSubtitle =>
-      'Присоединяйтесь к миллионам на Shortflix';
+  String get createAccountSubtitle => 'Присоединяйтесь к миллионам на 916TV';
 
   @override
   String get createAccountButton => 'Создать аккаунт';

@@ -424,7 +424,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featuredToday => 'Last Added';
 
   @override
-  String get popularOnShortflix => 'Popular on Shortflix';
+  String get popularOnShortflix => 'Popular on 916TV';
 
   @override
   String get browseByGenre => 'Browse by Genre';
@@ -528,7 +528,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccountHeading => 'Create account';
 
   @override
-  String get createAccountSubtitle => 'Join millions watching on Shortflix';
+  String get createAccountSubtitle => 'Join millions watching on 916TV';
 
   @override
   String get createAccountButton => 'Create Account';
