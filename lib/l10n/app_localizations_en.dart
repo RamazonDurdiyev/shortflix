@@ -703,4 +703,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allCategory => 'All';
+
+  @override
+  String get comingSoonTitle => 'Coming soon';
+
+  @override
+  String get comingSoonMessage => 'This feature will be added soon.';
+
+  @override
+  String get gotIt => 'Got it';
 }

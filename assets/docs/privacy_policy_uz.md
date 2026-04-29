@@ -1,12 +1,12 @@
-# Shortflix Maxfiylik Siyosati
+# 916TV Maxfiylik Siyosati
 
-Shortflix o'zining barcha ilovalari uchun ushbu maxfiylik siyosatini qabul qiladi. Biz foydalanuvchilarimizning ma'lumotlarini himoya qilishni birinchi o'ringa qo'yamiz va ularni xavfsiz va qonuniy asosda boshqaramiz.
+916TV o'zining barcha ilovalari uchun ushbu maxfiylik siyosatini qabul qiladi. Biz foydalanuvchilarimizning ma'lumotlarini himoya qilishni birinchi o'ringa qo'yamiz va ularni xavfsiz va qonuniy asosda boshqaramiz.
 
 ## Aloqa Ma'lumotlari
 
 Agar ushbu siyosat haqida savollaringiz bo'lsa yoki shaxsiy ma'lumotlaringiz bilan bog'liq murojaatlaringiz bo'lsa, quyidagi manzillar orqali biz bilan bog'lanishingiz mumkin:
 
-- Email: contact@shortflix.uz
+- Email: contact@916tv.uz
 - Manzil: Toshkent shahar, Alisher Navoiy ko'chasi, 11A
 - Telefon: +998 99 499 89 78
 

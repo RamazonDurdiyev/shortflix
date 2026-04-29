@@ -1,12 +1,12 @@
-# Privacy Policy of Shortflix
+# Privacy Policy of 916TV
 
-Shortflix adopts this privacy policy for all of its applications. We place the protection of our users' data first and handle it safely and on a lawful basis.
+916TV adopts this privacy policy for all of its applications. We place the protection of our users' data first and handle it safely and on a lawful basis.
 
 ## Contact Information
 
 If you have questions about this policy or requests regarding your personal data, you can contact us at the following addresses:
 
-- Email: contact@shortflix.uz
+- Email: contact@916tv.uz
 - Address: Tashkent city, Alisher Navoi Street, 11A
 - Phone: +998 99 499 89 78
 

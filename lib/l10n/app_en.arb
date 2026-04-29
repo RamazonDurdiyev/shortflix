@@ -299,5 +299,9 @@
   "noVideo": "No video",
 
   "allMovies": "All Movies",
-  "allCategory": "All"
+  "allCategory": "All",
+
+  "comingSoonTitle": "Coming soon",
+  "comingSoonMessage": "This feature will be added soon.",
+  "gotIt": "Got it"
 }

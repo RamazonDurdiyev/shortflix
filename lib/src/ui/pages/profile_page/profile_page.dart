@@ -132,6 +132,7 @@ class _ProfileView extends StatelessWidget {
                         _MenuItem(
                           icon: Icons.lock_outline_rounded,
                           label: l.privacyAndSecurity,
+                          onTap: () => _showComingSoonDialog(context),
                         ),
                         _MenuItem(
                           icon: Icons.language_rounded,
@@ -237,23 +238,7 @@ Widget _buildTopBar(BuildContext context, AppLocalizations l) {
             ),
           ),
         ),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: ColorName.backgroundSecondary,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: ColorName.surfaceSecondary),
-            ),
-            child: const Icon(
-              Icons.settings_outlined,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-        ),
+       
       ],
     ),
   );
@@ -762,8 +747,44 @@ Future<bool?> _confirmDeleteAccount(BuildContext context) {
 Widget _buildVersionLabel() {
   return Center(
     child: Text(
-      'Shortflix v1.0.0',
+      '916TV v1.0.0',
       style: TextStyle(color: ColorName.contentSecondary, fontSize: 11),
+    ),
+  );
+}
+
+// ─────────────────────────────────────────
+//  COMING SOON DIALOG
+// ─────────────────────────────────────────
+void _showComingSoonDialog(BuildContext context) {
+  final l = AppLocalizations.of(context);
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: ColorName.backgroundSecondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        l.comingSoonTitle,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        l.comingSoonMessage,
+        style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(
+            l.gotIt,
+            style: TextStyle(
+              color: ColorName.accent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

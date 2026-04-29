@@ -238,5 +238,9 @@
   "noVideo": "Video yo'q",
 
   "allMovies": "Barcha filmlar",
-  "allCategory": "Hammasi"
+  "allCategory": "Hammasi",
+
+  "comingSoonTitle": "Tez orada",
+  "comingSoonMessage": "Bu funksiya tez orada qo'shiladi.",
+  "gotIt": "Tushunarli"
 }

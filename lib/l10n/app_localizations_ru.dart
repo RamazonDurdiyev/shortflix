@@ -709,4 +709,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get allCategory => 'Все';
+
+  @override
+  String get comingSoonTitle => 'Скоро';
+
+  @override
+  String get comingSoonMessage =>
+      'Эта функция будет добавлена в ближайшее время.';
+
+  @override
+  String get gotIt => 'Понятно';
 }

@@ -238,5 +238,9 @@
   "noVideo": "Нет видео",
 
   "allMovies": "Все фильмы",
-  "allCategory": "Все"
+  "allCategory": "Все",
+
+  "comingSoonTitle": "Скоро",
+  "comingSoonMessage": "Эта функция будет добавлена в ближайшее время.",
+  "gotIt": "Понятно"
 }

@@ -709,4 +709,13 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get allCategory => 'Hammasi';
+
+  @override
+  String get comingSoonTitle => 'Tez orada';
+
+  @override
+  String get comingSoonMessage => 'Bu funksiya tez orada qo\'shiladi.';
+
+  @override
+  String get gotIt => 'Tushunarli';
 }
