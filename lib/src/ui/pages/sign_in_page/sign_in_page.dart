@@ -10,6 +10,7 @@ import 'package:shortflix/src/services/routes.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_bloc.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_event.dart';
 import 'package:shortflix/src/ui/pages/sign_in_page/sign_in_state.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -297,7 +298,8 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   // ─────────────────────────────────────────
-  //  GOOGLE BUTTON
+  //  GOOGLE BUTTON  (per Google brand guidelines:
+  //    https://developers.google.com/identity/branding-guidelines)
   // ─────────────────────────────────────────
   Widget _buildGoogleButton(SignInBloc bloc) {
     return BlocBuilder<SignInBloc, SignInState>(
@@ -306,59 +308,50 @@ class _SignInPageState extends State<SignInPage> {
         final isLoading =
             state is SignInGoogleState && state.state == BaseState.loading;
 
-        return GestureDetector(
-          onTap: isLoading ? null : () => bloc.add(SignInGoogleEvent()),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: 52,
-            decoration: BoxDecoration(
-              color: ColorName.backgroundSecondary,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: ColorName.surfaceSecondary),
-            ),
-            child: isLoading
-                ? const Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
+        return Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          elevation: 1,
+          shadowColor: Colors.black.withValues(alpha: 0.15),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: isLoading ? null : () => bloc.add(SignInGoogleEvent()),
+            child: SizedBox(
+              height: 48,
+              child: isLoading
+                  ? const Center(
+                      child: SizedBox(
                         width: 20,
                         height: 20,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF1F1F1F),
+                          strokeWidth: 2,
                         ),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'G',
-                          style: TextStyle(
-                            color: Color(0xFF4285F4),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w900,
-                            height: 1,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/google_g_logo.png',
+                          width: 20,
+                          height: 20,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          AppLocalizations.of(context).continueWithGoogle,
+                          style: const TextStyle(
+                            color: Color(0xFF1F1F1F),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.25,
+                            fontFamily: 'Roboto',
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        AppLocalizations.of(context).continueWithGoogle,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+            ),
           ),
         );
       },
@@ -366,7 +359,9 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   // ─────────────────────────────────────────
-  //  APPLE BUTTON (iOS only)
+  //  APPLE BUTTON  (uses the official SignInWithAppleButton widget,
+  //    which conforms to Apple's HIG for "Sign in with Apple")
+  //  iOS only.
   // ─────────────────────────────────────────
   Widget _buildAppleButton(SignInBloc bloc) {
     return BlocBuilder<SignInBloc, SignInState>(
@@ -375,49 +370,32 @@ class _SignInPageState extends State<SignInPage> {
         final isLoading =
             state is SignInAppleState && state.state == BaseState.loading;
 
-        return GestureDetector(
-          onTap: isLoading ? null : () => bloc.add(SignInAppleEvent()),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: 52,
+        if (isLoading) {
+          return Container(
+            height: 44,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: isLoading
-                ? const Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        '',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          height: 1,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        AppLocalizations.of(context).continueWithApple,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
+            child: const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return SignInWithAppleButton(
+          onPressed: () => bloc.add(SignInAppleEvent()),
+          text: AppLocalizations.of(context).continueWithApple,
+          style: SignInWithAppleButtonStyle.white,
+          height: 44,
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
         );
       },
     );
