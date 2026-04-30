@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile => 'Profile';
 
   @override
-  String get profileFallbackName => 'Someone';
+  String get profileFallbackName => 'Unknown';
 
   @override
   String get profileFallbackEmail => 'someone@email.com';
