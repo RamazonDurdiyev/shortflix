@@ -635,6 +635,28 @@ class _ActionColumn extends StatelessWidget {
                   );
                 },
               ),
+              Builder(
+                builder: (sheetCtx) {
+                  final l = AppLocalizations.of(sheetCtx);
+                  return ListTile(
+                    leading: const Icon(
+                      Icons.flag_outlined,
+                      color: Colors.white,
+                    ),
+                    title: Text(
+                      l.reportContent,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(sheetCtx);
+                      _showReportSheet(context, contentId: episodeId);
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 8),
             ],
           ),
@@ -903,9 +925,227 @@ class _CommentsSheetState extends State<_CommentsSheet> {
             ],
           ),
         ),
+        _CommentActionsMenu(comment: c),
       ],
     );
   }
+}
+
+// ─────────────────────────────────────────
+//  COMMENT ACTIONS MENU (Report / Block)
+// ─────────────────────────────────────────
+class _CommentActionsMenu extends StatelessWidget {
+  final CommentModel comment;
+  const _CommentActionsMenu({required this.comment});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final hasUser = comment.userId != null && comment.userId!.isNotEmpty;
+    return PopupMenuButton<String>(
+      color: const Color(0xFF1F1F1F),
+      icon: const Icon(Icons.more_vert_rounded,
+          color: Colors.white38, size: 18),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onSelected: (value) {
+        switch (value) {
+          case 'report':
+            _showReportSheet(context, contentId: comment.id ?? '');
+            break;
+          case 'block':
+            if (hasUser) {
+              _confirmBlockUser(context, userId: comment.userId!);
+            }
+            break;
+        }
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem<String>(
+          value: 'report',
+          child: Row(
+            children: [
+              const Icon(Icons.flag_outlined, color: Colors.white, size: 18),
+              const SizedBox(width: 10),
+              Text(l.reportComment,
+                  style: const TextStyle(color: Colors.white)),
+            ],
+          ),
+        ),
+        if (hasUser)
+          PopupMenuItem<String>(
+            value: 'block',
+            child: Row(
+              children: [
+                const Icon(Icons.block_rounded,
+                    color: Colors.redAccent, size: 18),
+                const SizedBox(width: 10),
+                Text(l.blockUser,
+                    style: const TextStyle(color: Colors.redAccent)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+//  REPORT / BLOCK HELPERS
+// ─────────────────────────────────────────
+void _showReportSheet(BuildContext context, {required String contentId}) {
+  final l = AppLocalizations.of(context);
+  final reasons = <String>[
+    l.reportReasonSpam,
+    l.reportReasonHarassment,
+    l.reportReasonViolence,
+    l.reportReasonSexual,
+    l.reportReasonOther,
+  ];
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: const Color(0xFF121212),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (sheetCtx) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    l.selectReason,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...reasons.map(
+                (reason) => ListTile(
+                  title: Text(
+                    reason,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded,
+                      color: Colors.white38),
+                  onTap: () {
+                    Navigator.pop(sheetCtx);
+                    _showReportSubmittedDialog(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showReportSubmittedDialog(BuildContext context) {
+  final l = AppLocalizations.of(context);
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: ColorName.backgroundSecondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        l.reportSubmittedTitle,
+        style: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        l.reportSubmittedMessage,
+        style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(
+            l.gotIt,
+            style: TextStyle(
+              color: ColorName.accent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+void _confirmBlockUser(BuildContext context, {required String userId}) {
+  final l = AppLocalizations.of(context);
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: ColorName.backgroundSecondary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        l.blockUserTitle,
+        style: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        l.blockUserMessage,
+        style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(
+            l.cancel,
+            style: TextStyle(color: ColorName.contentSecondary),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(ctx);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l.userBlockedMessage),
+                backgroundColor: ColorName.backgroundSecondary,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          },
+          child: Text(
+            l.blockUser,
+            style: const TextStyle(
+              color: Colors.redAccent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 // ─────────────────────────────────────────

@@ -242,5 +242,22 @@
 
   "comingSoonTitle": "Скоро",
   "comingSoonMessage": "Эта функция будет добавлена в ближайшее время.",
-  "gotIt": "Понятно"
+  "gotIt": "Понятно",
+
+  "reportContent": "Пожаловаться",
+  "reportContentTitle": "Пожаловаться на контент?",
+  "reportContentMessage": "Жалобы рассматриваются в течение 24 часов. Контент, нарушающий правила, будет удалён.",
+  "reportSubmittedTitle": "Жалоба получена",
+  "reportSubmittedMessage": "Спасибо. Наша команда рассмотрит контент в течение 24 часов.",
+  "blockUser": "Заблокировать пользователя",
+  "blockUserTitle": "Заблокировать пользователя?",
+  "blockUserMessage": "Вы больше не будете видеть контент и комментарии этого пользователя.",
+  "userBlockedMessage": "Пользователь заблокирован.",
+  "reportComment": "Пожаловаться на комментарий",
+  "reportReasonSpam": "Спам или мошенничество",
+  "reportReasonHarassment": "Травля или язык вражды",
+  "reportReasonViolence": "Насилие или опасные действия",
+  "reportReasonSexual": "Сексуальный или непристойный контент",
+  "reportReasonOther": "Другое",
+  "selectReason": "Выберите причину"
 }

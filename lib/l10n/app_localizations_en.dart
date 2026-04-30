@@ -712,4 +712,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gotIt => 'Got it';
+
+  @override
+  String get reportContent => 'Report';
+
+  @override
+  String get reportContentTitle => 'Report this content?';
+
+  @override
+  String get reportContentMessage =>
+      'Reports are reviewed within 24 hours. Content that violates our guidelines will be removed.';
+
+  @override
+  String get reportSubmittedTitle => 'Report received';
+
+  @override
+  String get reportSubmittedMessage =>
+      'Thank you. Our team will review this content within 24 hours.';
+
+  @override
+  String get blockUser => 'Block user';
+
+  @override
+  String get blockUserTitle => 'Block this user?';
+
+  @override
+  String get blockUserMessage =>
+      'You won\'t see content or comments from this user anymore.';
+
+  @override
+  String get userBlockedMessage => 'User blocked.';
+
+  @override
+  String get reportComment => 'Report comment';
+
+  @override
+  String get reportReasonSpam => 'Spam or misleading';
+
+  @override
+  String get reportReasonHarassment => 'Harassment or hate speech';
+
+  @override
+  String get reportReasonViolence => 'Violence or dangerous acts';
+
+  @override
+  String get reportReasonSexual => 'Sexual or nudity';
+
+  @override
+  String get reportReasonOther => 'Other';
+
+  @override
+  String get selectReason => 'Select a reason';
 }

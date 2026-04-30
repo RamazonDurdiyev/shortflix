@@ -161,6 +161,7 @@ class _ProfileView extends StatelessWidget {
                         _MenuItem(
                           icon: Icons.help_outline_rounded,
                           label: l.helpCenter,
+                          onTap: () => _showComingSoonDialog(context),
                         ),
                         _MenuItem(
                           icon: Icons.privacy_tip_outlined,
@@ -178,6 +179,7 @@ class _ProfileView extends StatelessWidget {
                         _MenuItem(
                           icon: Icons.info_outline_rounded,
                           label: l.about,
+                          onTap: () => _showComingSoonDialog(context),
                         ),
                       ]),
                       const SizedBox(height: 16),

@@ -303,5 +303,22 @@
 
   "comingSoonTitle": "Coming soon",
   "comingSoonMessage": "This feature will be added soon.",
-  "gotIt": "Got it"
+  "gotIt": "Got it",
+
+  "reportContent": "Report",
+  "reportContentTitle": "Report this content?",
+  "reportContentMessage": "Reports are reviewed within 24 hours. Content that violates our guidelines will be removed.",
+  "reportSubmittedTitle": "Report received",
+  "reportSubmittedMessage": "Thank you. Our team will review this content within 24 hours.",
+  "blockUser": "Block user",
+  "blockUserTitle": "Block this user?",
+  "blockUserMessage": "You won't see content or comments from this user anymore.",
+  "userBlockedMessage": "User blocked.",
+  "reportComment": "Report comment",
+  "reportReasonSpam": "Spam or misleading",
+  "reportReasonHarassment": "Harassment or hate speech",
+  "reportReasonViolence": "Violence or dangerous acts",
+  "reportReasonSexual": "Sexual or nudity",
+  "reportReasonOther": "Other",
+  "selectReason": "Select a reason"
 }

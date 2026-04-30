@@ -242,5 +242,22 @@
 
   "comingSoonTitle": "Tez orada",
   "comingSoonMessage": "Bu funksiya tez orada qo'shiladi.",
-  "gotIt": "Tushunarli"
+  "gotIt": "Tushunarli",
+
+  "reportContent": "Shikoyat qilish",
+  "reportContentTitle": "Ushbu kontentga shikoyat qilasizmi?",
+  "reportContentMessage": "Shikoyatlar 24 soat ichida ko'rib chiqiladi. Qoidalarimizni buzgan kontent o'chirib tashlanadi.",
+  "reportSubmittedTitle": "Shikoyat qabul qilindi",
+  "reportSubmittedMessage": "Rahmat. Jamoamiz ushbu kontentni 24 soat ichida ko'rib chiqadi.",
+  "blockUser": "Foydalanuvchini bloklash",
+  "blockUserTitle": "Foydalanuvchini bloklaysizmi?",
+  "blockUserMessage": "Endi bu foydalanuvchining kontenti va izohlarini ko'rmaysiz.",
+  "userBlockedMessage": "Foydalanuvchi bloklandi.",
+  "reportComment": "Izohga shikoyat qilish",
+  "reportReasonSpam": "Spam yoki aldash",
+  "reportReasonHarassment": "Tahdid yoki nafrat tili",
+  "reportReasonViolence": "Zo'ravonlik yoki xavfli xatti-harakatlar",
+  "reportReasonSexual": "Jinsiy yoki nomaqbul kontent",
+  "reportReasonOther": "Boshqa",
+  "selectReason": "Sababni tanlang"
 }

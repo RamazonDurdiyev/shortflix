@@ -37,6 +37,14 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>916TV needs camera access so you can record videos and capture photos for episodes you upload.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>916TV needs microphone access to record audio for the videos you create.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>916TV needs access to your photos so you can pick images and videos to upload.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>916TV needs permission to save shared media to your photo library.</string>
 	<key>GIDClientID</key>
 	<string>702398577621-hug0kc079la1eropvk06bh24cr9qo32a.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>

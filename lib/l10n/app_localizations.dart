@@ -1437,6 +1437,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it'**
   String get gotIt;
+
+  /// No description provided for @reportContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get reportContent;
+
+  /// No description provided for @reportContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this content?'**
+  String get reportContentTitle;
+
+  /// No description provided for @reportContentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports are reviewed within 24 hours. Content that violates our guidelines will be removed.'**
+  String get reportContentMessage;
+
+  /// No description provided for @reportSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report received'**
+  String get reportSubmittedTitle;
+
+  /// No description provided for @reportSubmittedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. Our team will review this content within 24 hours.'**
+  String get reportSubmittedMessage;
+
+  /// No description provided for @blockUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Block user'**
+  String get blockUser;
+
+  /// No description provided for @blockUserTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Block this user?'**
+  String get blockUserTitle;
+
+  /// No description provided for @blockUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t see content or comments from this user anymore.'**
+  String get blockUserMessage;
+
+  /// No description provided for @userBlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'User blocked.'**
+  String get userBlockedMessage;
+
+  /// No description provided for @reportComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Report comment'**
+  String get reportComment;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam or misleading'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment or hate speech'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonViolence.
+  ///
+  /// In en, this message translates to:
+  /// **'Violence or dangerous acts'**
+  String get reportReasonViolence;
+
+  /// No description provided for @reportReasonSexual.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual or nudity'**
+  String get reportReasonSexual;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reportReasonOther;
+
+  /// No description provided for @selectReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a reason'**
+  String get selectReason;
 }
 
 class _AppLocalizationsDelegate

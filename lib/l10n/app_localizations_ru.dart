@@ -719,4 +719,55 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get gotIt => 'Понятно';
+
+  @override
+  String get reportContent => 'Пожаловаться';
+
+  @override
+  String get reportContentTitle => 'Пожаловаться на контент?';
+
+  @override
+  String get reportContentMessage =>
+      'Жалобы рассматриваются в течение 24 часов. Контент, нарушающий правила, будет удалён.';
+
+  @override
+  String get reportSubmittedTitle => 'Жалоба получена';
+
+  @override
+  String get reportSubmittedMessage =>
+      'Спасибо. Наша команда рассмотрит контент в течение 24 часов.';
+
+  @override
+  String get blockUser => 'Заблокировать пользователя';
+
+  @override
+  String get blockUserTitle => 'Заблокировать пользователя?';
+
+  @override
+  String get blockUserMessage =>
+      'Вы больше не будете видеть контент и комментарии этого пользователя.';
+
+  @override
+  String get userBlockedMessage => 'Пользователь заблокирован.';
+
+  @override
+  String get reportComment => 'Пожаловаться на комментарий';
+
+  @override
+  String get reportReasonSpam => 'Спам или мошенничество';
+
+  @override
+  String get reportReasonHarassment => 'Травля или язык вражды';
+
+  @override
+  String get reportReasonViolence => 'Насилие или опасные действия';
+
+  @override
+  String get reportReasonSexual => 'Сексуальный или непристойный контент';
+
+  @override
+  String get reportReasonOther => 'Другое';
+
+  @override
+  String get selectReason => 'Выберите причину';
 }

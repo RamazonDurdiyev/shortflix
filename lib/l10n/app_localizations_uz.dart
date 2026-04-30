@@ -718,4 +718,56 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get gotIt => 'Tushunarli';
+
+  @override
+  String get reportContent => 'Shikoyat qilish';
+
+  @override
+  String get reportContentTitle => 'Ushbu kontentga shikoyat qilasizmi?';
+
+  @override
+  String get reportContentMessage =>
+      'Shikoyatlar 24 soat ichida ko\'rib chiqiladi. Qoidalarimizni buzgan kontent o\'chirib tashlanadi.';
+
+  @override
+  String get reportSubmittedTitle => 'Shikoyat qabul qilindi';
+
+  @override
+  String get reportSubmittedMessage =>
+      'Rahmat. Jamoamiz ushbu kontentni 24 soat ichida ko\'rib chiqadi.';
+
+  @override
+  String get blockUser => 'Foydalanuvchini bloklash';
+
+  @override
+  String get blockUserTitle => 'Foydalanuvchini bloklaysizmi?';
+
+  @override
+  String get blockUserMessage =>
+      'Endi bu foydalanuvchining kontenti va izohlarini ko\'rmaysiz.';
+
+  @override
+  String get userBlockedMessage => 'Foydalanuvchi bloklandi.';
+
+  @override
+  String get reportComment => 'Izohga shikoyat qilish';
+
+  @override
+  String get reportReasonSpam => 'Spam yoki aldash';
+
+  @override
+  String get reportReasonHarassment => 'Tahdid yoki nafrat tili';
+
+  @override
+  String get reportReasonViolence =>
+      'Zo\'ravonlik yoki xavfli xatti-harakatlar';
+
+  @override
+  String get reportReasonSexual => 'Jinsiy yoki nomaqbul kontent';
+
+  @override
+  String get reportReasonOther => 'Boshqa';
+
+  @override
+  String get selectReason => 'Sababni tanlang';
 }
