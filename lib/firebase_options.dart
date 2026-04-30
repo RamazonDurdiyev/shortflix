@@ -70,6 +70,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '753167810629',
     projectId: 'shortflix-notification-service',
     storageBucket: 'shortflix-notification-service.firebasestorage.app',
-    iosBundleId: 'com.mpmg.shortflix',
+    iosBundleId: 'com.mpmg.tv916',
   );
 }

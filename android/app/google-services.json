@@ -12,12 +12,7 @@
           "package_name": "com.mpmg.shortflix"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "753167810629-nse5kjuf1076rhtdhvq5mr31ndc7u7aj.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyBA-Kmq8-PsJh1bDbyBI-DSl5ifMJP_i0M"
@@ -25,19 +20,26 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "753167810629-nse5kjuf1076rhtdhvq5mr31ndc7u7aj.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "753167810629-4i44bpasj4j4u90tllnc5v0lgppp30ks.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.mpmg.shortflix"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753167810629:android:57e5061459c84d7cf4a32c",
+        "android_client_info": {
+          "package_name": "com.mpmg.tv916"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA-Kmq8-PsJh1bDbyBI-DSl5ifMJP_i0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }

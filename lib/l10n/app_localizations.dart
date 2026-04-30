@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileFallbackName.
   ///
   /// In en, this message translates to:
-  /// **'Someone'**
+  /// **'Unknown'**
   String get profileFallbackName;
 
   /// No description provided for @profileFallbackEmail.
