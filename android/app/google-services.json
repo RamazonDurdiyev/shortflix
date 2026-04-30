@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "753167810629-s4bgr348ad3sj20ubohlfc3b000idsei.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.mpmg.shortflix",
-            "certificate_hash": "dce8636467ded86d5ace62c176c8e46438b2a523"
-          }
-        },
-        {
           "client_id": "753167810629-nse5kjuf1076rhtdhvq5mr31ndc7u7aj.apps.googleusercontent.com",
           "client_type": 3
         }

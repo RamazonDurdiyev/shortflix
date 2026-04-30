@@ -31,7 +31,7 @@
 			<string>google</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.753167810629-4i44bpasj4j4u90tllnc5v0lgppp30ks</string>
+				<string>com.googleusercontent.apps.702398577621-hug0kc079la1eropvk06bh24cr9qo32a</string>
 			</array>
 		</dict>
 	</array>
@@ -46,7 +46,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>916TV needs permission to save shared media to your photo library.</string>
 	<key>GIDClientID</key>
-	<string>753167810629-4i44bpasj4j4u90tllnc5v0lgppp30ks.apps.googleusercontent.com</string>
+	<string>702398577621-hug0kc079la1eropvk06bh24cr9qo32a.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
