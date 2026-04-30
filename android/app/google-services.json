@@ -12,7 +12,20 @@
           "package_name": "com.mpmg.shortflix"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "753167810629-s4bgr348ad3sj20ubohlfc3b000idsei.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mpmg.shortflix",
+            "certificate_hash": "dce8636467ded86d5ace62c176c8e46438b2a523"
+          }
+        },
+        {
+          "client_id": "753167810629-nse5kjuf1076rhtdhvq5mr31ndc7u7aj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBA-Kmq8-PsJh1bDbyBI-DSl5ifMJP_i0M"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753167810629-nse5kjuf1076rhtdhvq5mr31ndc7u7aj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "753167810629-4i44bpasj4j4u90tllnc5v0lgppp30ks.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mpmg.shortflix"
+              }
+            }
+          ]
         }
       }
     }
