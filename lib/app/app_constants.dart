@@ -98,4 +98,4 @@ const FCM_TOKEN = "fcm_token";
 
 // API Keys
 
-const MEDIA_UPLOAD = "http://72.62.0.138:5001/api/upload/presigned-url";
+const MEDIA_UPLOAD = "https://shortflix.yaxshihayot.uz/api/upload/presigned-url";

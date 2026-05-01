@@ -6,7 +6,7 @@
 
 Agar ushbu siyosat haqida savollaringiz bo'lsa yoki shaxsiy ma'lumotlaringiz bilan bog'liq murojaatlaringiz bo'lsa, quyidagi manzillar orqali biz bilan bog'lanishingiz mumkin:
 
-- Email: contact@916tv.uz
+- Email: abdujabbordeveloper@gmail.com
 - Manzil: Toshkent shahar, Alisher Navoiy ko'chasi, 11A
 - Telefon: +998 99 499 89 78
 
