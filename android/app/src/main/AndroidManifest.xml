@@ -7,14 +7,9 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
-    <!-- Android 13+ (API 33) granular media permissions -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
-
-    <!-- Android 14+ (API 34) partial photo-library access -->
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
-
-    <!-- Android 12 and below (API 32) — kept for back-compat, capped above 32 -->
+    <!-- Android 12 and below (API 32) — kept for back-compat, capped above 32.
+         Modern Android (13+) uses the system Photo Picker / Storage Access
+         Framework via image_picker / file_picker, which require no permissions. -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"/>
