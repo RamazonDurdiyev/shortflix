@@ -8,6 +8,7 @@ import 'package:shortflix/core/network/network_info.dart';
 import 'package:shortflix/src/models/banner_model/banner_model.dart';
 import 'package:shortflix/src/models/comment_model/comment_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/models/report_model/report_model.dart';
 
 class MovieRepo {
   final NetworkInfo networkInfo;
@@ -503,6 +504,49 @@ class MovieRepo {
   Future<void> archiveEpisode(String episodeId) async {
     if (await networkInfo.isConnected) {
       await client.post(ARCHIVE_EPISODE + episodeId);
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // fetch report categories
+  // **************************************************************************
+
+  Future<List<ReportCategoryModel>> fetchReportCategories() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(GET_REPORT_CATEGORIES);
+      final raw = res.data;
+      final List list = raw is List
+          ? raw
+          : (raw is Map && raw["data"] is List ? raw["data"] as List : const []);
+      return list
+          .map<ReportCategoryModel>(
+              (e) => ReportCategoryModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+  // **************************************************************************
+  // report episode
+  // **************************************************************************
+
+  Future<void> reportEpisode({
+    required String episodeId,
+    required String subcategoryId,
+    String? text,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.post(
+        REPORT_EPISODE,
+        data: {
+          "episodeId": episodeId,
+          "subcategoryId": subcategoryId,
+          if (text != null && text.isNotEmpty) "text": text,
+        },
+      );
     } else {
       throw NetworkException();
     }

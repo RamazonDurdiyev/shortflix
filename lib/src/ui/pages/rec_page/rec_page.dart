@@ -6,6 +6,7 @@ import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/comment_model/comment_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/ui/widgets/global/episode_bottom_info.dart';
+import 'package:shortflix/src/ui/widgets/global/report_sheet.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_bloc.dart';
 import 'package:shortflix/src/ui/pages/home_page/home_state.dart';
 import 'package:shortflix/src/ui/pages/rec_page/rec_bloc.dart';
@@ -993,104 +994,15 @@ class _CommentActionsMenu extends StatelessWidget {
 //  REPORT / BLOCK HELPERS
 // ─────────────────────────────────────────
 void _showReportSheet(BuildContext context, {required String contentId}) {
-  final l = AppLocalizations.of(context);
-  final reasons = <String>[
-    l.reportReasonSpam,
-    l.reportReasonHarassment,
-    l.reportReasonViolence,
-    l.reportReasonSexual,
-    l.reportReasonOther,
-  ];
-  showModalBottomSheet<void>(
+  final repo = context.read<RecBloc>().movieRepo;
+  showReportSheet(
     context: context,
-    backgroundColor: const Color(0xFF121212),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (sheetCtx) {
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l.selectReason,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...reasons.map(
-                (reason) => ListTile(
-                  title: Text(
-                    reason,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  trailing: const Icon(Icons.chevron_right_rounded,
-                      color: Colors.white38),
-                  onTap: () {
-                    Navigator.pop(sheetCtx);
-                    _showReportSubmittedDialog(context);
-                  },
-                ),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
-void _showReportSubmittedDialog(BuildContext context) {
-  final l = AppLocalizations.of(context);
-  showDialog<void>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      backgroundColor: ColorName.backgroundSecondary,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      title: Text(
-        l.reportSubmittedTitle,
-        style: const TextStyle(
-            color: Colors.white, fontWeight: FontWeight.bold),
-      ),
-      content: Text(
-        l.reportSubmittedMessage,
-        style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(
-            l.gotIt,
-            style: TextStyle(
-              color: ColorName.accent,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+    onFetchCategories: repo.fetchReportCategories,
+    onSubmit: ({required String subcategoryId, String? text}) =>
+        repo.reportEpisode(
+      episodeId: contentId,
+      subcategoryId: subcategoryId,
+      text: text,
     ),
   );
 }

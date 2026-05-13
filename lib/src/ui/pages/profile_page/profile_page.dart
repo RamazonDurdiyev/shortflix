@@ -317,31 +317,6 @@ Widget _buildProfileHeader({
                   fontSize: 13,
                 ),
               ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  color: ColorName.accent.withValues(alpha: .15),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: ColorName.accent.withValues(alpha: .4)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.star_rounded, color: ColorName.accent, size: 12),
-                    const SizedBox(width: 4),
-                    Text(
-                      l.premium,
-                      style: TextStyle(
-                        color: ColorName.accent,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

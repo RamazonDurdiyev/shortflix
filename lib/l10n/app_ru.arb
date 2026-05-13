@@ -259,5 +259,10 @@
   "reportReasonViolence": "Насилие или опасные действия",
   "reportReasonSexual": "Сексуальный или непристойный контент",
   "reportReasonOther": "Другое",
-  "selectReason": "Выберите причину"
+  "selectReason": "Выберите причину",
+  "reportSubmit": "Отправить",
+  "reportDescribeLabel": "Опишите проблему",
+  "reportLoadError": "Не удалось загрузить причины",
+  "tryAgain": "Повторить",
+  "back": "Назад"
 }

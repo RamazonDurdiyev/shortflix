@@ -49,3 +49,4 @@ class RecAddCommentEvent extends RecEvent {
   @override
   List<Object?> get props => [comment];
 }
+

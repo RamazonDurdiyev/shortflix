@@ -146,4 +146,5 @@ class RecBloc extends Bloc<RecEvent, RecState> {
       printDebug('RecBloc _addComment error => $e');
     }
   }
+
 }

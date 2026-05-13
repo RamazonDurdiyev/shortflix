@@ -770,4 +770,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get selectReason => 'Выберите причину';
+
+  @override
+  String get reportSubmit => 'Отправить';
+
+  @override
+  String get reportDescribeLabel => 'Опишите проблему';
+
+  @override
+  String get reportLoadError => 'Не удалось загрузить причины';
+
+  @override
+  String get tryAgain => 'Повторить';
+
+  @override
+  String get back => 'Назад';
 }

@@ -90,6 +90,11 @@ const READ_ALL_PERSONAL_NOTIFICATIONS = "/api/notifications/me/read-all";
 const READ_ALL_GENERAL_NOTIFICATIONS = "/api/notifications/read-all";
 const UNREAD_COUNT_NOTIFICATIONS = "/api/notifications/me/unread-count";
 
+// Reports
+
+const GET_REPORT_CATEGORIES = "/api/reports/categories";
+const REPORT_EPISODE = "/api/reports";
+
 // Local data
 
 const USER_TOKEN = "auth";

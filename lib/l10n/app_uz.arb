@@ -259,5 +259,10 @@
   "reportReasonViolence": "Zo'ravonlik yoki xavfli xatti-harakatlar",
   "reportReasonSexual": "Jinsiy yoki nomaqbul kontent",
   "reportReasonOther": "Boshqa",
-  "selectReason": "Sababni tanlang"
+  "selectReason": "Sababni tanlang",
+  "reportSubmit": "Yuborish",
+  "reportDescribeLabel": "Muammoni tasvirlab bering",
+  "reportLoadError": "Sabablarni yuklab bo'lmadi",
+  "tryAgain": "Qayta urinish",
+  "back": "Orqaga"
 }

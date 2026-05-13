@@ -770,4 +770,19 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get selectReason => 'Sababni tanlang';
+
+  @override
+  String get reportSubmit => 'Yuborish';
+
+  @override
+  String get reportDescribeLabel => 'Muammoni tasvirlab bering';
+
+  @override
+  String get reportLoadError => 'Sabablarni yuklab bo\'lmadi';
+
+  @override
+  String get tryAgain => 'Qayta urinish';
+
+  @override
+  String get back => 'Orqaga';
 }

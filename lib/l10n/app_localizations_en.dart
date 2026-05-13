@@ -763,4 +763,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectReason => 'Select a reason';
+
+  @override
+  String get reportSubmit => 'Submit';
+
+  @override
+  String get reportDescribeLabel => 'Please describe the issue';
+
+  @override
+  String get reportLoadError => 'Couldn\'t load report options';
+
+  @override
+  String get tryAgain => 'Try again';
+
+  @override
+  String get back => 'Back';
 }

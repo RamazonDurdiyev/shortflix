@@ -320,5 +320,10 @@
   "reportReasonViolence": "Violence or dangerous acts",
   "reportReasonSexual": "Sexual or nudity",
   "reportReasonOther": "Other",
-  "selectReason": "Select a reason"
+  "selectReason": "Select a reason",
+  "reportSubmit": "Submit",
+  "reportDescribeLabel": "Please describe the issue",
+  "reportLoadError": "Couldn't load report options",
+  "tryAgain": "Try again",
+  "back": "Back"
 }

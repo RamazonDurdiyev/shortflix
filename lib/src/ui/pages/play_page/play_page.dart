@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/gen/colors.gen.dart';
+import 'package:shortflix/l10n/app_localizations.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
 import 'package:shortflix/src/services/navigation.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_bloc.dart';
 import 'package:shortflix/src/ui/widgets/global/episode_bottom_info.dart';
+import 'package:shortflix/src/ui/widgets/global/report_sheet.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_event.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_state.dart';
 import 'package:share_plus/share_plus.dart';
@@ -681,6 +683,28 @@ class _ActionColumn extends StatelessWidget {
                     );
                   },
                 ),
+              Builder(
+                builder: (sheetCtx) {
+                  final l = AppLocalizations.of(sheetCtx);
+                  return ListTile(
+                    leading: const Icon(
+                      Icons.flag_outlined,
+                      color: Colors.white,
+                    ),
+                    title: Text(
+                      l.reportContent,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(sheetCtx);
+                      _showReportSheet(context, episodeId: episodeId);
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 8),
             ],
           ),
@@ -702,6 +726,20 @@ class _ActionColumn extends StatelessWidget {
       builder: (_) => BlocProvider.value(
         value: bloc,
         child: const _CommentsSheet(),
+      ),
+    );
+  }
+
+  void _showReportSheet(BuildContext context, {required String episodeId}) {
+    final repo = context.read<PlayBloc>().movieRepo;
+    showReportSheet(
+      context: context,
+      onFetchCategories: repo.fetchReportCategories,
+      onSubmit: ({required String subcategoryId, String? text}) =>
+          repo.reportEpisode(
+        episodeId: episodeId,
+        subcategoryId: subcategoryId,
+        text: text,
       ),
     );
   }

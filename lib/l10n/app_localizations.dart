@@ -1533,6 +1533,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a reason'**
   String get selectReason;
+
+  /// No description provided for @reportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get reportSubmit;
+
+  /// No description provided for @reportDescribeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Please describe the issue'**
+  String get reportDescribeLabel;
+
+  /// No description provided for @reportLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load report options'**
+  String get reportLoadError;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
 }
 
 class _AppLocalizationsDelegate
