@@ -559,25 +559,33 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _buildSignInRow(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            l.alreadyHaveAccount,
-            style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
-          ),
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Text(
-              l.signIn,
-              style: TextStyle(
-                color: ColorName.accent,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => Navigator.of(context).pop(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l.alreadyHaveAccount,
+                style: TextStyle(
+                  color: ColorName.contentSecondary,
+                  fontSize: 13,
+                ),
               ),
-            ),
+              const SizedBox(width: 4),
+              Text(
+                l.signIn,
+                style: TextStyle(
+                  color: ColorName.accent,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

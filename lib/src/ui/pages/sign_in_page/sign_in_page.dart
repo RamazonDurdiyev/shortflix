@@ -140,21 +140,29 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      l.forgotPassword,
-                      style: TextStyle(
-                        color: ColorName.accent,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                // TODO: implement forgot password flow (backend + UI), then re-enable.
+                // const SizedBox(height: 12),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: GestureDetector(
+                //     behavior: HitTestBehavior.opaque,
+                //     onTap: () {},
+                //     child: Padding(
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 8,
+                //         vertical: 12,
+                //       ),
+                //       child: Text(
+                //         l.forgotPassword,
+                //         style: TextStyle(
+                //           color: ColorName.accent,
+                //           fontSize: 13,
+                //           fontWeight: FontWeight.w600,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(height: 28),
                 _buildSignInButton(bloc),
                 const SizedBox(height: 20),
@@ -407,25 +415,33 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildSignUpRow(BuildContext context) {
     final l = AppLocalizations.of(context);
     return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            l.dontHaveAccount,
-            style: TextStyle(color: ColorName.contentSecondary, fontSize: 13),
-          ),
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, Navigation.signUpPage),
-            child: Text(
-              l.signUp,
-              style: TextStyle(
-                color: ColorName.accent,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => Navigator.pushNamed(context, Navigation.signUpPage),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l.dontHaveAccount,
+                style: TextStyle(
+                  color: ColorName.contentSecondary,
+                  fontSize: 13,
+                ),
               ),
-            ),
+              const SizedBox(width: 4),
+              Text(
+                l.signUp,
+                style: TextStyle(
+                  color: ColorName.accent,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
