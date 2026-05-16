@@ -920,6 +920,12 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                                         fontSize: 11,
                                       ),
                                     ),
+                                    Expanded(child: SizedBox()),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _buildCommentReportBottomSheet(context, c.id ?? "");
+                                      },
+                                      child: Icon(Icons.more_horiz, color: Colors.white70,))
                                   ],
                                 ],
                               ),
@@ -995,6 +1001,107 @@ class _CommentsSheetState extends State<_CommentsSheet> {
       ),
     );
   }
+}
+
+
+void _buildCommentReportBottomSheet(
+  BuildContext context,
+  String commentId,
+) {
+  final bloc = context.read<PlayBloc>();
+
+  if (bloc.reportCommentCategories.isEmpty) {
+    bloc.add(FetchReportCommentCategoriesEvent());
+  }
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return BlocBuilder<PlayBloc, PlayState>(
+        bloc: bloc,
+        builder: (context, state) {
+          return Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.6,
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1E1E1E),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Report Comment",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+          
+                const SizedBox(height: 20),
+          
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: bloc.reportCommentCategories.length,
+                    separatorBuilder: (_, __) => const Divider(
+                      color: Colors.white12,
+                    ),
+                    itemBuilder: (context, index) {
+                      final category =
+                          bloc.reportCommentCategories[index];
+          
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          category.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            category.subcategory,
+                            style: const TextStyle(
+                              color: Colors.white54,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white54,
+                          size: 16,
+                        ),
+                        onTap: () async {
+                          Navigator.pop(context);
+          
+                          bloc.add(
+                            ReportCommentEvent(
+                              commentId: commentId,
+                              subcategoryId: category.id,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      );
+    },
+  );
 }
 
 // ─────────────────────────────────────────

@@ -67,3 +67,19 @@ class AddCommentState extends PlayState {
   @override
   List<Object?> get props => [state, UniqueKey()];
 }
+
+class FetchReportCommentCategoriesState extends PlayState{
+  final BaseState state;
+
+  FetchReportCommentCategoriesState({required this.state});
+  @override
+  List<Object?> get props => [state];
+}
+
+class ReportCommentState extends PlayState{
+  final BaseState state;
+
+  ReportCommentState({required this.state});
+  @override
+  List<Object?> get props => [state];
+}

@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shortflix/core/utils/base_state.dart';
 import 'package:shortflix/core/utils/print_debug.dart';
 import 'package:shortflix/src/models/comment_model/comment_model.dart';
 import 'package:shortflix/src/models/movie_model/movie_model.dart';
+import 'package:shortflix/src/models/report_model/report_model.dart';
 import 'package:shortflix/src/repository/movie_repo/movie_repo.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_event.dart';
 import 'package:shortflix/src/ui/pages/play_page/play_state.dart';
@@ -53,6 +55,12 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     on<AddCommentEvent>((event, emit) async {
       await _addComment(emit, event.comment);
     });
+    on<FetchReportCommentCategoriesEvent>((event, emit) async{
+      await _fetchReportCommentCategories(emit);
+    },);
+    on<ReportCommentEvent>((event, emit) async{
+      await _reportComment(emit, event.commentId, event.subcategoryId);
+    },);
   }
 
   int currentPageIndex = 0;
@@ -68,6 +76,8 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   int commentCount = 0;
   int likeCount = 0;
   List<CommentModel> comments = [];
+  TextEditingController reportCommentCtrl = TextEditingController();
+  List<ReportCommentCategoryModel> reportCommentCategories = [];
 
   // ─────────────────────────────────────────
   //  FETCH MOVIE
@@ -216,6 +226,28 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     } catch (e) {
       emit(AddCommentState(state: BaseState.error));
       printDebug('PlayBloc _addComment error => $e');
+    }
+  }
+  
+  Future<void> _fetchReportCommentCategories(Emitter<PlayState> emit) async {
+    try {
+      emit(FetchReportCommentCategoriesState(state: BaseState.loading));
+      reportCommentCategories = await movieRepo.fetchReportCommentCategories();
+      print("comment report => $reportCommentCategories");
+      emit(FetchReportCommentCategoriesState(state: BaseState.loaded));
+      
+    } catch (e) {
+      emit(FetchReportCommentCategoriesState(state: BaseState.error));
+    }
+  }
+  
+  Future<void> _reportComment(Emitter<PlayState> emit, String commentId, String subcategoryId) async {
+    try {
+      emit(ReportCommentState(state: BaseState.loading));
+      movieRepo.reportComment(commentId: commentId, subcategoryId: subcategoryId);
+      emit(ReportCommentState(state: BaseState.loaded));
+    } catch (e) {
+      emit(ReportCommentState(state: BaseState.error));
     }
   }
 }

@@ -37,7 +37,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool get _passwordValid => _passwordRegex.hasMatch(_passwordCtrl.text);
 
   bool get _canSubmit =>
-      _fullNameValid && _emailValid && _passwordValid && _selectedDate != null;
+      _fullNameValid && _emailValid && _passwordValid;
 
   // ── ISO 8601 UTC ─────────────────────────────────────────────
   String get _birthDateIso {

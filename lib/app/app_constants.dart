@@ -94,6 +94,8 @@ const UNREAD_COUNT_NOTIFICATIONS = "/api/notifications/me/unread-count";
 
 const GET_REPORT_CATEGORIES = "/api/reports/categories";
 const REPORT_EPISODE = "/api/reports";
+const GET_REPORT_COMMENT_CATEGORIES = "/api/reports/comments/categories";
+const REPORT_COMMENT = "/api/reports/comments";
 
 // Local data
 

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
+import 'package:shortflix/core/utils/base_state.dart';
 
 abstract class PlayEvent extends Equatable {}
 
@@ -63,4 +66,19 @@ class AddCommentEvent extends PlayEvent {
   AddCommentEvent({required this.comment});
   @override
   List<Object?> get props => [comment];
+}
+
+class FetchReportCommentCategoriesEvent extends PlayEvent{
+  
+  @override
+  List<Object?> get props => [];
+}
+
+class ReportCommentEvent extends PlayEvent{
+  final String commentId;
+  final String subcategoryId;
+
+  ReportCommentEvent({required this.commentId, required this.subcategoryId});
+  @override
+  List<Object?> get props => [commentId, subcategoryId];
 }

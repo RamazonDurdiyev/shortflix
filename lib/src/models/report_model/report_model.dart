@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'report_model.g.dart';
+
 class ReportCategoryModel {
   final String id;
   final String code;
@@ -48,4 +52,20 @@ class ReportSubcategoryModel {
       requiresText: json['requiresText'] as bool? ?? false,
     );
   }
+}
+
+@JsonSerializable()
+class ReportCommentCategoryModel{
+  final String id;
+  final int code;
+  final String name;
+  final String subcategory;
+  final bool requiresText;
+
+  ReportCommentCategoryModel({required this.id, required this.code, required this.name, required this.subcategory, required this.requiresText});
+
+    factory ReportCommentCategoryModel.fromJson(Map<String, dynamic> data) =>
+      _$ReportCommentCategoryModelFromJson(data);
+
+  Map<String, dynamic> toJson() => _$ReportCommentCategoryModelToJson(this);
 }

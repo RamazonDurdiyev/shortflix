@@ -669,4 +669,57 @@ class MovieRepo {
       throw NetworkException();
     }
   }
+
+  // **************************************************************************
+  // fetch report categories
+  // **************************************************************************
+
+  Future<List<ReportCommentCategoryModel>> fetchReportCommentCategories() async {
+    if (await networkInfo.isConnected) {
+      final res = await client.get(GET_REPORT_COMMENT_CATEGORIES);
+      final raw = res.data;
+      final List list = raw is List
+          ? raw
+          : (raw is Map && raw["data"] is List ? raw["data"] as List : const []);
+      return list
+          .map<ReportCommentCategoryModel>(
+              (e) => ReportCommentCategoryModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } else {
+      throw NetworkException();
+    }
+  }
+
+
+  // **************************************************************************
+  // report comment
+  // **************************************************************************
+
+    Future<void> reportComment({
+    required String commentId,
+    required String subcategoryId,
+    String? text,
+  }) async {
+    if (await networkInfo.isConnected) {
+      await client.post(
+        REPORT_COMMENT,
+        data: {
+          "commentId": commentId,
+          "subcategoryId": subcategoryId,
+          if (text != null && text.isNotEmpty) "text": text,
+        },
+      );
+    } else {
+      throw NetworkException();
+    }
+  }
+
+
 }
+
+
+
+
+  
+
+
